@@ -1,18 +1,10 @@
 import chalk from 'chalk';
 import fs from 'fs';
-import ncp from 'ncp';
 import path from 'path';
 import handlebars from 'handlebars';
 import { promisify } from 'util';
 
 const access = promisify(fs.access);
-const copy = promisify(ncp);
-
-async function copyTemplateFiles(options) {
-    return copy(options.templateDirectory, options.targetDirectory, {
-        clobber: false
-    })
-}
 
 async function compileTemplate(options) {
 
@@ -59,29 +51,30 @@ async function compileTemplate(options) {
 }
 
 export async function generate(options) {
-    options = {
-        ...options,
-        targetDirectory: options.targetDirectory || process.cwd()
-    };
-
     const currenFileUrl = import.meta.url;
     const templateDir = path.resolve(
         new URL(currenFileUrl).pathname,
         '../../templates',
         options.format.toLowerCase()
     );
-    options.templateDirectory = templateDir;
 
     try {
         await access(templateDir, fs.constants.R_OK);
     } catch (err) {
-        console.error('%s Invalid template name', chalk.red.bold('ERROR'));
+        console.error('%s Invalid template location', chalk.red.bold('ERROR'));
         process.exit(1);
     }
+    
+    options = {
+        ...options,
+        targetDirectory: options.targetDirectory || process.cwd(),
+        templateDirectory: templateDir
+    };
+    
+    console.log('%s Fetching templates', chalk.green.bold('DONE'));
 
-    console.log('%s Preparing templates', chalk.green.bold('DONE'));
-
-    // await copyTemplateFiles(options);
+    // todo: get templates from a common location (e.g. github)
+    // or the template location can be specified as cli option
 
     console.log('%s Compiling templates using handlebars', chalk.green.bold('DONE'));
 

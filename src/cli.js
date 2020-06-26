@@ -47,14 +47,21 @@ async function promptForMissingOptions(options) {
         questions.push({
             type: 'input',
             name: 'name',
-            message: 'Please provide the name of your API',
+            message: 'What\'s the name of your API:',
+            validate: async (input) => {
+                if (input === '') {
+                   return 'You should give your API a name, it will feel lost without one.';
+                }
+          
+                return true;
+             }
         });
     }
     if (!options.format) {
         questions.push({
             type: 'list',
             name: 'format',
-            message: 'Please choose which syntax you want to use',
+            message: 'Select the syntax you want to use:',
             choices: ['json', 'yaml'],
             default: defaultFormat,
         });
@@ -63,7 +70,7 @@ async function promptForMissingOptions(options) {
         questions.push({
             type: 'list',
             name: 'oasVersion',
-            message: 'Please choose the version of the Open API specification',
+            message: 'Choose an Open API specification version:',
             choices: [ 
                 ('v3 (Open API specification)', 3),
                 ('v2 (former swagger)', 2),
@@ -76,7 +83,7 @@ async function promptForMissingOptions(options) {
         questions.push({
             type: 'input',
             name: 'entities',
-            message: 'Add a comma seperated list of entities',
+            message: 'Add a comma seperated list of entities (e.g. \'invoice\'):',
         });
     }
 
@@ -93,6 +100,6 @@ async function promptForMissingOptions(options) {
 export async function cli(args) {
     let options = parseArgumentsIntoOptions(args);
     options = await promptForMissingOptions(options);
-    console.log(options);
+    // console.log(options);
     await generate(options);
 }
