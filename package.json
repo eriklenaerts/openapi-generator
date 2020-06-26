@@ -1,0 +1,32 @@
+{
+  "name": "generator",
+  "version": "1.0.0",
+  "description": "Generate a basic API definition (OAS) for your project that align with the Digipolis API system",
+  "main": "src/index.js",
+  "bin": {
+    "generator": "bin/generator"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "arg": "^4.1.3",
+    "chalk": "^4.1.0",
+    "esm": "^3.2.25",
+    "handlebars": "^4.7.6",
+    "inquirer": "^7.2.0",
+    "ncp": "^2.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "cli",
+    "OAS",
+    "generator",
+    "swagger"
+  ],
+  "author": "Erik Lenaerts",
+  "license": "MIT"
+}

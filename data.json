@@ -1,0 +1,13 @@
+{
+    "api-name": "somename",
+    "entity": [
+        {
+            "name": "invoice",
+            "collection": "invoices"
+        },
+        {
+            "name": "customer",
+            "collection": "customers"
+        }
+    ]
+}

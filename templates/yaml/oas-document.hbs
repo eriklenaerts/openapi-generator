@@ -1,0 +1,61 @@
+openapi: 3.0.5
+info:
+  version: '1.0.0'
+  title: {{api-name}} API
+  description: 'Change the description of your {{api-name}} API. Have a look [here](https://github.com/eriklenaerts/api-system/#/content/common/swagger-docs?id=info-object) for tips on writing good documentation.'
+servers:
+  - url: https://api.{{api-name}}.com/v1
+    description: Production server (uses live data)
+  - url: https://sandbox-api.{{api-name}}.com:8443/v1
+    description: Sandbox server (uses test data)
+paths:
+{{#each entity}}
+  /{{collection}}:
+    get:
+      description: Get all {{collection}} from this wonderful API ;). 
+      summary: Get all {{collection}}
+      responses:
+        '200':
+          description: OK
+    post:
+      description: Add a new {{name}} to the system.
+      summary: Add a new {{name}}.
+      responses:
+        '200':
+          description: OK
+  /{{collection}}/{id}:
+    get:
+      description: Retrieve a {{name}} for the given {{name}} id
+      summary: Retrieve the data for one specific {{name}}
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: The {{name}} number.
+          example: '<TODO: example here>'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/invoice'
+        '404':
+          description: Not Found
+{{/each}}
+components:
+  schemas:
+    invoice:
+      type: object
+      properties:
+        number: 
+          type: string
+          description: A unique sequential invoice number, prefixed with 'INV'
+          example: INV10034
+        date:
+          type: string
+          format: date
+          description: The date when this invoice was issued.
+          example: 28-04-2020
