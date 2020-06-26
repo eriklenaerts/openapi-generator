@@ -6,15 +6,17 @@ function parseArgumentsIntoOptions(rawArgs) {
     const args = arg(
         {
             '--yes': Boolean,
-            '--install': Boolean,
             '--format': String,
             '--oasVersion': Number,
             '--entities': String,
+            '--target': String,
+            '--verbose': Boolean,
             '-y': '--yes',
             '-f': '--format',
             '-ov': '--oasVersion',
             '-e': '--entities',
-            '-i': '--install'
+            '-t': '--target',
+            '-v': '--verbose',
         },
         {
             argv: rawArgs.slice(2),
@@ -23,22 +25,27 @@ function parseArgumentsIntoOptions(rawArgs) {
     return {
         skipPrompts: args['--yes'] || false,
         name: args._[0],
-        format: args['--format'],
+        format: args['--format'] || 'yaml',
         entities: args['--entities'],
         oasVersion: args['--oasVersion'],
-        runInstall: args['--install'] || false,
+        targetDirectory: args['--target'] || process.cwd(),
+        verbose: args['--verbose'] || false,
     }
 }
 
 async function promptForMissingOptions(options) {
     const defaultFormat = 'yaml';
     const defaultOASVersion = 3;
+    const defaultVerbose = false;
+    const defaultTargetDirectory = process.cwd();
 
     if (options.skipPrompts) {
         return {
             ...options,
             format: options.format || defaultFormat,
-            oasVersion: options.defaultOASVersion || defaultOASVersion
+            targetDirectory: options.targetDirectory || defaultTargetDirectory,
+            oasVersion: options.oasVersion || defaultOASVersion,
+            verbose: options.verbose || defaultVerbose
         };
     }
 
@@ -79,7 +86,7 @@ async function promptForMissingOptions(options) {
             
         });
     }
-    if (!options.name) {
+    if (!options.entities) {
         questions.push({
             type: 'input',
             name: 'entities',
@@ -100,6 +107,5 @@ async function promptForMissingOptions(options) {
 export async function cli(args) {
     let options = parseArgumentsIntoOptions(args);
     options = await promptForMissingOptions(options);
-    // console.log(options);
     await generate(options);
 }
