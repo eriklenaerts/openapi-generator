@@ -1,43 +1,38 @@
 openapi: 3.0.5
 info:
   version: '0.0.1'
-  title: {{apiName}} API
-  description: 'Change the description of your {{apiName}} API. Have a look [here](https://github.com/eriklenaerts/api-system/#/content/common/swagger-docs?id=info-object) for tips on writing good documentation.'
+  title:  API
+  description: 'Change the description of your  API. Have a look [here](https://github.com/eriklenaerts/api-system/#/content/common/swagger-docs?id=info-object) for tips on writing good documentation.'
 servers:
-  - url: https://api.{{apiName}}.com/v1
+  - url: https://api..com/v1
     description: Production server (uses live data)
-  - url: https://sandbox-api.{{apiName}}.com:8443/v1
+  - url: https://sandbox-api..com:8443/v1
     description: Sandbox server (uses test data)
-{{#if entity.length}}
 paths:
-{{else}}
-paths: {}    
-{{/if}}
-{{#each entity}}
-  /{{collection}}:
+  /items:
     get:
-      description: Get all {{collection}} from this wonderful API ;). 
-      summary: Get all {{collection}}
+      description: Get all items from this wonderful API ;). 
+      summary: Get all items
       responses:
         '200':
           description: OK
     post:
-      description: Add a new {{name}} to the system.
-      summary: Add a new {{name}}.
+      description: Add a new item to the system.
+      summary: Add a new item.
       responses:
         '200':
           description: OK
-  /{{collection}}/{id}:
+  /items/{id}:
     get:
-      description: Retrieve a {{name}} for the given {{name}} id
-      summary: Retrieve the data for one specific {{name}}
+      description: Retrieve a item for the given item id
+      summary: Retrieve the data for one specific item
       parameters:
         - in: path
           name: id
           schema:
             type: string
           required: true
-          description: The {{name}} number.
+          description: The item number.
           example: '<TODO: example here>'
       responses:
         '200':
@@ -48,7 +43,6 @@ paths: {}
                 $ref: '#/components/schemas/invoice'
         '404':
           description: Not Found
-{{/each}}
 components:
   schemas:
     invoice:
