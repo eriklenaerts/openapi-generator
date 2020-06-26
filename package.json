@@ -1,10 +1,11 @@
 {
-  "name": "generator",
+  "name": "@eriklenaerts/openapi-docgen",
   "version": "1.0.0",
-  "description": "Generate a basic API definition (OAS) for your project that align with the Digipolis API system",
+  "description": "Generate an Open API document to kick start your REST API design or development.",
   "main": "src/index.js",
   "bin": {
-    "generator": "bin/generator"
+    "@eriklenaerts/openapi-docgen": "bin/generator",
+    "openapi-docgen": "bin/generator"
   },
   "publishConfig": {
     "access": "public"
@@ -23,8 +24,10 @@
   },
   "keywords": [
     "cli",
-    "OAS",
+    "openapi-docgen",
     "generator",
+    "oas",
+    "openapi",
     "swagger"
   ],
   "author": "Erik Lenaerts",
