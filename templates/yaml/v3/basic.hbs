@@ -4,9 +4,9 @@ info:
   title: {{apiName}} API
   description: 'Change the description of your {{apiName}} API. Have a look [here](https://github.com/eriklenaerts/api-system/#/content/common/swagger-docs?id=info-object) for tips on writing good documentation.'
 servers:
-  - url: https://api.{{apiName}}.com/v1
+  - url: https://api.{{apiNameWithoutSpaces}}.com/v1
     description: Production server (uses live data)
-  - url: https://sandbox-api.{{apiName}}.com:8443/v1
+  - url: https://sandbox-api.{{apiNameWithoutSpaces}}.com:8443/v1
     description: Sandbox server (uses test data)
 {{#if entity.length}}
 paths:

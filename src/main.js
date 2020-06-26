@@ -27,9 +27,6 @@ async function compileTemplate(templatePath, templateData, targetPath, options) 
 }
 
 async function determineTemplateData(options) {
-
-    console.log(options);
-
     // Get the entities who are provided and separated by a ','
     var entities;
     var templateData;
@@ -39,6 +36,7 @@ async function determineTemplateData(options) {
 
         templateData = {
             apiName: options.name,
+            apiNameWithoutSpaces: options.name.replace(/\s+/g, '').toLowerCase(),
             entity: []
         };
 
@@ -54,7 +52,8 @@ async function determineTemplateData(options) {
     }
     else {
         templateData = {
-            apiName: options.name
+            apiName: options.name,
+            apiNameWithoutSpaces: options.name.replace(/\s+/g, '').toLowerCase(),
         };
 
         if (options.verbose)
