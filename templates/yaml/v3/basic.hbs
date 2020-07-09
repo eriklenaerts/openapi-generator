@@ -4,10 +4,25 @@ info:
   title: {{apiName}} API
   description: 'Change the description of your {{apiName}} API. Have a look [here](https://github.com/eriklenaerts/api-system/#/content/common/swagger-docs?id=info-object) for tips on writing good documentation.'
 servers:
-  - url: https://api.{{apiNameWithoutSpaces}}.com/v1
-    description: Production server (uses live data)
-  - url: https://sandbox-api.{{apiNameWithoutSpaces}}.com:8443/v1
-    description: Sandbox server (uses test data)
+  - url: 'https://{environment}.digipolis.be/{{apiNameWithoutSpaces}}:{port}/{version}'
+    description: OTAP servers
+    variables:
+      environment:
+        default: api-gw   #production
+        description: choice between production, acceptance or the development environment
+        enum:
+        - 'api-gw'        #production
+        - 'api-gw-a'      #acceptance
+        - 'api-gw-o'      #development
+      port:
+        description: select the port for the secure HTTP connection
+        enum:
+          - '443'
+          - '8443'
+        default: '443'   
+      version:
+        default: v1
+        description: specify the major version of this api
 {{#if entity.length}}
 paths:
 {{else}}
@@ -16,50 +31,279 @@ paths: {}
 {{#each entity}}
   /{{collection}}:
     get:
-      description: Get all {{collection}} from this wonderful API ;). 
-      summary: Get all {{collection}}
-      responses:
-        '200':
-          description: OK
-    post:
-      description: Add a new {{name}} to the system.
-      summary: Add a new {{name}}.
-      responses:
-        '200':
-          description: OK
-  /{{collection}}/{id}:
-    get:
-      description: Retrieve a {{name}} for the given {{name}} id
-      summary: Retrieve the data for one specific {{name}}
+      summary: Retrieve a list of {{collection}}
+      description: Retrieve a paged result list of {{collection}}
       parameters:
-        - in: path
-          name: id
+        - in: query
+          name: refnumber
+          description: Filter {{collection}} for the given refnumber
           schema:
-            type: string
-          required: true
-          description: The {{name}} number.
-          example: '<TODO: example here>'
+            type: integer
+            example: 123
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Pagesize'
+        - $ref: '#/components/parameters/PagingStrategy'
       responses:
         '200':
           description: OK
           content:
             application/json:
+              schema:
+                $ref: '#/components/schemas/{{collection}}'
+      tags:
+        - {{collection}}
+    post:
+      summary: Add a new {{name}} to the system
+      description: Add a new `{{name}}` including its InvoiceLines. If all goes well, you'll receive the invoice number as a response. 
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/{{name}}'
+            example:
+              date: 28-04-2020
+              logo: s3.amazon.com/klj1002/logo.xyz.png
+              customer:
+                id: 123
+              invoiceLines:
+                - quantity: 1
+                  product:
+                    code: LM001
+                - quantity: 1
+                  product:
+                    description: CM022
+      responses:
+        '201':
+          description: {{name}} created
+          content:
+            application/json:
+              schema:
+                type: string
+                description: The {{name}} number
+                example: INV10036  
+          headers:
+            Location:
+              description: The location of the newly created {{name}}
               schema: 
-                $ref: '#/components/schemas/invoice'
+                type: string
+                format: uri
+                example: '/{{collection}}/INV10036'
+      tags:
+        - {{collection}}
+  /{{collection}}/{id}:
+    get:
+      summary: Retrieve a {{name}}
+      description: Retrieve exactly one `{{name}}` for the given id in the path
+      parameters:
+        - $ref: '#/components/parameters/{{name}}Id'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Invoice'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '404':
-          description: Not Found
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServer'
+        'default':
+          $ref: '#/components/responses/Unexpected'
+      tags:
+        - {{collection}}
+    head:
+      summary: Check if a {{name}} exist
+      description: Check if the {{name}} with the given id exists
+      parameters:
+        - $ref: '#/components/parameters/{{name}}Id'
+      responses:
+        '200':
+          description: {{name}} found
+        '404':
+          description: {{name}} Not Found
+      tags:
+        - {{collection}}
+    put:
+      summary: Update a {{name}}
+      description: If the {{name}} number does not exist, one will be created
+      parameters:
+        - $ref: '#/components/parameters/{{name}}Id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/{{name}}'
+            example:
+              date: 28-04-2020
+              logo: s3.amazon.com/klj1002/logo.xyz.png
+              customer:
+                id: 123
+              invoiceLines:
+                - quantity: 1
+                  product:
+                    code: LM001
+                - quantity: 1
+                  product:
+                    description: CM022
+      responses:
+        '204':
+          description: {{name}} updated
+        '201':
+          description: {{name}} created
+          content:
+            application/json:
+              schema:
+                type: string
+                description: The {{name}} number
+                example: INV10036  
+          headers:
+            Location:
+              description: The location of the newly created {{name}}
+              schema: 
+                type: string
+                format: uri
+                example: '/invoices/INV10036'
+      tags:
+        - {{collection}} 
+    patch:
+      summary: Update a {{name}}
+      description: With this operation you can update parts of the {{name}} for the given id
+      parameters:
+        - $ref: '#/components/parameters/{{name}}Id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              date: null
+              logo: s3.amazon.com/bbt2525/logo.xyz.png
+      responses:
+        '204':
+          description: {{name}} updated
+      tags:
+        - {{collection}}
+    delete:
+      summary: Delete a {{name}}
+      description: Remove the {{name}} with the given id
+      parameters:
+        - $ref: '#/components/parameters/{{name}}Id'
+      responses:
+        '204':
+          description: {{name}} removed
+      tags:
+        - {{collection}}  
 {{/each}}
 components:
+  parameters:
+{{#each entity}}
+    {{name}}Id:
+      name: id
+      in: path
+      description: >-
+        The unique `id` of this `{{name}}` in our system.
+      required: true
+      schema:
+        minimum: 1
+        type: string
+        description: >-
+          The {{name}} id. This is a unique number issued by this API.
+        example: 20037            
+{{/each}}
+    Page:
+      $ref: 'https://ceph.antwerpen.be/myacpaas-acc/schemas/api-requirements/v1/oas3/paging.yaml#/components/parameters/Page'
+    Pagesize:
+      $ref: 'https://ceph.antwerpen.be/myacpaas-acc/schemas/api-requirements/v1/oas3/paging.yaml#/components/parameters/Pagesize'
+    PagingStrategy:
+      $ref: 'https://ceph.antwerpen.be/myacpaas-acc/schemas/api-requirements/v1/oas3/paging.yaml#/components/parameters/PagingStrategy'
+  responses:
+    BadRequest:
+      $ref: 'https://raw.githubusercontent.com/eriklenaerts/api-requirements/generic-defs/components/problem.yaml#/components/responses/BadRequest'
+    Unexpected:
+      $ref: 'https://raw.githubusercontent.com/eriklenaerts/api-requirements/generic-defs/components/problem.yaml#/components/responses/Unexpected'
+    InternalServer:
+      $ref: 'https://raw.githubusercontent.com/eriklenaerts/api-requirements/generic-defs/components/problem.yaml#/components/responses/InternalServer'
+    NotFound:
+      $ref: 'https://raw.githubusercontent.com/eriklenaerts/api-requirements/generic-defs/components/problem.yaml#/components/responses/NotFound'
   schemas:
-    invoice:
+{{#each entity}}
+    {{collection}}:
       type: object
       properties:
-        number: 
+        _links:
+          $ref: '#/components/schemas/Links'
+        _embedded:
+          type: object
+          description: Returns a list of invoices
+          properties:
+            invoices:
+              type: array
+              items:
+                $ref: '#/components/schemas/InvoiceHeader'
+        _page:
+          $ref: '#/components/schemas/Pages'
+      example:
+        _links:
+          self:
+            href: /{{collection}}?pagesize=10&page=1
+          first:
+            href: /{{collection}}?pagesize=10&page=1
+          last:
+            href: /{{collection}}?pagesize=10&page=3
+          prev:
+            href: /{{collection}}?pagesize=10&page=1
+          next:
+            href: /{{collection}}?pagesize=10&page=2
+        _embedded:
+          {{collection}}:
+            - nummer: 10034
+              datum: 28-04-2020
+              logo: s3.amazon.com/klj1002/logo.xyz.png
+              customer:
+                id: '123'
+            - nummer: 10222
+              datum: 12-07-2020
+              logo: s3.amazon.com/hj67JK/logo.abc.png
+              customer:
+                id: '123'
+            - ...
+        _page:
+          size: 10
+          totalElements: 24
+          totalPages: 1
+          number: 0
+    {{name}}:
+      type: object
+      properties:
+        number:
           type: string
-          description: A unique sequential invoice number, prefixed with 'INV'
-          example: INV10034
+          description: 'A unique sequential {{name}} number
+          readOnly: true
+          example: 10034
         date:
           type: string
           format: date
-          description: The date when this invoice was issued.
+          description: The date when this {{name}} was issued.
           example: 28-04-2020
+        logo:
+          type: string
+          format: uri
+          description: The logo for this {{name}}
+          example: s3.amazon.com/klj1002/logo.xyz.png
+{{/each}}
+    Links:
+      $ref: 'https://raw.githubusercontent.com/eriklenaerts/api-requirements/generic-defs/components/paging.yaml#/components/schemas/Links'
+    Pages:
+      $ref: 'https://ceph.antwerpen.be/myacpaas-acc/schemas/api-requirements/v1/oas3/paging.yaml#/components/schemas/Pages'
+    Problem:
+      $ref: 'https://raw.githubusercontent.com/eriklenaerts/api-requirements/generic-defs/components/problem.yaml#/components/schemas/Problem'
+tags:
+{{#each entity}}
+  - name: {{collection}}
+    description: Operations related to {{collection}}
+{{/each}}
+  - name: System
+    description: Technical operations for health checks, monitoring, caching, etc
