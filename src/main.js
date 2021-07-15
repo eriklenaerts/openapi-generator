@@ -2,13 +2,29 @@ import chalk from 'chalk';
 import fs from 'fs';
 import path from 'path';
 import handlebars from 'handlebars';
-import pluralize from 'pluralize';
+import api from './api';
 
 async function compileTemplate(templatePath, templateData, targetPath, options) {
     // read the file and use the callback to render
     fs.readFile(templatePath, function (err, data) {
         if (!err) {
             // call the render function
+            var helpers = require('handlebars-helpers');
+            var math = helpers.math({
+                handlebars: handlebars
+            });
+            var strings = helpers.string({
+                handlebars: handlebars
+            });
+
+            handlebars.registerHelper('ifEquals', function(arg1, arg2, options) {
+                return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
+            });
+
+            handlebars.registerHelper('ifNotEquals', function(arg1, arg2, options) {
+                return (arg1 != arg2) ? options.fn(this) : options.inverse(this);
+            });
+
             var template = handlebars.compile(data.toString());
 
             var resultData = template(templateData);
@@ -16,8 +32,8 @@ async function compileTemplate(templatePath, templateData, targetPath, options) 
             fs.writeFile(targetPath, resultData, function (err) {
                 if (err)
                     return console.error('%s Error saving generated data.', chalk.red.bold('ERROR'));
-                    process.exit(1);
-                });
+                process.exit(1);
+            });
         } else {
             // handle file read error
             console.error('%s Error reading template', chalk.red.bold('ERROR'));
@@ -27,55 +43,20 @@ async function compileTemplate(templatePath, templateData, targetPath, options) 
 }
 
 async function determineTemplateData(options) {
-    // Get the entities who are provided and separated by a ','
-    var entities;
-    var templateData;
-    
-    if (options.entities !== '') {
-        entities = options.entities.toString().split(',');
-
-        templateData = {
-            apiName: options.name,
-            apiNameWithoutSpaces: options.name.replace(/\s+/g, '').toLowerCase(),
-            entity: []
-        };
-
-        entities.map(function(entity) {        
-            templateData.entity.push({ 
-                "name": entity,
-                "collection": pluralize(entity)
-            });
-         })
-        
-         if (options.verbose)
-            console.log('%s found %s %s ', chalk.yellow.bold('TRACE'), entities.length, pluralize('entity', entities.length));    
-    }
-    else {
-        templateData = {
-            apiName: options.name,
-            apiNameWithoutSpaces: options.name.replace(/\s+/g, '').toLowerCase(),
-        };
-
-        if (options.verbose)
-            console.log('%s found 0 entities ', chalk.yellow.bold('TRACE'));    
-
-    }
-
-    
-    return templateData;
+    return new api(options.name, options.resources);
 }
 
 async function determineTarget(options) {
     var targetDir = options.targetDirectory || process.cwd();
 
-    if (!fs.existsSync(targetDir)){
+    if (!fs.existsSync(targetDir)) {
         fs.mkdirSync(targetDir);
     }
 
-    var targetPath = path.resolve(targetDir, options.name.toLowerCase() + '.' + options.format.toLowerCase());
+    var targetPath = path.resolve(targetDir, options.name.replace(/[^a-z0-9_]+/gi, '-').replace(/^-|-$/g, '').toLowerCase() + '-api' + '.' + options.format.toLowerCase());
 
     if (options.verbose)
-        console.log('%s target location: ' + targetPath, chalk.yellow.bold('TRACE'));
+        console.log('%s target location: %s', chalk.yellow.bold('TRACE'), chalk.bold(targetPath));
 
     return targetPath;
 }
@@ -92,16 +73,16 @@ async function determineTemplate(options) {
     );
 
     var templatePath = path.resolve(templateDir, 'basic.hbs');
-    
+
     if (options.verbose)
-        console.log('%s template location: ' + templatePath, chalk.yellow.bold('TRACE'));
+        console.log('%s template location: %s', chalk.yellow.bold('TRACE'), chalk.bold(templatePath));
 
     return templatePath;
 }
 
 
 export async function generate(options) {
-    
+
     console.log('%s Preparing templates', chalk.green.bold('DONE'));
 
     var templatePath = await determineTemplate(options);
@@ -113,7 +94,7 @@ export async function generate(options) {
     await compileTemplate(templatePath, templateData, targetPath, options);
 
     console.log('%s OpenAPI files generated', chalk.green.bold('DONE'));
-    
+
     return true;
 }
 

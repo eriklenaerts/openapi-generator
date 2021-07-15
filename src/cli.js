@@ -9,14 +9,14 @@ function parseArgumentsIntoOptions(rawArgs) {
             '--yes': Boolean,
             '--format': String,
             '--oasVersion': String,
-            '--entities': String,
+            '--resources': String,
             '--target': String,
             '--verbose': Boolean,
             '--help': Boolean,
             '-y': '--yes',
             '-f': '--format',
             '-o': '--oasVersion',
-            '-e': '--entities',
+            '-r': '--resources',
             '-t': '--target',
             '-v': '--verbose',
             '-h': '--help',
@@ -29,7 +29,7 @@ function parseArgumentsIntoOptions(rawArgs) {
         skipPrompts: args['--yes'] || false,
         name: args._[0],
         format: args['--format'] || 'yaml',
-        entities: args['--entities'],
+        resources: args['--resources'],
         oasVersion: args['--oasVersion'] || 'v3',
         targetDirectory: args['--target'] || process.cwd(),
         verbose: args['--verbose'] || false,
@@ -49,10 +49,32 @@ function showHelp(showHeader) {
     console.log('\n[OPTIONS)');
     console.log('--format|-f <value>\t\tspecify the format \'yaml\' (default) or \'json\'');
     console.log('--oasVersion|-o <value>\t\tthe Open API specification version \'v2\' or \'v3\' (default)');
-    console.log('--entities|-e <value>\t\ta comma seperated list of entity names, e.g. \'invoice, product\'');
+    console.log('--resources|-r <value>\t\ta comma seperated list of resource names, e.g. \'invoice, product\'');
+    console.log('\t\t\t\tFor each resource you can specify the operations you like and a specific tag.\n');
+    console.log('\t\t\t\tSelect your operators:');
+    console.log('\t\t\t\t----------------------');
+    console.log('\t\t\t\tAdd a number between squar brackets after your resource name. This is a calculated binary number based on the following values');
+    console.log('\t\t\t\t  2 - GET the collection:');
+    console.log('\t\t\t\t  4 - POST to the collection:');
+    console.log('\t\t\t\t  8 - GET one item:');
+    console.log('\t\t\t\t 16 - HEAD one item:');
+    console.log('\t\t\t\t 32 - PUT one item:');
+    console.log('\t\t\t\t 64 - PATCH one item:');
+    console.log('\t\t\t\t128 - DELETE one item:');
+    console.log('\t\t\t\tAdd the numbers in front for the operations you like and provide this with the resource.');
+    console.log('\t\t\t\tFor example \'location[96]\' will generate a PUT and PATCH operation only.\n');
+    console.log('\t\t\t\tSpecify a tag:');
+    console.log('\t\t\t\t--------------');
+    console.log('\t\t\t\tFor example \'location::mytag\' will set the tag of the location operations to \'mytag\'');
+    console.log('\t\t\t\tFor example \'location[2]::mytag\' will set the tag to \'mytag\' for only the GET collection operation\n');
+    console.log('\t\t\t\tAdd a child resource:');
+    console.log('\t\t\t\t-------------------');
+    console.log('\t\t\t\tFor example \'location/address\' will add an address resource as sub resource of the location resource.');
+    console.log('\t\t\t\tFor example \'location/address::mytag\' will set the tag to \'mytag\' for both the location as the address sub resource\n');
     console.log('--target|-t <value>\t\tspecify the target folder for the generated output (default it uses the current directory).');
     console.log('--yes|-y\t\t\tthis flag will run the document generator without prompting for questions and use the default values. (default off)');
     console.log('--verbose|-v\t\t\tflag to include verbose tracing messages (default off)');
+    console.log('--help\t\t\tShows this help ');
 }
 
 async function promptForMissingOptions(options) {
@@ -97,7 +119,7 @@ async function promptForMissingOptions(options) {
             name: 'format',
             message: 'Select the syntax you want to use:',
             choices: ['json', 'yaml'],
-            default: defaultFormat,
+            default: defaultFormat
         });
     }
     if (!options.oasVersion) {
@@ -109,15 +131,15 @@ async function promptForMissingOptions(options) {
                 ('v3 (Open API specification)', 'v3'),
                 ('v2 (former swagger)', 'v2'),
             ],
-            default: defaultOASVersion,
+            default: defaultOASVersion
 
         });
     }
-    if (!options.entities) {
+    if (!options.resources) {
         questions.push({
             type: 'input',
-            name: 'entities',
-            message: 'Add a comma seperated list of entities (e.g. \'invoice\'):',
+            name: 'resources',
+            message: 'Add a comma seperated list of resources (e.g. \'invoice\'):'
         });
     }
 
@@ -127,8 +149,8 @@ async function promptForMissingOptions(options) {
         format: options.format || answers.format,
         oasVersion: options.oasVersion || answers.oasVersion,
         name: options.name || answers.name,
-        entities: options.entities || answers.entities,
-    }
+        resources: options.resources || answers.resources
+    };
 }
 
 export async function cli(args) {

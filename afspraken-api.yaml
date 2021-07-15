@@ -1,18 +1,18 @@
 openapi: 3.0.3
 info:
   version: '0.0.1'
-  title: {{capitalize name}} API
+  title: Afspraken API
   description: > 
-    This {{name}} API is generated based on the specifications of the [Digipolis API System 7.0](https://antwerp-api.digipolis.be/). Here are some tips what you can do next: 
+    This afspraken API is generated based on the specifications of the [Digipolis API System 7.0](https://antwerp-api.digipolis.be/). Here are some tips what you can do next: 
     
     Here are some tips **what you can do next:** 
 
-      - Check if all resources (like {{resources.0.name}}) require all operations that were generated, some parts of the API may be readOnly so remove the operations not needed
+      - Check if all resources (like service) require all operations that were generated, some parts of the API may be readOnly so remove the operations not needed
       - The schema of all resources (or models) are examples here, be sure to adjust them to your case at hand
       - Have a look [here](https://antwerp-api.digipolis.be/#/content/common/swagger-docs) for tips on writing good documentation.'
         
 servers:
-  - url: 'https://{environment}.digipolis.be/{{urlFriendlyName}}:{port}/{version}'
+  - url: 'https://{environment}.digipolis.be/afspraken:{port}/{version}'
     description: OTAP servers
     variables:
       environment:
@@ -31,98 +31,21 @@ servers:
       version:
         default: v1
         description: specify the major version of this api
-{{#if resources.length}}
 paths:
-{{else}}
-paths: {}    
-{{/if}}
-{{#each resources}}
-  {{#if collectionPath~}}'{{~collectionPath~}}':{{~/if}}
-    {{#if ops.list}}
+  
+  '/services/{serviceId}':
     get:
-      summary: Retrieve a list of {{#if parent }}{{collection}} for a certain {{parent.name}}{{else}}{{collection}}{{/if}}
-      description: Retrieve a paged result list of {{#if parent }}{{collection}} for a certain {{parent.name}}{{else}}{{collection}}{{/if}}
+      summary: Retrieve one service
+      description: Retrieve exactly one `service` for the given id in the path
       parameters:
-        {{#if parent }}
-        - $ref: '#/components/parameters/{{parent.idParameter}}'
-        {{/if}}
-        - in: query
-          name: refnumber
-          description: Filter {{collection}} using a given refnumber
-          schema:
-            type: integer
-            example: {{random 1 500}}
-        - $ref: '#/components/parameters/Page'
-        - $ref: '#/components/parameters/Pagesize'
-        - $ref: '#/components/parameters/PagingStrategy'
+        - $ref: '#/components/parameters/serviceId'
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/{{collection}}'
-        '500':
-          $ref: '#/components/responses/InternalServer'
-        'default':
-          $ref: '#/components/responses/Unexpected'
-      tags:
-        - {{capitalize tag}}
-    {{/if}}
-    {{#if ops.post}}
-    post:
-      summary: Add a new {{name}} to the {{collection}} collection.
-      description: Add a new `{{name}}` resource.
-      {{#if parent }}
-      parameters:
-        - $ref: '#/components/parameters/{{parent.idParameter}}'
-      {{/if}}
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/{{name}}'
-      responses:
-        '201':
-          description: {{name}} created
-          content:
-            application/json:
-              schema:
-                type: string
-                description: The id of the newly created {{name}} 
-                example: {{random 1000 10000}}  
-          headers:
-            Location:
-              description: The location of the newly created {{name}}
-              schema: 
-                type: string
-                format: uri
-                example: '/{{#if parent }}{{parent.collection}}/{{random 1000 10000}}/{{/if}}{{collection}}/{{random 1000 10000}}'
-        '500':
-          $ref: '#/components/responses/InternalServer'
-        'default':
-          $ref: '#/components/responses/Unexpected'
-      tags:
-        - {{capitalize tag}}
-    {{/if}}
-  {{#if resourcePath ~}}'{{~resourcePath~}}':{{~/if}}
-    {{#if ops.get}}
-    get:
-      summary: Retrieve one {{name}}
-      description: Retrieve exactly one `{{name}}` for the given id in the path
-      parameters:
-        - $ref: '#/components/parameters/{{idParameter}}'
-        {{#if parent }}
-        - $ref: '#/components/parameters/{{parent.idParameter}}'
-        {{/if}}
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/{{name}}'
+                $ref: '#/components/schemas/service'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -132,115 +55,143 @@ paths: {}
         'default':
           $ref: '#/components/responses/Unexpected'
       tags:
-        - {{capitalize tag}}
-    {{/if}}
-    {{#if ops.head}}
-    head:
-      summary: Check if the {{name}} exist
-      description: Check if the `{{name}}` with the given id exists
+        - Service
+  
+  '/services/{serviceId}/availableDays/{availableDayId}':
+    get:
+      summary: Retrieve one availableDay
+      description: Retrieve exactly one `availableDay` for the given id in the path
       parameters:
-        - $ref: '#/components/parameters/{{idParameter}}'
-        {{#if parent }}
-        - $ref: '#/components/parameters/{{parent.idParameter}}'
-        {{/if}}
+        - $ref: '#/components/parameters/availableDayId'
+        - $ref: '#/components/parameters/serviceId'
       responses:
         '200':
-          description: {{name}} found
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/availableDay'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '404':
-          description: {{name}} Not Found
+          $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/InternalServer'
         'default':
           $ref: '#/components/responses/Unexpected'
       tags:
-        - {{capitalize tag}}
-    {{/if}}
-    {{#if ops.put}}
-    put:
-      summary: Replace the {{name}} with the one given here
-      description: If the {{name}} does not exist, one will be created
+        - Service
+  '/tenants':
+    get:
+      summary: Retrieve a list of tenants
+      description: Retrieve a paged result list of tenants
       parameters:
-        - $ref: '#/components/parameters/{{idParameter}}'
-        {{#if parent }}
-        - $ref: '#/components/parameters/{{parent.idParameter}}'
-        {{/if}}
+        - in: query
+          name: refnumber
+          description: Filter tenants using a given refnumber
+          schema:
+            type: integer
+            example: 219
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Pagesize'
+        - $ref: '#/components/parameters/PagingStrategy'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/tenants'
+        '500':
+          $ref: '#/components/responses/InternalServer'
+        'default':
+          $ref: '#/components/responses/Unexpected'
+      tags:
+        - System
+    post:
+      summary: Add a new tenant to the tenants collection.
+      description: Add a new `tenant` resource.
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/{{name}}'
+              $ref: '#/components/schemas/tenant'
       responses:
-        '204':
-          description: {{name}} replaced
         '201':
-          description: {{name}} created
+          description: tenant created
           content:
             application/json:
               schema:
                 type: string
-                description: The {{name}} number
-                example: {{random 1000 10000}}  
+                description: The id of the newly created tenant 
+                example: 4514  
           headers:
             Location:
-              description: The location of the newly created {{name}}
+              description: The location of the newly created tenant
               schema: 
                 type: string
                 format: uri
-                example: '/{{#if parent }}{{parent.collection}}/{{random 1000 10000}}/{{/if}}{{collection}}/{{random 1000 10000}}'
+                example: '/tenants/9696'
         '500':
           $ref: '#/components/responses/InternalServer'
         'default':
           $ref: '#/components/responses/Unexpected'
       tags:
-        - {{capitalize tag}} 
-    {{/if}}
-    {{#if ops.patch}}
-    patch:
-      summary: Update a {{name}}
-      description: With this operation you can update parts of the {{name}} with the given id
+        - System
+  '/tenants/{tenantId}':
+    get:
+      summary: Retrieve one tenant
+      description: Retrieve exactly one `tenant` for the given id in the path
       parameters:
-        - $ref: '#/components/parameters/{{idParameter}}'
-        {{#if parent }}
-        - $ref: '#/components/parameters/{{parent.idParameter}}'
-        {{/if}}
-      requestBody:
-        required: true
-        content:
-          application/json:
-            example:
-              someprop: newvalue
+        - $ref: '#/components/parameters/tenantId'
       responses:
-        '204':
-          description: {{name}} partially updated
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/tenant'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/InternalServer'
         'default':
           $ref: '#/components/responses/Unexpected'
       tags:
-        - {{capitalize tag}}
-    {{/if}}
-    {{#if ops.delete}}
+        - System
+    head:
+      summary: Check if the tenant exist
+      description: Check if the `tenant` with the given id exists
+      parameters:
+        - $ref: '#/components/parameters/tenantId'
+      responses:
+        '200':
+          description: tenant found
+        '404':
+          description: tenant Not Found
+        '500':
+          $ref: '#/components/responses/InternalServer'
+        'default':
+          $ref: '#/components/responses/Unexpected'
+      tags:
+        - System
     delete:
-      summary: Delete a {{name}}
-      description: Remove the {{name}} with the given id
+      summary: Delete a tenant
+      description: Remove the tenant with the given id
       parameters:
-        - $ref: '#/components/parameters/{{idParameter}}'
-        {{#if parent }}
-        - $ref: '#/components/parameters/{{parent.idParameter}}'
-        {{/if}}
+        - $ref: '#/components/parameters/tenantId'
       responses:
         '204':
-          description: {{name}} removed
+          description: tenant removed
         '500':
           $ref: '#/components/responses/InternalServer'
         'default':
           $ref: '#/components/responses/Unexpected'
       tags:
-        - {{capitalize tag}}  
-    {{/if}}
-{{/each}}
-{{#if resources.length}}
+        - System  
   '/status/health':
     get:
       summary: Returns the health status of this Service
@@ -281,23 +232,44 @@ paths: {}
           $ref: '#/components/responses/Unexpected'
       tags:
         - System
-{{/if}}
 components:
   parameters:
-{{#each resources}}
-    {{idParameter}}:
-      name: {{idParameter}}
+    serviceId:
+      name: serviceId
       in: path
       description: >-
-        The unique `id` of this `{{name}}` in our system.
+        The unique `id` of this `service` in our system.
       required: true
       schema:
         minimum: 1
         type: string
         description: >-
-          The {{name}} id. This is a unique number issued by this API.
+          The service id. This is a unique number issued by this API.
         example: 20037            
-{{/each}}
+    availableDayId:
+      name: availableDayId
+      in: path
+      description: >-
+        The unique `id` of this `availableDay` in our system.
+      required: true
+      schema:
+        minimum: 1
+        type: string
+        description: >-
+          The availableDay id. This is a unique number issued by this API.
+        example: 20037            
+    tenantId:
+      name: tenantId
+      in: path
+      description: >-
+        The unique `id` of this `tenant` in our system.
+      required: true
+      schema:
+        minimum: 1
+        type: string
+        description: >-
+          The tenant id. This is a unique number issued by this API.
+        example: 20037            
     Page:
       $ref: 'https://raw.githubusercontent.com/digipolisantwerpdocumentation/api-system/master/components/paging.yaml#/components/parameters/Page'
     Pagesize:
@@ -314,37 +286,71 @@ components:
     NotFound:
       $ref: 'https://raw.githubusercontent.com/eriklenaerts/api-requirements/generic-defs/components/problem.yaml#/components/responses/NotFound'
   schemas:
-{{#each resources}}
-  {{#if ops.hasCollectionOps}}
-    {{collection}}:
+    service:
+      type: object
+      properties:
+        id:
+          type: string
+          description: 'A unique service number'
+          readOnly: true
+          example: 10034
+        date:
+          type: string
+          format: date
+          description: The date when this service was issued.
+          example: 28-04-2020
+        logo:
+          type: string
+          format: uri
+          description: The logo for this service
+          example: s3.amazon.com/klj1002/logo.xyz.png
+    availableDay:
+      type: object
+      properties:
+        id:
+          type: string
+          description: 'A unique availableDay number'
+          readOnly: true
+          example: 10034
+        date:
+          type: string
+          format: date
+          description: The date when this availableDay was issued.
+          example: 28-04-2020
+        logo:
+          type: string
+          format: uri
+          description: The logo for this availableDay
+          example: s3.amazon.com/klj1002/logo.xyz.png
+    tenants:
       type: object
       properties:
         _links:
           $ref: '#/components/schemas/Links'
         _embedded:
           type: object
-          description: Returns a list of {{collection}}
+          description: Returns a list of tenants
           properties:
-            {{collection}}:
+            tenants:
               type: array
               items:
-                $ref: '#/components/schemas/{{name}}'
+                $ref: '#/components/schemas/tenant'
         _page:
           $ref: '#/components/schemas/Pages'
       example:
         _links:
           self:
-            href: /{{collection}}?pagesize=10&page=1
+            href: /tenants?pagesize=10&page=1
           first:
-            href: /{{collection}}?pagesize=10&page=1
+            href: /tenants?pagesize=10&page=1
           last:
-            href: /{{collection}}?pagesize=10&page=3
+            href: /tenants?pagesize=10&page=3
           prev:
-            href: /{{collection}}?pagesize=10&page=1
+            href: /tenants?pagesize=10&page=1
           next:
-            href: /{{collection}}?pagesize=10&page=2
+            href: /tenants?pagesize=10&page=2
         _embedded:
-          {{collection}}:
+          tenants:
             - nummer: 10034
               datum: 28-04-2020
               logo: s3.amazon.com/klj1002/logo.xyz.png
@@ -357,26 +363,24 @@ components:
           totalElements: 24
           totalPages: 1
           number: 0
-  {{/if}}
-    {{name}}:
+    tenant:
       type: object
       properties:
         id:
           type: string
-          description: 'A unique {{name}} number'
+          description: 'A unique tenant number'
           readOnly: true
           example: 10034
         date:
           type: string
           format: date
-          description: The date when this {{name}} was issued.
+          description: The date when this tenant was issued.
           example: 28-04-2020
         logo:
           type: string
           format: uri
-          description: The logo for this {{name}}
+          description: The logo for this tenant
           example: s3.amazon.com/klj1002/logo.xyz.png
-{{/each}}
     healthStatus:
       type: object
       properties:
@@ -431,7 +435,7 @@ components:
     Problem:
       $ref: 'https://raw.githubusercontent.com/eriklenaerts/api-requirements/generic-defs/components/problem.yaml#/components/schemas/Problem'
 tags:
-{{#each tags}}
-  - name: {{capitalize name}}
-    description: Operations related to {{#each collection}} {{.}}, {{/each}} ...
-{{/each}}
+  - name: Service
+    description: Operations related to  services,  availableDays,  ...
+  - name: System
+    description: Operations related to  health checks,  monitoring,  caching,  tenants,  ...
