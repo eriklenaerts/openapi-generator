@@ -1,6 +1,6 @@
 {
   "name": "@eriklenaerts/openapi-docgen",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Generate an Open API document to kick start your REST API design or development.",
   "main": "src/index.js",
   "bin": {
@@ -17,7 +17,8 @@
     "handlebars": "^4.7.7",
     "handlebars-helpers": "^0.10.0",
     "inquirer": "^8.1.2",
-    "pluralize": "^8.0.0"
+    "pluralize": "^8.0.0",
+    "highlight.js": ">=10.4.1"
   },
   "devDependencies": {},
   "scripts": {
@@ -35,3 +36,4 @@
   "author": "Erik Lenaerts",
   "license": "MIT"
 }
+

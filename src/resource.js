@@ -12,12 +12,17 @@ export default class resource {
 
     constructor(resourceString) {
         if (resourceString) {
-            this.name = this.parseName(resourceString);
-            this.tag = this.parseTag(resourceString);
-            this.collection = this.parseCollection(resourceString);
-            this.parent = this.parseParent(resourceString);
+            // test this regex here: https://regex101.com/r/ZLQZGW/1
+            let match = (/^(?:(?<parent>[a-zA-Z0-9-]+)\/{1}){0,2}(?<resource>[a-zA-Z0-9-]+)?(?:\[(?<ops>[2-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-4])\]+)?(?:::(?<tag>[a-zA-Z0-9-]+))?$/g).exec(resourceString);
+            if (!match)
+                throw new Error(`There\'s something wrong with the format of this (${resourceString}) resource argument`);
+
+            this.name = match.groups.resource;
+            this.tag = match.groups.tag || match.groups.resource ;
+            this.collection = pluralize(match.groups.resource);
+            this.parent = match.groups.parent ? new resource(match.groups.parent) : null;
             this.idParameter = this.name + 'Id';
-            this.ops = this.parseOps(resourceString);
+            this.ops = this.parseOps(match.groups.ops);
             this.collectionPath = this.ops.hasCollectionOps ? this.determinePath(this.parent, this.collection) : null;
             this.resourcePath = this.ops.hasresourceOps ? this.determinePath(this.parent, this.collection, this.idParameter) : null;
         }
@@ -34,52 +39,22 @@ export default class resource {
             path += '/{' + idParameter + '}';
 
         return path;
-
     }
 
-    parseCollection(resourceString) {
-        return pluralize(this.parseName(resourceString));
-    }
-
-    parseName(resourceString) {
-        //strip a specific tag
-        if (resourceString && resourceString.includes("::"))
-            resourceString = resourceString.split("::")[0].trim();
-
-        //strip specific ops
-        if (resourceString && resourceString.includes("["))
-            resourceString = resourceString.split("[")[0].trim();
-
-        // strip a specific parent
-        if (resourceString && resourceString.includes("/"))
-            return resourceString.split("/")[1].trim();
-
-        return resourceString;
-    }
-
-    parseParent(resourceString) {
-        var resourceName = this.parseName(resourceString);
-
-        // strip a specific parent
-        if (resourceString && resourceString.includes("/"))
-            return new resource(resourceString.replace('/' + resourceName, ''));
-
-        return null;
-    }
-
-    parseOps(resourceString) {
-        if (resourceString && resourceString.includes("[")) {
-            var opsParam = parseInt(resourceString.match(/\d+/g).map(Number)[0]);
+    parseOps(opsModifier) {
+        if (opsModifier) {
+            if (opsModifier < 2 || opsModifier > 254)
+                throw new Error(`Incorrect numeric value for operations modifier (... [${opsModifier}] ...). Use a numeric value between 2 and 254`);
             var ops = {
-                "list": (opsParam & 2) == 2,
-                "post": (opsParam & 4) == 4,
-                "get": (opsParam & 8) == 8,
-                "head": (opsParam & 16) == 16,
-                "put": (opsParam & 32) == 32,
-                "patch": (opsParam & 64) == 64,
-                "delete": (opsParam & 128) == 128,
-                "hasCollectionOps": ((opsParam & 2) == 2) || ((opsParam & 4) == 4),
-                "hasresourceOps": (opsParam & 8) == 8 || (opsParam & 16) == 16 || (opsParam & 32) == 32 || (opsParam & 64) == 64 || (opsParam & 128) == 128
+                "list": (opsModifier & 2) == 2,
+                "post": (opsModifier & 4) == 4,
+                "get": (opsModifier & 8) == 8,
+                "head": (opsModifier & 16) == 16,
+                "put": (opsModifier & 32) == 32,
+                "patch": (opsModifier & 64) == 64,
+                "delete": (opsModifier & 128) == 128,
+                "hasCollectionOps": ((opsModifier & 2) == 2) || ((opsModifier & 4) == 4),
+                "hasresourceOps": (opsModifier & 8) == 8 || (opsModifier & 16) == 16 || (opsModifier & 32) == 32 || (opsModifier & 64) == 64 || (opsModifier & 128) == 128
             };
 
             return ops;
@@ -96,14 +71,5 @@ export default class resource {
             "hasCollectionOps": true,
             "hasresourceOps": true
         };
-    }
-
-    parseTag(resourceString) {
-        // either it has a specific tag
-        if (resourceString && resourceString.includes("::"))
-            return resourceString.split("::")[1].trim();
-
-        // or we use the resource name instead for a tag
-        return this.parseName(resourceString);
     }
 }

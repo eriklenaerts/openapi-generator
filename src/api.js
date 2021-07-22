@@ -9,13 +9,13 @@ export default class api {
     constructor(name, resourcesString) {
         this.name = name.toLowerCase();
         this.urlFriendlyName = name.replace(/[^a-z0-9_]+/gi, '-').replace(/^-|-$/g, '').toLowerCase();
-        this.resources = this.parseresources(resourcesString);
+        this.resources = this.parseResources(resourcesString);
         this.tags = this.findUniqueTags(this.resources);
     };
 
-    parseresources(resourcesString) {
+    parseResources(resourcesString) {
         if (resourcesString) {
-            var resourceArray = resourcesString.toString().split(',');
+            var resourceArray = resourcesString.toString().split(',').map(r => r.trim());
             var resources = [];
             resourceArray.forEach(element => {
                 resources.push(new resource(element));

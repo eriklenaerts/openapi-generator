@@ -43,7 +43,12 @@ async function compileTemplate(templatePath, templateData, targetPath, options) 
 }
 
 async function determineTemplateData(options) {
-    return new api(options.name, options.resources);
+    let apiData = new api(options.name, options.resources);
+
+    if (options.verbose)
+        console.log('%s api data successfuly parsed, found %s resources', chalk.yellow.bold('TRACE'), apiData.resources.length);
+
+    return apiData;
 }
 
 async function determineTarget(options) {
@@ -56,7 +61,7 @@ async function determineTarget(options) {
     var targetPath = path.resolve(targetDir, options.name.replace(/[^a-z0-9_]+/gi, '-').replace(/^-|-$/g, '').toLowerCase() + '-api' + '.' + options.format.toLowerCase());
 
     if (options.verbose)
-        console.log('%s target location: %s', chalk.yellow.bold('TRACE'), chalk.bold(targetPath));
+        console.log('%s target location: %s', chalk.yellow.bold('TRACE'), chalk.blueBright.underline(targetPath));
 
     return targetPath;
 }
@@ -75,7 +80,7 @@ async function determineTemplate(options) {
     var templatePath = path.resolve(templateDir, 'basic.hbs');
 
     if (options.verbose)
-        console.log('%s template location: %s', chalk.yellow.bold('TRACE'), chalk.bold(templatePath));
+        console.log('%s template retrieved from location: %s', chalk.yellow.bold('TRACE'), chalk.blueBright.underline(templatePath));
 
     return templatePath;
 }
@@ -83,17 +88,17 @@ async function determineTemplate(options) {
 
 export async function generate(options) {
 
-    console.log('%s Preparing templates', chalk.green.bold('DONE'));
-
+    console.log('%s Gathering ingredients...', chalk.green.bold('START'));
     var templatePath = await determineTemplate(options);
     var templateData = await determineTemplateData(options);
     var targetPath = await determineTarget(options);
 
-    console.log('%s Compiling templates using handlebars', chalk.green.bold('DONE'));
+    console.log('%s all ingredients prepared.', chalk.green.bold('DONE'));
+    console.log('%s Brewing your API...', chalk.green.bold('START'));
 
     await compileTemplate(templatePath, templateData, targetPath, options);
 
-    console.log('%s OpenAPI files generated', chalk.green.bold('DONE'));
+    console.log('%s OpenAPI file ready & served, you can find it here: %s', chalk.green.bold('DONE'), chalk.blueBright.underline(targetPath));
 
     return true;
 }
