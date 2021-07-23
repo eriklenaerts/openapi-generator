@@ -8,7 +8,7 @@ info:
 
     Here are some tips **you can do next:** 
 
-      - Check if all resources (like {{resources.0.name}}) require all operations that were generated, some parts of the API may be readOnly so remove the operations not needed
+      - Check if all resources (like {{capitalize resources.0.name}}) require all operations that were generated, some parts of the API may be readOnly so remove the operations not needed
       - The schema (or models) of all resources are examples here, be sure to adjust them to your case at hand
       - Have a look [here](https://antwerp-api.digipolis.be/#/content/common/swagger-docs) for tips on writing good documentation.
         
@@ -45,7 +45,7 @@ paths: {}
     {{#if ops.list}}
     get:
       summary: Retrieve a list of {{#if parent }}{{collection}} for a certain {{parent.name}}{{else}}{{collection}}{{/if}}
-      description: Retrieve a paged result list of {{#if parent }}{{collection}} for a certain {{parent.name}}{{else}}{{collection}}{{/if}}
+      description: 'Retrieve a paged result list of {{#if parent }}`{{collection}}` for a certain `{{parent.name}}`{{else}}`{{collection}}`{{/if}}.'
       parameters:
         {{#if parent }}
         - $ref: '#/components/parameters/{{parent.idParameter}}'
@@ -63,7 +63,7 @@ paths: {}
         '200':
           description: OK
           content:
-            application/json:
+            application/hal+json:
               schema:
                 $ref: '#/components/schemas/{{collection}}'
         '500':
@@ -76,7 +76,7 @@ paths: {}
     {{#if ops.post}}
     post:
       summary: Add a new {{name}} to the {{collection}} collection.
-      description: Add a new `{{name}}` resource.
+      description: 'Add a new `{{capitalize name}}` resource to the `{{capitalize collection}}` collection{{#if parent }} of the given `{{capitalize parent.name}}`{{/if}}.'
       {{#if parent }}
       parameters:
         - $ref: '#/components/parameters/{{parent.idParameter}}'
@@ -89,13 +89,18 @@ paths: {}
               $ref: '#/components/schemas/{{name}}'
       responses:
         '201':
-          description: {{name}} created
+          description: '`{{capitalize name}}` created'
           content:
             application/json:
               schema:
-                type: string
-                description: The id of the newly created {{name}} 
-                example: {{random 1000 10000}}  
+                type: object
+                description: 'The `id` of the newly created `{{capitalize name}}`'
+                properties:
+                  id:
+                    type: number
+                    description: 'A unique number for `{{capitalize name}}`'
+                    readOnly: true
+                    example: {{random 1000 10000}}
           headers:
             Location:
               description: The location of the newly created {{name}}
@@ -103,6 +108,8 @@ paths: {}
                 type: string
                 format: uri
                 example: '/{{#if parent }}{{parent.collection}}/{{random 1000 10000}}/{{/if}}{{collection}}/{{random 1000 10000}}'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '500':
           $ref: '#/components/responses/InternalServer'
         'default':
@@ -114,7 +121,7 @@ paths: {}
     {{#if ops.get}}
     get:
       summary: Retrieve one {{name}}
-      description: Retrieve exactly one `{{name}}` for the given id in the path
+      description: 'Retrieve exactly one `{{capitalize name}}` for the given id in the path.'
       parameters:
         - $ref: '#/components/parameters/{{idParameter}}'
         {{#if parent }}
@@ -130,7 +137,11 @@ paths: {}
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
-          $ref: '#/components/responses/NotFound'
+          description: '`{{capitalize name}}`{{#if parent }} or `{{capitalize parent.name}}`{{/if}} Not Found'
+          content:
+            application/problem+json:
+                schema:
+                    $ref: '#/components/schemas/Problem'
         '500':
           $ref: '#/components/responses/InternalServer'
         'default':
@@ -141,7 +152,7 @@ paths: {}
     {{#if ops.head}}
     head:
       summary: Check if the {{name}} exist
-      description: Check if the `{{name}}` with the given id exists
+      description: 'Check if the `{{capitalize name}}` with the given id exists.'
       parameters:
         - $ref: '#/components/parameters/{{idParameter}}'
         {{#if parent }}
@@ -149,9 +160,15 @@ paths: {}
         {{/if}}
       responses:
         '200':
-          description: {{name}} found
+          description: '`{{capitalize name}}` exist.'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '404':
-          description: {{name}} Not Found
+          description: '`{{capitalize name}}`{{#if parent }} or `{{capitalize parent.name}}`{{/if}} Not Found'
+          content:
+            application/problem+json:
+                schema:
+                    $ref: '#/components/schemas/Problem'
         '500':
           $ref: '#/components/responses/InternalServer'
         'default':
@@ -162,7 +179,7 @@ paths: {}
     {{#if ops.put}}
     put:
       summary: Replace the {{name}} with the one given here
-      description: If the {{name}} does not exist, one will be created
+      description: 'Replace the complete `{{capitalize name}}` resource with the one provided in the payload. If {{name}} does not exist a 404 will be returned.'
       parameters:
         - $ref: '#/components/parameters/{{idParameter}}'
         {{#if parent }}
@@ -175,23 +192,27 @@ paths: {}
             schema:
               $ref: '#/components/schemas/{{name}}'
       responses:
-        '204':
-          description: {{name}} replaced
-        '201':
-          description: {{name}} created
+        '200':
+          description: '`{{capitalize name}}` replaced'
           content:
             application/json:
               schema:
-                type: string
-                description: The {{name}} number
-                example: {{random 1000 10000}}  
-          headers:
-            Location:
-              description: The location of the newly created {{name}}
-              schema: 
-                type: string
-                format: uri
-                example: '/{{#if parent }}{{parent.collection}}/{{random 1000 10000}}/{{/if}}{{collection}}/{{random 1000 10000}}'
+                type: object
+                description: 'The `id` of the newly created `{{capitalize name}}`'
+                properties:
+                  id:
+                    type: number
+                    description: 'A unique number for `{{capitalize name}}`'
+                    readOnly: true
+                    example: {{random 1000 10000}}
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          description: '`{{capitalize name}}`{{#if parent }} or `{{capitalize parent.name}}`{{/if}} Not Found'
+          content:
+            application/problem+json:
+                schema:
+                    $ref: '#/components/schemas/Problem'
         '500':
           $ref: '#/components/responses/InternalServer'
         'default':
@@ -202,7 +223,7 @@ paths: {}
     {{#if ops.patch}}
     patch:
       summary: Update a {{name}}
-      description: With this operation you can update parts of the {{name}} with the given id
+      description: 'With this operation you can update parts of the `{{capitalize name}}` for the given id.'
       parameters:
         - $ref: '#/components/parameters/{{idParameter}}'
         {{#if parent }}
@@ -212,11 +233,25 @@ paths: {}
         required: true
         content:
           application/json:
-            example:
-              someprop: newvalue
+              schema:
+                type: object
+                properties:
+                  date:
+                    type: string
+                    format: date
+                    description: 'The date when this `{{capitalize name}}` was issued.'
+                    example: '2020-04-16'
       responses:
         '204':
-          description: {{name}} partially updated
+          description: '`{{capitalize name}}` partially updated'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          description: '`{{capitalize name}}`{{#if parent }} or `{{capitalize parent.name}}`{{/if}} Not Found'
+          content:
+            application/problem+json:
+                schema:
+                    $ref: '#/components/schemas/Problem'
         '500':
           $ref: '#/components/responses/InternalServer'
         'default':
@@ -227,7 +262,7 @@ paths: {}
     {{#if ops.delete}}
     delete:
       summary: Delete a {{name}}
-      description: Remove the {{name}} with the given id
+      description: 'Remove the `{{capitalize name}}` with the given id.'
       parameters:
         - $ref: '#/components/parameters/{{idParameter}}'
         {{#if parent }}
@@ -235,10 +270,18 @@ paths: {}
         {{/if}}
       responses:
         '204':
-          description: {{name}} removed
+          description: '`{{capitalize name}}` removed'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          description: '`{{capitalize name}}`{{#if parent }} or `{{capitalize parent.name}}`{{/if}} Not Found'
+          content:
+            application/problem+json:
+                schema:
+                    $ref: '#/components/schemas/Problem'
         '500':
           $ref: '#/components/responses/InternalServer'
-        'default':
+        '5XX':
           $ref: '#/components/responses/Unexpected'
       tags:
         - {{capitalize tag}}  
@@ -293,14 +336,14 @@ components:
       name: {{idParameter}}
       in: path
       description: >-
-        The unique `id` of this `{{name}}` in our system.
+        The unique `id` of this `{{capitalize name}}` in our system.
       required: true
       schema:
         minimum: 1
         type: string
         description: >-
-          The {{name}} id. This is a unique number issued by this API.
-        example: 20037            
+         'The `{{capitalize name}}` id. This is a unique number issued by this API.'
+        example: {{random 2000 10000}}            
 {{/each}}
     Page:
       $ref: 'https://raw.githubusercontent.com/digipolisantwerpdocumentation/api-system/master/components/paging.yaml#/components/parameters/Page'
@@ -349,12 +392,12 @@ components:
             href: /{{collection}}?pagesize=10&page=2
         _embedded:
           {{collection}}:
-            - nummer: 10034
-              datum: 28-04-2020
-              logo: s3.amazon.com/klj1002/logo.xyz.png
-            - nummer: 10222
-              datum: 12-07-2020
-              logo: s3.amazon.com/hj67JK/logo.abc.png
+            - id: {{random 1000 10000}}
+              date: '2020-04-28'
+              logo: 'https://s3.amazon.com/klj{{random 1000 10000}}/logo.xyz.png'
+            - id: {{random 1000 10000}}
+              date: '2020-07-12'
+              logo: 'https://s3.amazon.com/pfh{{random 1000 10000}}/logo.xyz.png'
             - ...
         _page:
           size: 10
@@ -366,20 +409,20 @@ components:
       type: object
       properties:
         id:
-          type: string
-          description: 'A unique {{name}} number'
+          type: number
+          description: 'A unique number for `{{capitalize name}}`'
           readOnly: true
-          example: 10034
+          example: {{random 1000 10000}}
         date:
           type: string
           format: date
-          description: The date when this {{name}} was issued.
-          example: 28-04-2020
+          description: 'The date when this `{{capitalize name}}` was issued.'
+          example: '2020-04-16'
         logo:
           type: string
           format: uri
-          description: The logo for this {{name}}
-          example: s3.amazon.com/klj1002/logo.xyz.png
+          description: 'The logo for this `{{capitalize name}}`'
+          example: 'https://s3.amazon.com/klj{{random 1000 10000}}/logo.xyz.png'
 {{/each}}
     healthStatus:
       type: object
