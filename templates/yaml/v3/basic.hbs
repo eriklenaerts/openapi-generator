@@ -3,33 +3,37 @@ info:
   version: '0.0.1'
   title: {{capitalize name}} API
   description: > 
-    This {{name}} API is generated based on the specifications of the [Digipolis API System 7.0](https://antwerp-api.digipolis.be/). Here are some tips what you can do next: 
+    This {{name}} API is generated based on the specifications of the [Digipolis API System 7.0](https://antwerp-api.digipolis.be/).
     
+
     Here are some tips **you can do next:** 
 
       - Check if all resources (like {{resources.0.name}}) require all operations that were generated, some parts of the API may be readOnly so remove the operations not needed
-      - The schema of all resources (or models) are examples here, be sure to adjust them to your case at hand
-      - Have a look [here](https://antwerp-api.digipolis.be/#/content/common/swagger-docs) for tips on writing good documentation.'
+      - The schema (or models) of all resources are examples here, be sure to adjust them to your case at hand
+      - Have a look [here](https://antwerp-api.digipolis.be/#/content/common/swagger-docs) for tips on writing good documentation.
         
 servers:
-  - url: 'https://{environment}.digipolis.be/{{urlFriendlyName}}:{port}/{version}'
+  - url: 'https://{environment}.antwerpen.be/{catalog}/{provider}/{service}/v{version}'
     description: OTAP servers
     variables:
       environment:
-        default: api-gw   #production
+        default: api-gw-p   #production
         description: choice between production, acceptance or the development environment
         enum:
-        - 'api-gw'        #production
-        - 'api-gw-a'      #acceptance
-        - 'api-gw-o'      #development
-      port:
-        description: select the port for the secure HTTP connection
-        enum:
-          - '443'
-          - '8443'
-        default: '443'   
+        - 'api-gw-p'        #production
+        - 'api-gw-a'        #acceptance
+        - 'api-gw-o'        #development
+      catalog:
+        default: antwerpen
+        description: the catalog in which this API will be published  
+      provider:
+        default: digipolis
+        description: the name of the organisation that provides your {{name}} API
+      service:
+        default: {{name}}
+        description: the name of this Service 
       version:
-        default: v1
+        default: '1'
         description: specify the major version of this api
 {{#if resources.length}}
 paths:
@@ -433,5 +437,9 @@ components:
 tags:
 {{#each tags}}
   - name: {{capitalize name}}
-    description: Operations related to {{#each collection}} {{.}}, {{/each}} ...
+    {{#ifGT collection.length 1}} 
+    description: Operations related to {{#each collection}}{{capitalize .}}, {{/each}}... 
+    {{else}} 
+    description: Operations related to {{#each collection}}{{capitalize .}} {{/each}}
+    {{/ifGT}}
 {{/each}}
