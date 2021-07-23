@@ -162,7 +162,7 @@ async function promptForMissingOptions(options) {
                     { name: '[POST] \tCreate a resource', short: 'Create', value: 4, checked: true },
                     { name: '[GET] \tRead one resource', short: 'Read', value: 8, checked: true },
                     { name: '[HEAD] \tCheck if a resource exist', short: 'Check', value: 16 },
-                    { name: '[PUT] \tReplace a resource', short: 'Replace', value: 32 },
+                    { name: '[PUT] \tReplace a resource', short: 'Replace', value: 32, checked: true },
                     { name: '[PATCH] \tUpdate a resource', short: 'Update', value: 64, checked: true },
                     { name: "[DELETE] \tRemove a resource.", short: 'Delete', value: 128, checked: true }]
             });
