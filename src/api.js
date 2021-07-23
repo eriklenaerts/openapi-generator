@@ -7,6 +7,12 @@ export default class api {
     tags;
 
     constructor(name, resourcesString) {
+        if (name) {
+            let match = (/^(?:[a-zA-Z0-9-])*$/g).exec(name);
+            if (!match)
+                throw new Error(`The name (${name}) is invalid, please use small or big letters, numbers or hyphens (-) only.`);
+        }
+
         this.name = name.toLowerCase();
         this.urlFriendlyName = name.replace(/[^a-z0-9_]+/gi, '-').replace(/^-|-$/g, '').toLowerCase();
         this.resources = this.parseResources(resourcesString);
