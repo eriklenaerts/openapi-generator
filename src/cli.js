@@ -88,7 +88,7 @@ async function promptForMissingOptions(options) {
 
     if (options.name && options.resources) {
         if (options.verbose)
-            console.log('%s No prompts needed here, using the provided commandline arguments and defaults, well done so far ;)...', chalk.yellow.bold('TRACE'));
+            console.log('%s No prompts needed here, using the provided commandline arguments and defaults, good job, you managed to master the CLI ...', chalk.yellow.bold('TRACE'));
 
         return options;
     }
@@ -198,7 +198,7 @@ async function promptForMissingOptions(options) {
         console.log('%s assembed the following resource structure: %s', chalk.yellow.bold('TRACE'), chalk.cyan(answers.resources));
     }
 
-    console.log('\n%s: Want to skip prompts next time? Copy and run this command: %s', chalk.blue.bold('TIP'), chalk.cyan('openapi-docgen ' + answers.name + ' -r \'' + answers.resources + '\' -v\n'));
+    console.log('\n%s: Want to skip prompts next time? Copy and run this command: %s', chalk.blue.bold('TIP'), chalk.cyan('openapi-docgen ' + options.name + ' -r \'' + answers.resources + (options.verbose ? '\' -v\n' : '\n')));        
 
     return {
         ...options,
