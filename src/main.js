@@ -8,7 +8,7 @@ async function compileTemplate(templatePath, templateData, targetPath, options) 
     // read the file and use the callback to render
     fs.readFile(templatePath, function (err, data) {
         if (!err) {
-            // call the render function
+            // load handlebar helper functions that extend the capabilities
             var helpers = require('handlebars-helpers');
             var math = helpers.math({
                 handlebars: handlebars
@@ -21,14 +21,16 @@ async function compileTemplate(templatePath, templateData, targetPath, options) 
                 return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
             });
 
+            handlebars.registerHelper('ifGT', function(arg1, arg2, options) {
+                return (arg1 > arg2) ? options.fn(this) : options.inverse(this);
+            });
+
             handlebars.registerHelper('ifNotEquals', function(arg1, arg2, options) {
                 return (arg1 != arg2) ? options.fn(this) : options.inverse(this);
             });
 
             var template = handlebars.compile(data.toString());
-
             var resultData = template(templateData);
-
             fs.writeFile(targetPath, resultData, function (err) {
                 if (err)
                     return console.error('%s Error saving generated data.', chalk.red.bold('ERROR'));

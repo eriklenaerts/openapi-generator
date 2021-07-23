@@ -30,7 +30,7 @@ export default class api {
         ];
 
         resources.forEach(resource => {
-            var tag = taglist.find(tag => tag.name === resource.tag);
+            var tag = taglist.find(tag => tag.name.toLowerCase() === resource.tag.toLowerCase());
             if (!tag) {
                 taglist.unshift(
                     {
