@@ -4,6 +4,7 @@ import path from 'path';
 import handlebars from 'handlebars';
 import api from './api';
 import { version } from 'os';
+import { exit } from 'process';
 
 async function compileTemplate(templatePath, templateData, targetPath, options) {
     // read the file and use the callback to render
@@ -49,7 +50,7 @@ async function determineTemplateData(options) {
     let apiData = new api(options.name, options.apiVersion, options.resources);
 
     if (options.verbose)
-        console.log('%s api data successfuly parsed, found %s resources', chalk.yellow.bold('TRACE'), apiData.resources.length);
+        console.log('%s API data successfuly parsed, found %s resources.', chalk.yellow.bold('TRACE'), apiData.resources.length);
 
     return apiData;
 }
@@ -58,7 +59,12 @@ async function determineTarget(options) {
     var targetDir = options.targetDirectory || process.cwd();
 
     if (!fs.existsSync(targetDir)) {
-        fs.mkdirSync(targetDir);
+        try {
+            fs.mkdirSync(targetDir);
+        } catch (err) {
+            console.log(chalk.red.bold('ERROR ') + chalk.reset.red('Can\'t write to target location ') + chalk.reset.blueBright.underline(targetDir) + chalk.reset.red(' there\'s something wrong with this path.'));
+            exit(1);
+        }
     }
 
     var targetPath = path.resolve(targetDir, options.name.replace(/[^a-z0-9_]+/gi, '-').replace(/^-|-$/g, '').toLowerCase() + '-api' + '.' + options.format.toLowerCase());
