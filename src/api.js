@@ -38,16 +38,21 @@ export default class api {
 
     // find missing parents for orphans, that is when a sub resource was asked for like "-r main/sub[14]", without asking for the parent as well like "-r main, main/sub[14]"
     findMissingParents(resources) {
+        let missingParents = [];
         resources.forEach(res => {
             if(res.parent) {
-                if (!resources.find(parentResource => parentResource.name === res.parent)) {
+                if (!resources.find(parentResource => parentResource.name === res.parent.name)) {
                     // the parent is added under the same tag as the orphan and with only the two GET ops
-                    resources.unshift(new resource(res.parent.name + '[10]::' + res.tag));
+                    missingParents.push(new resource(res.parent.name + '[10]::' + res.tag));
 
                     console.log('%s parent %s added for orphant %s child', chalk.yellow.bold('TRACE'), chalk.cyan(res.parent.name), chalk.cyan(res.name));
                 }
             }
         })
+        
+        if (missingParents)
+            resources = [].concat(missingParents, resources);
+
         return resources;
 
     }
