@@ -68,8 +68,6 @@ paths: {}
                 $ref: '#/components/schemas/{{collection}}'
         '500':
           $ref: '#/components/responses/InternalServer'
-        'default':
-          $ref: '#/components/responses/Unexpected'
       tags:
         - {{capitalize tag}}
     {{/if}}
@@ -112,8 +110,6 @@ paths: {}
           $ref: '#/components/responses/BadRequest'
         '500':
           $ref: '#/components/responses/InternalServer'
-        'default':
-          $ref: '#/components/responses/Unexpected'
       tags:
         - {{capitalize tag}}
     {{/if}}
@@ -141,11 +137,15 @@ paths: {}
           content:
             application/problem+json:
                 schema:
-                    $ref: '#/components/schemas/Problem'
+                  $ref: '#/components/schemas/Problem'
+                example:
+                  type: 'https://api-gw-a.antwerpen.be/antwerpen/digipolis/{{name}}/{{version}}/errors/SVC0011'
+                  title: '{{capitalize name}}{{#if parent }} or {{capitalize parent.name}}{{/if}} Not Found'
+                  status: 400
+                  identifier: 'B5FF68BBB-DE23-89AB-CCC2-7891D1D11956'
+                  code: 'SVC0011'
         '500':
           $ref: '#/components/responses/InternalServer'
-        'default':
-          $ref: '#/components/responses/Unexpected'
       tags:
         - {{capitalize tag}}
     {{/if}}
@@ -168,11 +168,15 @@ paths: {}
           content:
             application/problem+json:
                 schema:
-                    $ref: '#/components/schemas/Problem'
+                  $ref: '#/components/schemas/Problem'
+                example:
+                  type: 'https://api-gw-a.antwerpen.be/antwerpen/digipolis/{{name}}/{{version}}/errors/SVC0011'
+                  title: '{{capitalize name}}{{#if parent }} or {{capitalize parent.name}}{{/if}} Not Found'
+                  status: 400
+                  identifier: 'B5FF68BBB-DE23-89AB-CCC2-7891D1D11956'
+                  code: 'SVC0011'
         '500':
           $ref: '#/components/responses/InternalServer'
-        'default':
-          $ref: '#/components/responses/Unexpected'
       tags:
         - {{capitalize tag}}
     {{/if}}
@@ -212,11 +216,15 @@ paths: {}
           content:
             application/problem+json:
                 schema:
-                    $ref: '#/components/schemas/Problem'
+                  $ref: '#/components/schemas/Problem'
+                example:
+                  type: 'https://api-gw-a.antwerpen.be/antwerpen/digipolis/{{name}}/{{version}}/errors/SVC0011'
+                  title: '{{capitalize name}}{{#if parent }} or {{capitalize parent.name}}{{/if}} Not Found'
+                  status: 400
+                  identifier: 'B5FF68BBB-DE23-89AB-CCC2-7891D1D11956'
+                  code: 'SVC0011'
         '500':
           $ref: '#/components/responses/InternalServer'
-        'default':
-          $ref: '#/components/responses/Unexpected'
       tags:
         - {{capitalize tag}} 
     {{/if}}
@@ -251,11 +259,15 @@ paths: {}
           content:
             application/problem+json:
                 schema:
-                    $ref: '#/components/schemas/Problem'
+                  $ref: '#/components/schemas/Problem'
+                example:
+                  type: 'https://api-gw-a.antwerpen.be/antwerpen/digipolis/{{name}}/{{version}}/errors/SVC0011'
+                  title: '{{capitalize name}}{{#if parent }} or {{capitalize parent.name}}{{/if}} Not Found'
+                  status: 400
+                  identifier: 'B5FF68BBB-DE23-89AB-CCC2-7891D1D11956'
+                  code: 'SVC0011'
         '500':
           $ref: '#/components/responses/InternalServer'
-        'default':
-          $ref: '#/components/responses/Unexpected'
       tags:
         - {{capitalize tag}}
     {{/if}}
@@ -278,11 +290,15 @@ paths: {}
           content:
             application/problem+json:
                 schema:
-                    $ref: '#/components/schemas/Problem'
+                  $ref: '#/components/schemas/Problem'
+                example:
+                  type: 'https://api-gw-a.antwerpen.be/antwerpen/digipolis/{{name}}/{{version}}/errors/SVC0011'
+                  title: '{{capitalize name}}{{#if parent }} or {{capitalize parent.name}}{{/if}} Not Found'
+                  status: 400
+                  identifier: 'B5FF68BBB-DE23-89AB-CCC2-7891D1D11956'
+                  code: 'SVC0011'
         '500':
           $ref: '#/components/responses/InternalServer'
-        '5XX':
-          $ref: '#/components/responses/Unexpected'
       tags:
         - {{capitalize tag}}  
     {{/if}}
@@ -304,8 +320,6 @@ paths: {}
                 $ref: '#/components/schemas/healthStatus'
         '500':
           $ref: '#/components/responses/InternalServer'
-        'default':
-          $ref: '#/components/responses/Unexpected'
       tags:
         - System
   '/status/health/components':
@@ -324,8 +338,6 @@ paths: {}
                 $ref: '#/components/schemas/healthStatusComponents'
         '500':
           $ref: '#/components/responses/InternalServer'
-        'default':
-          $ref: '#/components/responses/Unexpected'
       tags:
         - System
 {{/if}}
@@ -353,13 +365,41 @@ components:
       $ref: 'https://raw.githubusercontent.com/digipolisantwerpdocumentation/api-system/master/components/paging.yaml#/components/parameters/PagingStrategy'
   responses:
     BadRequest:
-      $ref: 'https://raw.githubusercontent.com/eriklenaerts/api-requirements/generic-defs/components/problem.yaml#/components/responses/BadRequest'
-    Unexpected:
-      $ref: 'https://raw.githubusercontent.com/eriklenaerts/api-requirements/generic-defs/components/problem.yaml#/components/responses/Unexpected'
+      description: Bad Request
+      content:
+          application/problem+json:
+              schema:
+                  $ref: '#/components/schemas/Problem'
+              example:
+                type: 'https://api-gw-a.antwerpen.be/antwerpen/digipolis/{{name}}/{{version}}/errors/SVC0034'
+                title: 'The request is malformed, please check the URLn the queryparameters and header values.'
+                status: 400
+                identifier: 'DDD68BE6-B522-3E35-08BF-9563D1D11991'
+                code: 'SVC0034'
     InternalServer:
-      $ref: 'https://raw.githubusercontent.com/eriklenaerts/api-requirements/generic-defs/components/problem.yaml#/components/responses/InternalServer'
+      description: Internal Server Error
+      content:
+          application/problem+json:
+              schema:
+                  $ref: '#/components/schemas/Problem'
+              example:
+                type: 'https://api-gw-a.antwerpen.be/antwerpen/digipolis/{{name}}/{{version}}/errors/SVC0032'
+                title: 'There seems to be an issue with the server at the moment. Please try again later.'
+                status: 500
+                identifier: 'C5C68BE6-B5FF-11E5-B08F-D1D119563991'
+                code: 'SVC0032'
     NotFound:
-      $ref: 'https://raw.githubusercontent.com/eriklenaerts/api-requirements/generic-defs/components/problem.yaml#/components/responses/NotFound'
+      description: Not found
+      content:
+          application/problem+json:
+              schema:
+                  $ref: '#/components/schemas/Problem'
+              example:
+                type: 'https://api-gw-a.antwerpen.be/antwerpen/digipolis/{{name}}/{{version}}/errors/SVC0011'
+                title: 'Requested resource not found.'
+                status: 400
+                identifier: 'B5FF68BBB-DE23-89AB-CCC2-7891D1D11956'
+                code: 'SVC0011'
   schemas:
 {{#each resources}}
   {{#if ops.hasCollectionOps}}
