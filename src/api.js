@@ -6,8 +6,9 @@ export default class api {
     urlFriendlyName;
     resources;
     tags;
+    version;
 
-    constructor(name, resourcesString) {
+    constructor(name, version, resourcesString) {
         if (name) {
             let match = (/^(?:[a-zA-Z0-9-])*$/g).exec(name);
             if (!match)
@@ -15,6 +16,7 @@ export default class api {
         }
 
         this.name = name.toLowerCase();
+        this.version = version;
         this.urlFriendlyName = name.replace(/[^a-z0-9_]+/gi, '-').replace(/^-|-$/g, '').toLowerCase();
         this.resources = this.parseResources(resourcesString);
         this.tags = this.findUniqueTags(this.resources);

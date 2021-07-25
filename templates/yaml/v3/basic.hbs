@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: '0.0.1'
+  version: {{version}}
   title: {{capitalize name}} API
   description: > 
     This {{name}} API is generated based on the specifications of the [Digipolis API System 7.0](https://antwerp-api.digipolis.be/).
@@ -13,7 +13,7 @@ info:
       - Have a look [here](https://antwerp-api.digipolis.be/#/content/common/swagger-docs) for tips on writing good documentation.
         
 servers:
-  - url: 'https://{environment}.antwerpen.be/{catalog}/{provider}/{service}/v{version}'
+  - url: 'https://{environment}.antwerpen.be/{catalog}/{provider}/{service}/{version}'
     description: OTAP servers
     variables:
       environment:
@@ -33,7 +33,7 @@ servers:
         default: {{name}}
         description: the name of this Service 
       version:
-        default: '1'
+        default: {{version}}
         description: specify the major version of this api
 {{#if resources.length}}
 paths:

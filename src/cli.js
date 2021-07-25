@@ -9,12 +9,14 @@ function parseArgumentsIntoOptions(rawArgs) {
             '--yes': Boolean,
             '--format': String,
             '--oasVersion': String,
+            '--apiVersion': String,
             '--resources': String,
             '--target': String,
             '--verbose': Boolean,
             '--help': Boolean,
             '-f': '--format',
             '-o': '--oasVersion',
+            '-a': '--apiVersion',
             '-r': '--resources',
             '-t': '--target',
             '-v': '--verbose',
@@ -29,6 +31,7 @@ function parseArgumentsIntoOptions(rawArgs) {
         format: args['--format'] || 'yaml',
         resources: args['--resources'],
         oasVersion: args['--oasVersion'] || 'v3',
+        apiVersion: args['--apiVersion'] || 'v1',
         targetDirectory: args['--target'] || process.cwd(),
         verbose: args['--verbose'] || false,
         help: args['--help'] || false,
@@ -47,20 +50,21 @@ function showHelp() {
     console.log('Usage: \n\topenapi-docgen <name> [options]');
     console.log('\n<name>\t\t\t\tthe name of your API (You should omit the acronim \'API\' preferable)');
     console.log('\n[OPTIONS)');
-    console.log('--format|-f <value>\t\tspecify the format \'yaml\' (default) or \'json\'');
-    console.log('--oasVersion|-o <value>\t\tthe Open API specification version \'v2\' or \'v3\' (default)');
+    console.log('--format|-f <value>\t\tspecify the format \'json\' or \'yaml\' ' + chalk.dim('(default)'));
+    console.log('--oasVersion|-o <value>\t\tthe Open API specification version \'v2\' or \'v3\' ' + chalk.dim('(default)'));
+    console.log('--apiVersion|-av <value>\t\tthe version for your API for example \'v1\' '  + chalk.dim('(default)') + ' or 1.2.0');
     console.log('--resources|-r <value>\t\ta comma seperated list of resource names, e.g. \'invoice, product\'');
     console.log('\t\t\t\tFor each resource you can specify the operations you like and a specific tag.\n');
     console.log('\t\t\t\tSelect your operators:');
     console.log('\t\t\t\t----------------------');
     console.log('\t\t\t\tAdd a number between squar brackets after your resource name. This is a calculated binary number based on the following values');
-    console.log('\t\t\t\t  2 - GET the collection:');
-    console.log('\t\t\t\t  4 - POST to the collection:');
-    console.log('\t\t\t\t  8 - GET one item:');
-    console.log('\t\t\t\t 16 - HEAD one item:');
-    console.log('\t\t\t\t 32 - PUT one item:');
-    console.log('\t\t\t\t 64 - PATCH one item:');
-    console.log('\t\t\t\t128 - DELETE one item:');
+    console.log('\t\t\t\t  2 - GET the resource collection ' + chalk.dim('(default)'));
+    console.log('\t\t\t\t  4 - POST to the collection ' + chalk.dim('(default)'));
+    console.log('\t\t\t\t  8 - GET one resource ' + chalk.dim('(default)'));
+    console.log('\t\t\t\t 16 - HEAD or check if resource exists.');
+    console.log('\t\t\t\t 32 - PUT or replace a resource ' + chalk.dim('(default)'));
+    console.log('\t\t\t\t 64 - PATCH a resource ' + chalk.dim('(default)'));
+    console.log('\t\t\t\t128 - DELETE a resource ' + chalk.dim('(default)'));
     console.log('\t\t\t\tTake the sum of the numbers for the operations you like and provide this in square brackets with the resource.');
     console.log('\t\t\t\tFor example \'location[96]\' will generate a PUT and PATCH operation only.\n');
     console.log('\t\t\t\tSpecify a tag:');
@@ -69,12 +73,12 @@ function showHelp() {
     console.log('\t\t\t\tFor example \'location[2]::mytag\' will set the tag to \'mytag\' for only the GET collection operation\n');
     console.log('\t\t\t\tAdd a child resource:');
     console.log('\t\t\t\t---------------------');
-    console.log('\t\t\t\tFor example \'location/address\' will only add an address resource as sub resource of the location resource.');
-    console.log('\t\t\t\tFor example \'location, location/address\' will add location resource and then address resource as sub resource of the location resource.');
+    console.log('\t\t\t\tFor example \'location/address\' will add an address resource under a ' + chalk.dim('(minimal)') + ' location resource.');
+    console.log('\t\t\t\tFor example \'location, location/address\' will add full location ' + chalk.dim('(with default ops)') + ' resource and then address resource as sub resource of the location resource.');
     console.log('\t\t\t\tFor example \'location/address::mytag\' will set the tag to \'mytag\' for the address sub resource.\n');
-    console.log('--target|-t <value>\t\tspecify the target folder for the generated output (default it uses the current directory).');
-    console.log('--verbose|-v\t\t\tflag to include verbose tracing messages (default false)');
-    console.log('--help\t\t\tShows this help ');
+    console.log('--target|-t <value>\t\tspecify the target folder for the generated output '  + chalk.dim('(default it uses the current directory).'));
+    console.log('--verbose|-v\t\t\tflag to include verbose tracing messages ' + chalk.dim('(default false)'));
+    console.log('--help|-h\t\t\tShows this help ');
 }
 
 async function promptForMissingOptions(options) {
@@ -83,6 +87,7 @@ async function promptForMissingOptions(options) {
         format: options.format || 'yaml',
         targetDirectory: options.targetDirectory || process.cwd(),
         oasVersion: options.oasVersion || 'v3',
+        apiVersion: options.apiVersion || 'v1',
         verbose: options.verbose || false
     }
 
@@ -105,6 +110,8 @@ async function promptForMissingOptions(options) {
             console.log(`Sorry m8, can't work with name ${chalk.cyan(options.name)}. Not fond of special characters here. Let's try again.`);
             options.name = null;
         }
+
+        console.log(`I need a few more details about ${chalk.cyan(options.name + ' (' + options.apiVersion +')')} to make this magic work. Let's see...\n`);
     }
 
     if (!options.name) {
@@ -160,7 +167,7 @@ async function promptForMissingOptions(options) {
                     return 'An API without any resources seems odd...';
                 }
 
-                let match = (/^(?:[a-zA-Z0-9-])*$/g).exec(input);
+                let match = (/^(?:[a-zA-Z0-9-,\s])*$/g).exec(input);
                 if (!match)
                     return `Oh dear, too complex for me, this ${chalk.cyan(input)}. Try to use simple things like letters, numbers or hyphens. Thnx ;)`;
 
@@ -228,6 +235,7 @@ async function promptForMissingOptions(options) {
         ...options,
         format: options.format || answers.format,
         oasVersion: options.oasVersion || answers.oasVersion,
+        apiVersion: options.apiVersion || answers.apiVersion,
         name: options.name || answers.name,
         resources: options.resources || answers.resources
     };

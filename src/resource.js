@@ -64,7 +64,7 @@ export default class resource {
             "list": true,
             "post": true,
             "get": true,
-            "head": true,
+            "head": false,
             "put": true,
             "patch": true,
             "delete": true,
