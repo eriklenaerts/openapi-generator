@@ -1,4 +1,5 @@
 import resource from './resource';
+import chalk from 'chalk';
 
 export default class api {
     name;
@@ -27,7 +28,26 @@ export default class api {
                 resources.push(new resource(element));
             });
         }
+
+        resources = this.findMissingParents(resources);
+
         return resources;
+    }
+
+    // find missing parents for orphans, that is when a sub resource was asked for like "-r main/sub[14]", without asking for the parent as well like "-r main, main/sub[14]"
+    findMissingParents(resources) {
+        resources.forEach(res => {
+            if(res.parent) {
+                if (!resources.find(parentResource => parentResource.name === res.parent)) {
+                    // the parent is added under the same tag as the orphan and with only the two GET ops
+                    resources.unshift(new resource(res.parent.name + '[10]::' + res.tag));
+
+                    console.log('%s parent %s added for orphant %s child', chalk.yellow.bold('TRACE'), chalk.cyan(res.parent.name), chalk.cyan(res.name));
+                }
+            }
+        })
+        return resources;
+
     }
 
     findUniqueTags(resources) {

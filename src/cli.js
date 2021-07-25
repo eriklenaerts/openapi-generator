@@ -40,7 +40,7 @@ function showHeader() {
     console.log(chalk.whiteBright.bold(`\nOpen API document generator (v${pjson.version})`));
     console.log('------------------------------------');
     console.log('Use this commandline to generate an Open API document (aka a \'swagger\' file) to get you kick started for design and development of a REST API.');
-    console.log(chalk.gray.italic('Developed by Erik Lenaerts, 2021. Contact me at erik.lenaerts@line20.be\n'));
+    console.log(chalk.dim.italic('Developed by Erik Lenaerts, 2021. Contact me at erik.lenaerts@line20.be\n'));
 }
 
 function showHelp() {
@@ -94,20 +94,40 @@ async function promptForMissingOptions(options) {
     }
 
     const questions = [];
+    if (options.name) {
+        if (options.name.length < 3) {
+            console.log(`Seems ${chalk.cyan(options.name)} is rather short, I'd like 3 or more characters much better. Let's try again.`);
+            options.name = null;
+        }
+
+        let match = (/^(?:[a-zA-Z0-9-])*$/g).exec(options.name);
+        if (!match) {
+            console.log(`Sorry m8, can't work with name ${chalk.cyan(options.name)}. Not fond of special characters here. Let's try again.`);
+            options.name = null;
+        }
+    }
+
     if (!options.name) {
         questions.push({
             type: 'input',
             name: 'name',
             message: 'What\'s the name of your API:',
             validate: async (input) => {
-                if (input === '') {
+                if (input === '')
                     return 'You should give your API a name, it will feel lost without one.';
-                }
+
+                if (input.length < 3)
+                    return `Seems ${chalk.cyan(input)} is rather short. How about providing 3 or more characters, that could work for me.`;
+
+                let match = (/^(?:[a-zA-Z0-9-])*$/g).exec(input);
+                if (!match)
+                    return `Sorry, I can't work with the name ${chalk.cyan(input)}, special characters throw me off. Please use letters, numbers or hyphens only. Cheers ;)`;
 
                 return true;
             }
         });
     }
+
     if (!options.format) {
         questions.push({
             type: 'list',
@@ -134,11 +154,15 @@ async function promptForMissingOptions(options) {
         questions.push({
             type: 'input',
             name: 'resources',
-            message: 'Provide a comma seperated list of the resources you want, use singular nouns (e.g. \'invoice, customer\'):',
+            message: 'What resources would you like me to generate?' + chalk.reset.white(' (I like a comma saparated list of singular nouns, e.g. \'invoice, customer\'):'),
             validate: async (input) => {
                 if (input === '') {
-                    return 'An API without resources seems odd';
+                    return 'An API without any resources seems odd...';
                 }
+
+                let match = (/^(?:[a-zA-Z0-9-])*$/g).exec(input);
+                if (!match)
+                    return `Oh dear, too complex for me, this ${chalk.cyan(input)}. Try to use simple things like letters, numbers or hyphens. Thnx ;)`;
 
                 return true;
             }
@@ -156,9 +180,9 @@ async function promptForMissingOptions(options) {
             questions.push({
                 type: 'checkbox',
                 name: resource + 'Ops',
-                message: 'Select the operations for \'' + resource + '\' (press enter for the defaults)',
+                message: 'Select the operations for ' + chalk.reset.cyan(resource) + ':',
                 choices: [
-                    { name: '[GET] \tList all resources', short: 'list', value: 2, checked: true },
+                    { name: '[GET] \tList all resources', short: 'List', value: 2, checked: true },
                     { name: '[POST] \tCreate a resource', short: 'Create', value: 4, checked: true },
                     { name: '[GET] \tRead one resource', short: 'Read', value: 8, checked: true },
                     { name: '[HEAD] \tCheck if a resource exist', short: 'Check', value: 16 },
@@ -169,13 +193,13 @@ async function promptForMissingOptions(options) {
             questions.push({
                 type: 'input',
                 name: resource + 'Tag',
-                message: 'What tag would you like to use for \'' + resource + '\' (press enter for the default)',
+                message: 'What tag would you like to use for ' + chalk.reset.cyan(resource) + '?' + chalk.reset.white(' Typically I tag the resource using it\'s own name') + ':',
                 default: resource
             });
             questions.push({
                 type: 'input',
                 name: resource + 'Parent',
-                message: 'What is the parent resource for \'' + resource + '\' (press enter for the default)',
+                message: 'What parent would you like for ' + chalk.reset.cyan(resource) + '?' + chalk.reset.white(' (Hit enter if you do not need one)') + ':',
                 default: null
             });
         });
@@ -198,7 +222,7 @@ async function promptForMissingOptions(options) {
         console.log('%s assembed the following resource structure: %s', chalk.yellow.bold('TRACE'), chalk.cyan(answers.resources));
     }
 
-    console.log('\n%s: Want to skip prompts next time? Copy and run this command: %s', chalk.blue.bold('TIP'), chalk.cyan('openapi-docgen ' + options.name + ' -r \'' + answers.resources + (options.verbose ? '\' -v\n' : '\n')));        
+    console.log('\n%s: Want to skip prompts next time? Copy and run this command: %s', chalk.blue.bold('TIP'), chalk.cyan('openapi-docgen ' + options.name + ' -r \'' + answers.resources + (options.verbose ? '\' -v\n' : '\n')));
 
     return {
         ...options,
