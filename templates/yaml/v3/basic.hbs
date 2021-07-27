@@ -141,7 +141,7 @@ paths: {}
                 example:
                   type: 'https://api-gw-a.antwerpen.be/antwerpen/digipolis/{{name}}/{{version}}/errors/SVC0011'
                   title: '{{capitalize name}}{{#if parent }} or {{capitalize parent.name}}{{/if}} Not Found'
-                  status: 400
+                  status: 404
                   identifier: 'B5FF68BBB-DE23-89AB-CCC2-7891D1D11956'
                   code: 'SVC0011'
         '500':
@@ -343,6 +343,13 @@ paths: {}
 {{/if}}
 components:
   parameters:
+    tenantParam:
+      name: dgp-tenant-id
+      description: the identification of the tenant you want to use
+      in: header
+      required: true
+      schema:
+        type: string
 {{#each resources}}
     {{idParameter}}:
       name: {{idParameter}}
@@ -355,7 +362,8 @@ components:
         type: string
         description: >-
          'The `{{capitalize name}}` id. This is a unique number issued by this API.'
-        example: {{random 2000 10000}}            
+        example: {{random 2000 10000}}    
+        
 {{/each}}
     Page:
       $ref: 'https://raw.githubusercontent.com/digipolisantwerpdocumentation/api-system/master/components/paging.yaml#/components/parameters/Page'
@@ -372,7 +380,7 @@ components:
                   $ref: '#/components/schemas/Problem'
               example:
                 type: 'https://api-gw-a.antwerpen.be/antwerpen/digipolis/{{name}}/{{version}}/errors/SVC0034'
-                title: 'The request is malformed, please check the URLn the queryparameters and header values.'
+                title: 'The request is malformed, please check the URL in the queryparameters and header values.'
                 status: 400
                 identifier: 'DDD68BE6-B522-3E35-08BF-9563D1D11991'
                 code: 'SVC0034'
@@ -517,6 +525,18 @@ components:
       $ref: 'https://raw.githubusercontent.com/digipolisantwerpdocumentation/api-system/master/components/paging.yaml#/components/schemas/Pages'
     Problem:
       $ref: 'https://raw.githubusercontent.com/eriklenaerts/api-requirements/generic-defs/components/problem.yaml#/components/schemas/Problem'
+  securitySchemes:
+    ApiKeyAuth:        
+      type: apiKey
+      in: header       
+      name: apikey    
+    bearerAuth:            
+      type: http
+      scheme: bearer
+      bearerFormat: JWT    
+security:
+  - ApiKeyAuth: []
+  - bearerAuth: []
 tags:
 {{#each tags}}
   - name: {{capitalize name}}
