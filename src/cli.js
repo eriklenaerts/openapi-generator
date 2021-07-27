@@ -229,7 +229,7 @@ async function promptForMissingOptions(options) {
         console.log('%s assembed the following resource structure: %s', chalk.yellow.bold('TRACE'), chalk.cyan(answers.resources));
     }
 
-    console.log('\n%s: Want to skip prompts next time? Copy and run this command: %s', chalk.blue.bold('TIP'), chalk.cyan('openapi-docgen ' + (options.name || answers.name) + ' -r \'' + answers.resources + (options.verbose ? '\' -v\n' : '\n')));
+    console.log('\n%s Want to skip prompts next time? Copy and run this command: %s', chalk.blue.bold('TIP'), chalk.cyan('openapi-docgen ' + (options.name || answers.name) + ' -r \'' + answers.resources + (options.verbose ? '\' -v\n' : '\'\n')));
 
     return {
         ...options,

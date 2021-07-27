@@ -411,7 +411,7 @@ components:
   schemas:
 {{#each resources}}
   {{#if ops.hasCollectionOps}}
-    {{collection}}:
+    {{capitalize collection}}:
       type: object
       properties:
         _links:
