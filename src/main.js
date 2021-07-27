@@ -108,7 +108,7 @@ export async function generate(options) {
     await compileTemplate(templatePath, templateData, targetPath, options);
 
     console.log('%s OpenAPI file ready & served, you can find it here: %s', chalk.green.bold('DONE'), chalk.blueBright.underline(targetPath));
-
+    console.log(`${chalk.blue.bold('TIP')} Use '-t|--target <target>' to specify a different output location, ${chalk.dim.italic('(Standard it uses the working directory)')}`);
     return true;
 }
 
