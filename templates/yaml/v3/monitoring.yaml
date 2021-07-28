@@ -43,7 +43,7 @@ paths:
       tags:
         - System
 
-  "/status/health/metrics":
+  "/status/metrics":
     get:
       tags:
         - System
