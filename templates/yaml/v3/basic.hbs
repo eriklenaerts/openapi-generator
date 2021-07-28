@@ -56,9 +56,9 @@ paths: {}
           schema:
             type: integer
             example: {{random 1 500}}
-        - $ref: '#/components/parameters/Page'
-        - $ref: '#/components/parameters/Pagesize'
-        - $ref: '#/components/parameters/PagingStrategy'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pagesize'
+        - $ref: '#/components/parameters/pagingStrategy'
       responses:
         '200':
           description: OK
@@ -67,14 +67,14 @@ paths: {}
               schema:
                 $ref: '#/components/schemas/{{collection}}'
         '500':
-          $ref: '#/components/responses/InternalServer'
+          $ref: '#/components/responses/internalserver'
       tags:
         - {{capitalize tag}}
     {{/if}}
     {{#if ops.post}}
     post:
       summary: Add a new {{name}} to the {{collection}} collection.
-      description: 'Add a new `{{capitalize name}}` resource to the `{{capitalize collection}}` collection{{#if parent }} of the given `{{capitalize parent.name}}`{{/if}}.'
+      description: 'Add a new `{{name}}` resource to the `{{collection}}` collection{{#if parent }} of the given `{{parent.name}}`{{/if}}.'
       {{#if parent }}
       parameters:
         - $ref: '#/components/parameters/{{parent.idParameter}}'
@@ -87,7 +87,7 @@ paths: {}
               $ref: '#/components/schemas/{{name}}'
       responses:
         '201':
-          description: '`{{capitalize name}}` created'
+          description: '`{{name}}` created'
           content:
             application/json:
               schema:
@@ -107,9 +107,9 @@ paths: {}
                 format: uri
                 example: '/{{#if parent }}{{parent.collection}}/{{random 1000 10000}}/{{/if}}{{collection}}/{{random 1000 10000}}'
         '400':
-          $ref: '#/components/responses/BadRequest'
+          $ref: '#/components/responses/badrequest'
         '500':
-          $ref: '#/components/responses/InternalServer'
+          $ref: '#/components/responses/internalserver'
       tags:
         - {{capitalize tag}}
     {{/if}}
@@ -117,7 +117,7 @@ paths: {}
     {{#if ops.get}}
     get:
       summary: Retrieve one {{name}}
-      description: 'Retrieve exactly one `{{capitalize name}}` for the given id in the path.'
+      description: 'Retrieve exactly one `{{name}}` for the given id in the path.'
       parameters:
         - $ref: '#/components/parameters/{{idParameter}}'
         {{#if parent }}
@@ -131,28 +131,28 @@ paths: {}
               schema:
                 $ref: '#/components/schemas/{{name}}'
         '400':
-          $ref: '#/components/responses/BadRequest'
+          $ref: '#/components/responses/badrequest'
         '404':
-          description: '`{{capitalize name}}`{{#if parent }} or `{{capitalize parent.name}}`{{/if}} Not Found'
+          description: '`{{name}}`{{#if parent }} or `{{parent.name}}`{{/if}} Not Found'
           content:
             application/problem+json:
                 schema:
-                  $ref: '#/components/schemas/Problem'
+                  $ref: '#/components/schemas/problem'
                 example:
                   type: 'https://api-gw-a.antwerpen.be/antwerpen/digipolis/{{name}}/{{version}}/errors/SVC0011'
-                  title: '{{capitalize name}}{{#if parent }} or {{capitalize parent.name}}{{/if}} Not Found'
+                  title: '{{name}}{{#if parent }} or {{parent.name}}{{/if}} Not Found'
                   status: 404
                   identifier: 'B5FF68BBB-DE23-89AB-CCC2-7891D1D11956'
                   code: 'SVC0011'
         '500':
-          $ref: '#/components/responses/InternalServer'
+          $ref: '#/components/responses/internalserver'
       tags:
         - {{capitalize tag}}
     {{/if}}
     {{#if ops.head}}
     head:
       summary: Check if the {{name}} exist
-      description: 'Check if the `{{capitalize name}}` with the given id exists.'
+      description: 'Check if the `{{name}}` with the given id exists.'
       parameters:
         - $ref: '#/components/parameters/{{idParameter}}'
         {{#if parent }}
@@ -160,30 +160,30 @@ paths: {}
         {{/if}}
       responses:
         '200':
-          description: '`{{capitalize name}}` exist.'
+          description: '`{{name}}` exist.'
         '400':
-          $ref: '#/components/responses/BadRequest'
+          $ref: '#/components/responses/badrequest'
         '404':
-          description: '`{{capitalize name}}`{{#if parent }} or `{{capitalize parent.name}}`{{/if}} Not Found'
+          description: '`{{name}}`{{#if parent }} or `{{parent.name}}`{{/if}} Not Found'
           content:
             application/problem+json:
                 schema:
-                  $ref: '#/components/schemas/Problem'
+                  $ref: '#/components/schemas/problem'
                 example:
                   type: 'https://api-gw-a.antwerpen.be/antwerpen/digipolis/{{name}}/{{version}}/errors/SVC0011'
-                  title: '{{capitalize name}}{{#if parent }} or {{capitalize parent.name}}{{/if}} Not Found'
+                  title: '{{name}}{{#if parent }} or {{parent.name}}{{/if}} Not Found'
                   status: 400
                   identifier: 'B5FF68BBB-DE23-89AB-CCC2-7891D1D11956'
                   code: 'SVC0011'
         '500':
-          $ref: '#/components/responses/InternalServer'
+          $ref: '#/components/responses/internalserver'
       tags:
         - {{capitalize tag}}
     {{/if}}
     {{#if ops.put}}
     put:
       summary: Replace the {{name}} with the one given here
-      description: 'Replace the complete `{{capitalize name}}` resource with the one provided in the payload. If {{name}} does not exist a 404 will be returned.'
+      description: 'Replace the complete `{{name}}` resource with the one provided in the payload. If {{name}} does not exist a 404 will be returned.'
       parameters:
         - $ref: '#/components/parameters/{{idParameter}}'
         {{#if parent }}
@@ -197,41 +197,41 @@ paths: {}
               $ref: '#/components/schemas/{{name}}'
       responses:
         '200':
-          description: '`{{capitalize name}}` replaced'
+          description: '`{{name}}` replaced'
           content:
             application/json:
               schema:
                 type: object
-                description: 'The `id` of the newly created `{{capitalize name}}`'
+                description: 'The `id` of the newly created `{{name}}`'
                 properties:
                   id:
                     type: number
-                    description: 'A unique number for `{{capitalize name}}`'
+                    description: 'A unique number for `{{name}}`'
                     readOnly: true
                     example: {{random 1000 10000}}
         '400':
-          $ref: '#/components/responses/BadRequest'
+          $ref: '#/components/responses/badrequest'
         '404':
-          description: '`{{capitalize name}}`{{#if parent }} or `{{capitalize parent.name}}`{{/if}} Not Found'
+          description: '`{{name}}`{{#if parent }} or `{{parent.name}}`{{/if}} Not Found'
           content:
             application/problem+json:
                 schema:
-                  $ref: '#/components/schemas/Problem'
+                  $ref: '#/components/schemas/problem'
                 example:
                   type: 'https://api-gw-a.antwerpen.be/antwerpen/digipolis/{{name}}/{{version}}/errors/SVC0011'
-                  title: '{{capitalize name}}{{#if parent }} or {{capitalize parent.name}}{{/if}} Not Found'
+                  title: '{{name}}{{#if parent }} or {{parent.name}}{{/if}} Not Found'
                   status: 400
                   identifier: 'B5FF68BBB-DE23-89AB-CCC2-7891D1D11956'
                   code: 'SVC0011'
         '500':
-          $ref: '#/components/responses/InternalServer'
+          $ref: '#/components/responses/internalserver'
       tags:
         - {{capitalize tag}} 
     {{/if}}
     {{#if ops.patch}}
     patch:
       summary: Update a {{name}}
-      description: 'With this operation you can update parts of the `{{capitalize name}}` for the given id.'
+      description: 'With this operation you can update parts of the `{{name}}` for the given id.'
       parameters:
         - $ref: '#/components/parameters/{{idParameter}}'
         {{#if parent }}
@@ -247,27 +247,27 @@ paths: {}
                   date:
                     type: string
                     format: date
-                    description: 'The date when this `{{capitalize name}}` was issued.'
+                    description: 'The date when this `{{name}}` was issued.'
                     example: '2020-04-16'
       responses:
         '204':
-          description: '`{{capitalize name}}` partially updated'
+          description: '`{{name}}` partially updated'
         '400':
-          $ref: '#/components/responses/BadRequest'
+          $ref: '#/components/responses/badrequest'
         '404':
-          description: '`{{capitalize name}}`{{#if parent }} or `{{capitalize parent.name}}`{{/if}} Not Found'
+          description: '`{{name}}`{{#if parent }} or `{{parent.name}}`{{/if}} Not Found'
           content:
             application/problem+json:
                 schema:
-                  $ref: '#/components/schemas/Problem'
+                  $ref: '#/components/schemas/problem'
                 example:
                   type: 'https://api-gw-a.antwerpen.be/antwerpen/digipolis/{{name}}/{{version}}/errors/SVC0011'
-                  title: '{{capitalize name}}{{#if parent }} or {{capitalize parent.name}}{{/if}} Not Found'
+                  title: '{{name}}{{#if parent }} or {{parent.name}}{{/if}} Not Found'
                   status: 400
                   identifier: 'B5FF68BBB-DE23-89AB-CCC2-7891D1D11956'
                   code: 'SVC0011'
         '500':
-          $ref: '#/components/responses/InternalServer'
+          $ref: '#/components/responses/internalserver'
       tags:
         - {{capitalize tag}}
     {{/if}}
@@ -282,23 +282,23 @@ paths: {}
         {{/if}}
       responses:
         '204':
-          description: '`{{capitalize name}}` removed'
+          description: '`{{name}}` removed'
         '400':
-          $ref: '#/components/responses/BadRequest'
+          $ref: '#/components/responses/badrequest'
         '404':
-          description: '`{{capitalize name}}`{{#if parent }} or `{{capitalize parent.name}}`{{/if}} Not Found'
+          description: '`{{name}}`{{#if parent }} or `{{parent.name}}`{{/if}} Not Found'
           content:
             application/problem+json:
                 schema:
-                  $ref: '#/components/schemas/Problem'
+                  $ref: '#/components/schemas/problem'
                 example:
                   type: 'https://api-gw-a.antwerpen.be/antwerpen/digipolis/{{name}}/{{version}}/errors/SVC0011'
-                  title: '{{capitalize name}}{{#if parent }} or {{capitalize parent.name}}{{/if}} Not Found'
+                  title: '{{name}}{{#if parent }} or {{parent.name}}{{/if}} Not Found'
                   status: 400
                   identifier: 'B5FF68BBB-DE23-89AB-CCC2-7891D1D11956'
                   code: 'SVC0011'
         '500':
-          $ref: '#/components/responses/InternalServer'
+          $ref: '#/components/responses/internalserver'
       tags:
         - {{capitalize tag}}  
     {{/if}}
@@ -319,7 +319,7 @@ paths: {}
               schema:
                 $ref: '#/components/schemas/healthStatus'
         '500':
-          $ref: '#/components/responses/InternalServer'
+          $ref: '#/components/responses/internalserver'
       tags:
         - System
   '/status/health/components':
@@ -337,7 +337,7 @@ paths: {}
               schema:
                 $ref: '#/components/schemas/healthStatusComponents'
         '500':
-          $ref: '#/components/responses/InternalServer'
+          $ref: '#/components/responses/internalserver'
       tags:
         - System
 {{/if}}
@@ -355,41 +355,41 @@ components:
       name: {{idParameter}}
       in: path
       description: >-
-        The unique `id` of this `{{capitalize name}}` in our system.
+        The unique `id` of this `{{name}}` in our system.
       required: true
       schema:
         minimum: 1
         type: string
         description: >-
-         'The `{{capitalize name}}` id. This is a unique number issued by this API.'
+         'The `{{name}}` id. This is a unique number issued by this API.'
         example: {{random 2000 10000}}    
         
 {{/each}}
-    Page:
+    page:
       $ref: 'https://raw.githubusercontent.com/digipolisantwerpdocumentation/api-system/master/components/paging.yaml#/components/parameters/Page'
-    Pagesize:
+    pagesize:
       $ref: 'https://raw.githubusercontent.com/digipolisantwerpdocumentation/api-system/master/components/paging.yaml#/components/parameters/Pagesize'
-    PagingStrategy:
+    pagingStrategy:
       $ref: 'https://raw.githubusercontent.com/digipolisantwerpdocumentation/api-system/master/components/paging.yaml#/components/parameters/PagingStrategy'
   responses:
-    BadRequest:
+    badrequest:
       description: Bad Request
       content:
           application/problem+json:
               schema:
-                  $ref: '#/components/schemas/Problem'
+                  $ref: '#/components/schemas/problem'
               example:
                 type: 'https://api-gw-a.antwerpen.be/antwerpen/digipolis/{{name}}/{{version}}/errors/SVC0034'
                 title: 'The request is malformed, please check the URL in the queryparameters and header values.'
                 status: 400
                 identifier: 'DDD68BE6-B522-3E35-08BF-9563D1D11991'
                 code: 'SVC0034'
-    InternalServer:
+    internalserver:
       description: Internal Server Error
       content:
           application/problem+json:
               schema:
-                  $ref: '#/components/schemas/Problem'
+                  $ref: '#/components/schemas/problem'
               example:
                 type: 'https://api-gw-a.antwerpen.be/antwerpen/digipolis/{{name}}/{{version}}/errors/SVC0032'
                 title: 'There seems to be an issue with the server at the moment. Please try again later.'
@@ -401,21 +401,21 @@ components:
       content:
           application/problem+json:
               schema:
-                  $ref: '#/components/schemas/Problem'
+                  $ref: '#/components/schemas/problem'
               example:
                 type: 'https://api-gw-a.antwerpen.be/antwerpen/digipolis/{{name}}/{{version}}/errors/SVC0011'
                 title: 'Requested resource not found.'
-                status: 400
+                status: 404
                 identifier: 'B5FF68BBB-DE23-89AB-CCC2-7891D1D11956'
                 code: 'SVC0011'
   schemas:
 {{#each resources}}
   {{#if ops.hasCollectionOps}}
-    {{capitalize collection}}:
+    {{collection}}:
       type: object
       properties:
         _links:
-          $ref: '#/components/schemas/Links'
+          $ref: '#/components/schemas/links'
         _embedded:
           type: object
           description: Returns a list of {{collection}}
@@ -425,7 +425,7 @@ components:
               items:
                 $ref: '#/components/schemas/{{name}}'
         _page:
-          $ref: '#/components/schemas/Pages'
+          $ref: '#/components/schemas/pages'
       example:
         _links:
           self:
@@ -519,11 +519,11 @@ components:
           description: >-
             A health status result including the details of underlying
             components
-    Links:
+    links:
       $ref: 'https://raw.githubusercontent.com/digipolisantwerpdocumentation/api-system/master/components/paging.yaml#/components/schemas/Links'
-    Pages:
+    pages:
       $ref: 'https://raw.githubusercontent.com/digipolisantwerpdocumentation/api-system/master/components/paging.yaml#/components/schemas/Pages'
-    Problem:
+    problem:
       $ref: 'https://raw.githubusercontent.com/eriklenaerts/api-requirements/generic-defs/components/problem.yaml#/components/schemas/Problem'
   securitySchemes:
     ApiKeyAuth:        
@@ -536,7 +536,6 @@ components:
       bearerFormat: JWT    
 security:
   - ApiKeyAuth: []
-  - bearerAuth: []
 tags:
 {{#each tags}}
   - name: {{capitalize name}}
