@@ -6,7 +6,7 @@ info:
 servers:
 - url: /
 paths: 
-  '/status/health':
+  /status/health:
     get:
       summary: Returns the health status of this Service
       description: >-
@@ -24,7 +24,7 @@ paths:
           $ref: '#/components/responses/internalserver'
       tags:
         - System
-  '/status/health/components':
+  /status/health/components:
     get:
       summary: Returns the health status of this Service
       description: >-
