@@ -5,6 +5,7 @@ import handlebars from 'handlebars';
 import api from './api';
 import { version } from 'os';
 import { exit } from 'process';
+import { fileURLToPath } from 'url';
 
 async function compileTemplate(templatePath, templateData, targetPath, options) {
     // read the file and use the callback to render
@@ -79,8 +80,9 @@ async function determineTemplate(options) {
     // todo: get templates from a common location (e.g. github)
     // or the template location can be specified as cli option
     const currenFileUrl = import.meta.url;
+    
     const templateDir = path.resolve(
-        new URL(currenFileUrl).pathname,
+        fileURLToPath(currenFileUrl),
         '../../templates',
         options.format.toLowerCase(),
         options.oasVersion.toString().toLowerCase()
