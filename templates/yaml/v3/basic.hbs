@@ -305,41 +305,11 @@ paths: {}
 {{/each}}
 {{#if resources.length}}
   '/status/health':
-    get:
-      summary: Returns the health status of this Service
-      description: >-
-        Returns high level information about the service according to the status
-        &amp; [monitoring spec of
-        Digipolis](https://github.com/digipolisantwerpdocumentation/status-monitoring)
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/healthStatus'
-        '500':
-          $ref: '#/components/responses/internalserver'
-      tags:
-        - System
+    $ref: 'https://raw.githubusercontent.com/eriklenaerts/openapi-generator/master/templates/yaml/v3/monitoring.yaml#/paths/~1status~1health'      
   '/status/health/components':
-    get:
-      summary: Returns the health status of this Service
-      description: >-
-        Returns information about the service and its underlying components
-        according to the status &amp; [monitoring spec of
-        Digipolis](https://github.com/digipolisantwerpdocumentation/status-monitoring)
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/healthStatusComponents'
-        '500':
-          $ref: '#/components/responses/internalserver'
-      tags:
-        - System
+    $ref: 'https://raw.githubusercontent.com/eriklenaerts/openapi-generator/master/templates/yaml/v3/monitoring.yaml#/paths/~1status~1health~1components'    
+  '/status/metrics':
+    $ref: 'https://raw.githubusercontent.com/eriklenaerts/openapi-generator/master/templates/yaml/v3/monitoring.yaml#/paths/~1status~1metrics'    
 {{/if}}
 components:
   parameters:
@@ -362,8 +332,7 @@ components:
         type: string
         description: >-
          'The `{{name}}` id. This is a unique number issued by this API.'
-        example: {{random 2000 10000}}    
-        
+        example: {{random 2000 10000}}  
 {{/each}}
     page:
       $ref: 'https://raw.githubusercontent.com/digipolisantwerpdocumentation/api-system/master/components/paging.yaml#/components/parameters/Page'
@@ -375,39 +344,39 @@ components:
     badrequest:
       description: Bad Request
       content:
-          application/problem+json:
-              schema:
-                  $ref: '#/components/schemas/problem'
-              example:
-                type: 'https://api-gw-a.antwerpen.be/antwerpen/digipolis/{{name}}/{{version}}/errors/SVC0034'
-                title: 'The request is malformed, please check the URL in the queryparameters and header values.'
-                status: 400
-                identifier: 'DDD68BE6-B522-3E35-08BF-9563D1D11991'
-                code: 'SVC0034'
+        application/problem+json:
+            schema:
+                $ref: '#/components/schemas/problem'
+            example:
+              type: 'https://api-gw-a.antwerpen.be/antwerpen/digipolis/{{name}}/{{version}}/errors/SVC0034'
+              title: 'The request is malformed, please check the URL in the queryparameters and header values.'
+              status: 400
+              identifier: 'DDD68BE6-B522-3E35-08BF-9563D1D11991'
+              code: 'SVC0034'
     internalserver:
       description: Internal Server Error
       content:
-          application/problem+json:
-              schema:
-                  $ref: '#/components/schemas/problem'
-              example:
-                type: 'https://api-gw-a.antwerpen.be/antwerpen/digipolis/{{name}}/{{version}}/errors/SVC0032'
-                title: 'There seems to be an issue with the server at the moment. Please try again later.'
-                status: 500
-                identifier: 'C5C68BE6-B5FF-11E5-B08F-D1D119563991'
-                code: 'SVC0032'
-    NotFound:
+        application/problem+json:
+            schema:
+                $ref: '#/components/schemas/problem'
+            example:
+              type: 'https://api-gw-a.antwerpen.be/antwerpen/digipolis/{{name}}/{{version}}/errors/SVC0032'
+              title: 'There seems to be an issue with the server at the moment. Please try again later.'
+              status: 500
+              identifier: 'C5C68BE6-B5FF-11E5-B08F-D1D119563991'
+              code: 'SVC0032'
+    notfound:
       description: Not found
       content:
-          application/problem+json:
-              schema:
-                  $ref: '#/components/schemas/problem'
-              example:
-                type: 'https://api-gw-a.antwerpen.be/antwerpen/digipolis/{{name}}/{{version}}/errors/SVC0011'
-                title: 'Requested resource not found.'
-                status: 404
-                identifier: 'B5FF68BBB-DE23-89AB-CCC2-7891D1D11956'
-                code: 'SVC0011'
+        application/problem+json:
+            schema:
+                $ref: '#/components/schemas/problem'
+            example:
+              type: 'https://api-gw-a.antwerpen.be/antwerpen/digipolis/{{name}}/{{version}}/errors/SVC0011'
+              title: 'Requested resource not found.'
+              status: 404
+              identifier: 'B5FF68BBB-DE23-89AB-CCC2-7891D1D11956'
+              code: 'SVC0011'
   schemas:
 {{#each resources}}
   {{#if ops.hasCollectionOps}}
@@ -473,52 +442,9 @@ components:
           example: 'https://s3.amazon.com/klj{{random 1000 10000}}/logo.xyz.png'
 {{/each}}
     healthStatus:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Contains a high level status of the health for this service
-          example: outage
-          enum:
-            - ok
-            - degraded
-            - outage
-      description: A high level health status result
+      $ref: 'https://raw.githubusercontent.com/eriklenaerts/openapi-generator/master/templates/yaml/v3/monitoring.yaml#/components/schemas/healthStatus'    
     healthStatusComponents:
-      allOf:
-        - $ref: '#/components/schemas/healthStatus'
-        - type: object
-          properties:
-            components:
-              type: array
-              items:
-                type: object
-                properties:
-                  errormessage:
-                    type: string
-                    description: Contains the actual message in case of a problem
-                    example: timeout
-                  code:
-                    type: string
-                    description: the code of the problem that occurred
-                    example: TIMEOUT504
-                  name:
-                    type: string
-                    description: the name of the underlying component
-                    example: eventhandler
-                  details:
-                    type: string
-                    description: more information about the problem at hand
-                    example: >-
-                      Messages are not received due to the eventhandler who
-                      seems to be too busy.
-                  type:
-                    type: string
-                    description: the type of problem that occurred
-                    example: event
-          description: >-
-            A health status result including the details of underlying
-            components
+      $ref: 'https://raw.githubusercontent.com/eriklenaerts/openapi-generator/master/templates/yaml/v3/monitoring.yaml#/components/schemas/healthStatusComponents'    
     links:
       $ref: 'https://raw.githubusercontent.com/digipolisantwerpdocumentation/api-system/master/components/paging.yaml#/components/schemas/Links'
     pages:
