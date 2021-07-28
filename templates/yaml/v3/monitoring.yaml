@@ -6,7 +6,7 @@ info:
 servers:
 - url: /
 paths: 
-  /status-health:
+  /status/health:
     get:
       summary: Returns the health status of this Service
       description: >-
