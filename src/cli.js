@@ -1,6 +1,7 @@
 import arg from 'arg';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
+import consola from './consola.js';
 import { generate } from './main.js';
 
 function parseArgumentsIntoOptions(rawArgs) {
@@ -40,45 +41,42 @@ function parseArgumentsIntoOptions(rawArgs) {
 
 function showHeader() {
     var pjson = require('../package.json');
-    console.log(chalk.whiteBright.bold(`\nOpen API document generator (v${pjson.version})`));
-    console.log('------------------------------------');
-    console.log('Use this commandline to generate an Open API document (aka a \'swagger\' file) to get you kick started for design and development of a REST API.');
-    console.log(chalk.dim.italic('Developed by Erik Lenaerts, 2021. Contact me at erik.lenaerts@line20.be\n'));
+    consola.newline().title(`Open API document generator (v${pjson.version})`);
+    consola.log('Use this commandline to generate an Open API document (aka a \'swagger\' file) to get you kick started for design and development of a REST API.');
+    consola.sub('Developed by Erik Lenaerts, 2021. Contact me at erik.lenaerts@line20.be').newline();
 }
 
 function showHelp() {
-    console.log('Usage: \n\topenapi-docgen <name> [options]');
-    console.log('\n<name>\t\t\t\tthe name of your API (You should omit the acronim \'API\' preferable)');
-    console.log('\n[OPTIONS)');
-    console.log('--format|-f <value>\t\tspecify the format \'json\' or \'yaml\' ' + chalk.dim('(default)'));
-    console.log('--oasVersion|-o <value>\t\tthe Open API specification version \'v2\' or \'v3\' ' + chalk.dim('(default)'));
-    console.log('--apiVersion|-av <value>\t\tthe version for your API for example \'v1\' '  + chalk.dim('(default)') + ' or 1.2.0');
-    console.log('--resources|-r <value>\t\ta comma seperated list of resource names, e.g. \'invoice, product\'');
-    console.log('\t\t\t\tFor each resource you can specify the operations you like and a specific tag.\n');
-    console.log('\t\t\t\tSelect your operators:');
-    console.log('\t\t\t\t----------------------');
-    console.log('\t\t\t\tAdd a number between squar brackets after your resource name. This is a calculated binary number based on the following values');
-    console.log('\t\t\t\t  2 - GET the resource collection ' + chalk.dim('(default)'));
-    console.log('\t\t\t\t  4 - POST to the collection ' + chalk.dim('(default)'));
-    console.log('\t\t\t\t  8 - GET one resource ' + chalk.dim('(default)'));
-    console.log('\t\t\t\t 16 - HEAD or check if resource exists.');
-    console.log('\t\t\t\t 32 - PUT or replace a resource ' + chalk.dim('(default)'));
-    console.log('\t\t\t\t 64 - PATCH a resource ' + chalk.dim('(default)'));
-    console.log('\t\t\t\t128 - DELETE a resource ' + chalk.dim('(default)'));
-    console.log('\t\t\t\tTake the sum of the numbers for the operations you like and provide this in square brackets with the resource.');
-    console.log('\t\t\t\tFor example \'location[96]\' will generate a PUT and PATCH operation only.\n');
-    console.log('\t\t\t\tSpecify a tag:');
-    console.log('\t\t\t\t--------------');
-    console.log('\t\t\t\tFor example \'location::mytag\' will set the tag of the location operations to \'mytag\'');
-    console.log('\t\t\t\tFor example \'location[2]::mytag\' will set the tag to \'mytag\' for only the GET collection operation\n');
-    console.log('\t\t\t\tAdd a child resource:');
-    console.log('\t\t\t\t---------------------');
-    console.log('\t\t\t\tFor example \'location/address\' will add an address resource under a ' + chalk.dim('(minimal)') + ' location resource.');
-    console.log('\t\t\t\tFor example \'location, location/address\' will add full location ' + chalk.dim('(with default ops)') + ' resource and then address resource as sub resource of the location resource.');
-    console.log('\t\t\t\tFor example \'location/address::mytag\' will set the tag to \'mytag\' for the address sub resource.\n');
-    console.log('--target|-t <value>\t\tspecify the target folder for the generated output '  + chalk.dim('(default it uses the current directory).'));
-    console.log('--verbose|-v\t\t\tflag to include verbose tracing messages ' + chalk.dim('(default false)'));
-    console.log('--help|-h\t\t\tShows this help ');
+    consola.log('Usage:');
+    consola.newline().log('   openapi-docgen <name> [options]');
+    consola.newline().log('<name>\t\t\t\tthe name of your API (You should omit the acronim \'API\' preferable)');
+    consola.newline().log('[OPTIONS)');
+    consola.log('--format|-f <value>\t\tspecify the format \'json\' or \'yaml\' ' + chalk.dim('(default)'));
+    consola.log('--oasVersion|-o <value>\t\tthe Open API specification version \'v2\' or \'v3\' ' + chalk.dim('(default)'));
+    consola.log('--apiVersion|-a <value>\t\tthe version for your API for example \'v1\' '  + chalk.dim('(default)') + ' or 1.2.0');
+    consola.log('--resources|-r <value>\t\ta comma seperated list of resource names, e.g. \'invoice, product\'');
+    consola.tab(4).log('For each resource you can specify the operations you like and a specific tag.\n');
+    consola.tab(4).subtitle('Select your operators:');
+    consola.tab(4).log('Add a number between squar brackets after your resource name. This is a calculated binary number based on the following values');
+    consola.tab(4).log('  2 - GET the resource collection ' + chalk.dim('(default)'));
+    consola.tab(4).log('  4 - POST to the collection ' + chalk.dim('(default)'));
+    consola.tab(4).log('  8 - GET one resource ' + chalk.dim('(default)'));
+    consola.tab(4).log(' 16 - HEAD or check if resource exists.');
+    consola.tab(4).log(' 32 - PUT or replace a resource ' + chalk.dim('(default)'));
+    consola.tab(4).log(' 64 - PATCH a resource ' + chalk.dim('(default)'));
+    consola.tab(4).log('128 - DELETE a resource ' + chalk.dim('(default)'));
+    consola.tab(4).log('Take the sum of the numbers for the operations you like and provide this in square brackets with the resource.');
+    consola.tab(4).log('For example \'location[96]\' will generate a PUT and PATCH operation only.\n');
+    consola.tab(4).subtitle('Specify a tag:');
+    consola.tab(4).log('For example \'location::mytag\' will set the tag of the location operations to \'mytag\'');
+    consola.tab(4).log('For example \'location[2]::mytag\' will set the tag to \'mytag\' for only the GET collection operation\n');
+    consola.tab(4).subtitle('Add a child resource:');
+    consola.tab(4).log('For example \'location/address\' will add an address resource under a ' + chalk.dim('(minimal)') + ' location resource.');
+    consola.tab(4).log('For example \'location, location/address\' will add full location ' + chalk.dim('(with default ops)') + ' resource and then address resource as sub resource of the location resource.');
+    consola.tab(4).log('For example \'location/address::mytag\' will set the tag to \'mytag\' for the address sub resource.\n');
+    consola.log('--target|-t <value>\t\tspecify the target folder for the generated output '  + chalk.dim('(default it uses the current directory).'));
+    consola.log('--verbose|-v\t\t\tflag to include verbose tracing messages ' + chalk.dim('(default false)'));
+    consola.log('--help|-h\t\t\tShows this help ');
 }
 
 async function promptForMissingOptions(options) {
@@ -92,8 +90,7 @@ async function promptForMissingOptions(options) {
     }
 
     if (options.name && options.resources) {
-        if (options.verbose)
-            console.log('%s No prompts needed here, using the provided commandline arguments and defaults, good job, you managed to master the CLI ...', chalk.yellow.bold('TRACE'));
+        consola.trace('No prompts needed here, using the provided commandline arguments and defaults, good job, you managed to master the CLI ...', options.verbose);
 
         return options;
     }
@@ -101,17 +98,15 @@ async function promptForMissingOptions(options) {
     const questions = [];
     if (options.name) {
         if (options.name.length < 3) {
-            console.log(`Seems ${chalk.cyan(options.name)} is rather short, I'd like 3 or more characters much better. Let's try again.`);
+            consola.warn(`Seems ${chalk.cyan(options.name)} is rather short, I'd like 3 or more characters much better. Let's try again.`);
             options.name = null;
         }
 
         let match = (/^(?:[a-zA-Z0-9-])*$/g).exec(options.name);
         if (!match) {
-            console.log(`Sorry m8, can't work with name ${chalk.cyan(options.name)}. Not fond of special characters here. Let's try again.`);
+            consola.warn(`Sorry m8, can't work with name ${chalk.cyan(options.name)}. Not fond of special characters here. Let's try again.`);
             options.name = null;
         }
-
-        console.log(`I need a few more details about ${chalk.cyan(options.name + ' (' + options.apiVersion +')')} to make this magic work. Let's see...\n`);
     }
 
     if (!options.name) {
@@ -225,11 +220,8 @@ async function promptForMissingOptions(options) {
         answers.resources += ','
     });
     answers.resources = answers.resources.slice(0, -1);
-    if (options.verbose) {
-        console.log('%s assembed the following resource structure: %s', chalk.yellow.bold('TRACE'), chalk.cyan(answers.resources));
-    }
-
-    console.log('\n%s Want to skip prompts next time? Copy and run this command: %s', chalk.blue.bold('TIP'), chalk.cyan('openapi-docgen ' + (options.name || answers.name) + ' -r \'' + answers.resources + (options.verbose ? '\' -v\n' : '\'\n')));
+    consola.newline().trace('assembed the following resource structure: ' + chalk.cyan(answers.resources), options.verbose);
+    consola.newline().tip('Want to skip prompts next time? Copy and run this command: ' + chalk.cyan('openapi-docgen ' + (options.name || answers.name) + ' -r \'' + answers.resources + (options.verbose ? '\' -v\n' : '\'\n')));
 
     return {
         ...options,
@@ -254,7 +246,7 @@ export async function cli(args) {
         await generate(options);
     }
     catch (err) {
-        console.error('%s %s', chalk.red.bold('ERROR'), chalk.red.italic(err.message));
+        consola.error(chalk.red.italic(err.message));
         process.exit(1);
     }
 }

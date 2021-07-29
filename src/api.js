@@ -1,4 +1,5 @@
 import resource from './resource';
+import consola from './consola';
 import chalk from 'chalk';
 
 export default class api {
@@ -44,8 +45,7 @@ export default class api {
                 if (!resources.find(parentResource => parentResource.name === res.parent.name)) {
                     // the parent is added under the same tag as the orphan and with only the two GET ops
                     missingParents.push(new resource(res.parent.name + '[10]::' + res.tag));
-
-                    console.log('%s parent %s added for orphant %s child', chalk.yellow.bold('TRACE'), chalk.cyan(res.parent.name), chalk.cyan(res.name));
+                    consola.trace(`parent ${chalk.cyan(res.parent.name)} added for orphant ${chalk.cyan(res.name)} child`);
                 }
             }
         })
