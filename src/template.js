@@ -1,10 +1,11 @@
 import path from 'path';
 import chalk from 'chalk';
 import fs from 'fs';
-import consola from "./consola";
+import consola from './consola';
+import { templateProvider, templateBaseLocation } from './config'
 
 const providers = {
-    FileSystem: 'filesystem',
+    FileSystem: 'FileSystem',
     Online: 'Online'
 }
 
@@ -19,13 +20,13 @@ export default class template {
         this.format = options.format;
         this.oasVersion = options.oasVersion;
         this.name = 'basic.hbs';
-        this.provider = providers.FileSystem;
+        this.provider = templateProvider;
         this.verbose = options.verbose;
     }
 
     async getTemplateFromOnline(templateLocation) {
         const axios = require("axios");
-        consola.trace(`- Downloading template from ${chalk.blueBright.underline(templateLocation)} (Online)`, this.verbose);
+        consola.trace(`- Downloading template from ${chalk.blueBright.underline(templateLocation)}`, this.verbose);
 
         try {
             let response = await axios({
@@ -42,19 +43,19 @@ export default class template {
             return response.data;
 
         } catch (error) {
-            consola.error(error);
+            throw new Error(`Downloading template from ${templateLocation}\n\t${error}`);
         }
     }
 
     async getTemplateFromFS(templateLocation) {
 
-        consola.trace(`- Reading template from ${chalk.cyan(templateLocation)} (FileSystem)`, this.verbose);
+        consola.trace(`- Reading template from ${chalk.blueBright.underline(templateLocation)}`, this.verbose);
 
         try {
             let content = fs.readFileSync(templateLocation).toString();
-            
+
             consola.trace(`- Finished, retrieved ${content.length} bytes.`, this.verbose);
-            
+
             return content;
         } catch (error) {
             consola.error(error)
@@ -62,27 +63,41 @@ export default class template {
     }
 
     async getTemplateLocationForFS(templateName, format, oasVersion) {
-        const templateFolder = path.join(
-            __dirname,
-            '../templates',
-            format.toLowerCase(),
-            oasVersion.toString().toLowerCase()
-        );
 
-        var templateLocation = path.normalize(path.join(templateFolder, templateName));
+        try {
+            const templateFolder = path.join(
+                __dirname,
+                templateBaseLocation.trim(),
+                format.toLowerCase(),
+                oasVersion.toString().toLowerCase()
+            );
 
-        return templateLocation;
+            const status = fs.statSync(templateFolder);
+
+            var templateLocation = path.normalize(path.join(templateFolder, templateName));
+
+            return templateLocation;
+        } catch (error) {
+            throw new Error(error.message + '\n\tValidate your configuration in your \'env\' file.');
+        }
+
     }
 
     async getTemplateLocationForOnline(templateName, format, oasVersion) {
-        const templateLocation = new URL(`${format}/${oasVersion}/${templateName}`, 'https://raw.githubusercontent.com/eriklenaerts/openapi-generator/master/templates/');
-        return templateLocation.toString();
+        try {
+            const templateLocation = new URL(`${format}/${oasVersion}/${templateName}`, templateBaseLocation.trim());
+            return templateLocation.toString();
+        } catch (error) {
+            throw new Error(error.message + '\n\tValidate your configuration in your \'env\' file.');
+        }
+
     }
 
     async getTemplate() {
         let template;
         let templateLocation;
         consola.trace(`Retrieving template`, this.verbose);
+        consola.trace(`- template provider ${chalk.cyan(this.provider)} retrieved from '.env' configuration file`, this.verbose);
 
         if (this.provider == providers.FileSystem) {
             templateLocation = await this.getTemplateLocationForFS(this.name, this.format, this.oasVersion);

@@ -11,7 +11,7 @@ import template from './template';
 
 async function compileTemplate(template, templateData, targetPath, options) {
     // read the file and use the callback to render
-        consola.start('Brewing your API...');
+        consola.start('Brewing your OpenAPI document...');
 
         // load handlebar helper functions that extend the capabilities
         handlebarsHelpers.math({ handlebars: handlebars });
@@ -33,7 +33,7 @@ async function compileTemplate(template, templateData, targetPath, options) {
         consola.trace('- Template succesfully compiled', options.verbose);
 
         var resultData = hbTemplate(templateData);
-        consola.trace('- API data merged with the template', options.verbose);
+        consola.trace('- Cooking the OpenAPI document by merging the Parsed API info with the template', options.verbose);
 
         fs.writeFile(targetPath, resultData, err => {
             if (err)
@@ -42,8 +42,8 @@ async function compileTemplate(template, templateData, targetPath, options) {
             process.exit(1);
         });
 
-        consola.trace('- Output save (FileSystem)', options.verbose);
-        consola.done(`OpenAPI file ready & served, you can find it here: ${chalk.blueBright.underline(targetPath)}`);
+        consola.trace('- OpenAPI document saved (FileSystem)', options.verbose);
+        consola.done(`OpenAPI document ready & served, you can find it here: ${chalk.blueBright.underline(targetPath)}`);
         consola.tip(`Use '-t|--target <target>' to specify a different output location. ${chalk.dim.italic('(Standard it uses the working directory)')}`);
 }
 

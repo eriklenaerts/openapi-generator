@@ -1,6 +1,6 @@
 {
   "name": "@eriklenaerts/openapi-docgen",
-  "version": "0.3.7",
+  "version": "0.3.8",
   "description": "Generate an Open API document to kick start your REST API design or development.",
   "main": "src/index.js",
   "bin": {
@@ -14,12 +14,14 @@
     "arg": "^5.0.0",
     "axios": "^0.21.1",
     "chalk": "^4.1.1",
+    "dotenv": "^10.0.0",
     "esm": "^3.2.25",
     "get-installed-path": "^4.0.8",
     "handlebars": "^4.7.7",
     "handlebars-helpers": "^0.10.0",
     "highlight.js": ">=10.4.1",
     "inquirer": "^8.1.2",
+    "is-installed": "^2.0.1",
     "pluralize": "^8.0.0"
   },
   "scripts": {

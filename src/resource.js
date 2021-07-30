@@ -31,7 +31,7 @@ export default class resource {
             this.collectionPath = this.ops.hasCollectionOps ? this.determinePath(this.parent, this.collection) : null;
             this.resourcePath = this.ops.hasResourceOps ? this.determinePath(this.parent, this.collection, this.idParameter) : null;
 
-            consola.trace(`-- Found resource ${chalk.cyan(this.name)} with ops ${chalk.cyan(this.ops)}`, this.verbose);
+            consola.trace(`-- Found ${chalk.cyan(this.name)} resource with ops ${chalk.cyan(this.ops)}`, this.verbose);
         }
     }
 
