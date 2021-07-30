@@ -7,9 +7,12 @@ import { exit } from 'process';
 import consola from './consola';
 
 async function compileTemplate(templatePath, templateData, targetPath, options) {
+
     // read the file and use the callback to render
     fs.readFile(templatePath, function (err, data) {
         if (!err) {
+            consola.start('Brewing your API...');
+
             // load handlebar helper functions that extend the capabilities
             var helpers = require('handlebars-helpers');
             var math = helpers.math({
@@ -32,12 +35,19 @@ async function compileTemplate(templatePath, templateData, targetPath, options) 
             });
 
             var template = handlebars.compile(data.toString());
+            consola.trace('Template succesfully interpreted.', options.verbose);
+
             var resultData = template(templateData);
+            consola.trace('CLI input merged with the template.', options.verbose);
+
             fs.writeFile(targetPath, resultData, function (err) {
                 if (err)
                     consola.error('Error saving generated data.');
                 process.exit(1);
             });
+            consola.trace('Output stored on disk.', options.verbose);
+            consola.done(`OpenAPI file ready & served, you can find it here: ${chalk.blueBright.underline(targetPath)}`);
+            consola.tip(`Use '-t|--target <target>' to specify a different output location. ${chalk.dim.italic('(Standard it uses the working directory)')}`);
         } else {
             // handle file read error
             consola.error('Error reading template');
@@ -86,7 +96,7 @@ async function determineTemplate(options) {
 
     var templatePath = path.normalize(path.join(templateFolder, 'basic.hbs'));
 
-    consola.trace(`template retrieved from location: ${chalk.blueBright.underline(templatePath)}`, options.verbose);
+    consola.trace(`template location: ${chalk.blueBright.underline(templatePath)}`, options.verbose);
 
     return templatePath;
 }
@@ -94,16 +104,12 @@ async function determineTemplate(options) {
 export async function generate(options) {
     consola.start('Gathering ingredients...');
     var templatePath = await determineTemplate(options);
-    var templateData = await determineTemplateData(options);
     var targetPath = await determineTarget(options);
-
-    consola.done('all ingredients prepared.');
-    consola.start('Brewing your API...');
+    var templateData = await determineTemplateData(options);
+    consola.done('All ingredients prepared.');
 
     await compileTemplate(templatePath, templateData, targetPath, options);
-
-    consola.done(`OpenAPI file ready & served, you can find it here: ${chalk.blueBright.underline(targetPath)}`);
-    consola.tip(`Use '-t|--target <target>' to specify a different output location, ${chalk.dim.italic('(Standard it uses the working directory)')}`);
+    
     return true;
 }
 
