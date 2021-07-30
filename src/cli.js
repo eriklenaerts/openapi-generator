@@ -3,7 +3,7 @@ import chalk from 'chalk';
 import inquirer from 'inquirer';
 import consola from './consola.js';
 import { generate } from './main.js';
-import { defaultTemplate, defaultTarget } from './config'
+import { defaultTemplate, defaultTargetLocation, uniqueTarget } from './config'
 
 
 function parseArgumentsIntoOptions(rawArgs) {
@@ -15,6 +15,7 @@ function parseArgumentsIntoOptions(rawArgs) {
             '--apiVersion': String,
             '--resources': String,
             '--target': String,
+            '--unique': Boolean,
             '--template': String,
             '--verbose': Boolean,
             '--help': Boolean,
@@ -23,6 +24,7 @@ function parseArgumentsIntoOptions(rawArgs) {
             '-a': '--apiVersion',
             '-r': '--resources',
             '-t': '--target',
+            '-u': '--unique',
             '-e': '--template',
             '-v': '--verbose',
             '-h': '--help'
@@ -37,7 +39,8 @@ function parseArgumentsIntoOptions(rawArgs) {
         resources: args['--resources'],
         oasVersion: args['--oasVersion'] || 'v3',
         apiVersion: args['--apiVersion'] || 'v1',
-        targetLocation: args['--target'] || defaultTarget || process.cwd(),
+        targetLocation: args['--target'] || defaultTargetLocation || process.cwd(),
+        uniqueTarget: args['--unique'] || uniqueTarget || false,
         verbose: args['--verbose'] || false,
         template: args['--template'] || defaultTemplate || 'default.hbs',
         help: args['--help'] || false,

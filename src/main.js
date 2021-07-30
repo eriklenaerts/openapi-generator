@@ -3,11 +3,10 @@ import fs from 'fs';
 import path from 'path';
 import handlebars from 'handlebars';
 import handlebarsHelpers from 'handlebars-helpers';
-import exit from 'process';
+import shortid from 'shortid'
 import api from './api';
 import consola from './consola';
 import template from './template';
-
 
 async function compileTemplate(template, templateData, targetPath, options) {
     // read the file and use the callback to render
@@ -60,7 +59,8 @@ async function getTemplateData(options) {
 }
 
 async function determineTarget(options) {
-    var targetLocation = options.targetLocation;
+    // convert a ~ path to an absolute path if needed.
+    const targetLocation = options.targetLocation.replace(/^~($|\/|\\)/,`${require('os').homedir()}$1`);
 
     consola.trace('Checking Target location', options.verbose);
 
@@ -83,10 +83,13 @@ async function determineTarget(options) {
         process.exit(1);
     }
 
-
     consola.trace('- target folder: ' + chalk.reset.blueBright.underline(targetLocation) + ' looks good.', options.verbose);
 
-    var targetPath = path.resolve(targetLocation, options.name.replace(/[^a-z0-9_]+/gi, '-').replace(/^-|-$/g, '').toLowerCase() + '-api' + '.' + options.format.toLowerCase());
+    const uniqueNamePostfix = options.uniqueTarget ? '_' + shortid.generate() : '';
+    if (options.uniqueTarget)
+        consola.trace('- generating a unique target postfix ' + chalk.cyan(uniqueNamePostfix), options.verbose);
+
+    var targetPath = path.resolve(targetLocation, options.name.replace(/[^a-z0-9_]+/gi, '-').replace(/^-|-$/g, '').toLowerCase() + '-api' + uniqueNamePostfix +'.' + options.format.toLowerCase());
 
     return targetPath;
 }

@@ -59,7 +59,7 @@ export default class template {
             return content;
         } catch (error) {
             consola.error(error)
-            process.exit(1);
+            process.exit(1)
         }
     }
 

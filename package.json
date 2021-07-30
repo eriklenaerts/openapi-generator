@@ -22,7 +22,8 @@
     "highlight.js": ">=10.4.1",
     "inquirer": "^8.1.2",
     "is-installed": "^2.0.1",
-    "pluralize": "^8.0.0"
+    "pluralize": "^8.0.0",
+    "shortid": "^2.2.16"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

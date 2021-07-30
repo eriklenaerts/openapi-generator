@@ -15,6 +15,7 @@ module.exports = {
     templateProvider: process.env.TEMPLATE_PROVIDER,
     templateBaseLocation: process.env.TEMPLATES_BASE_LOCATION,
     defaultTemplate : process.env.DEFAULT_TEMPLATE,
-    defaultTarget : process.env.DEFAULT_TARGET,
+    defaultTargetLocation : process.env.DEFAULT_TARGET_LOCATION,
+    uniqueTarget : (process.env.UNIQUE_TARGET.trim() == 'true'), 
 };
 
