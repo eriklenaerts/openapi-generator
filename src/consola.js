@@ -8,39 +8,38 @@ export default class consola {
         return this;
     }
 
-    // some info
     static sub(message) {
         console.log(chalk.dim.italic(message));
         return this;
     }
 
     static error(message) {
-        console.error('%s %s', chalk.red.bold('ERROR'), chalk.red(message));
+        console.error('%s\t%s', chalk.red.bold('ERROR'), chalk.red(message));
         return this;
     }
 
     static start(message) {
-        console.log('%s %s', chalk.green.bold('START'), message);
+        console.log('%s\t%s', chalk.green.bold('START'), message);
         return this;
     }
 
     static warn(message) {
-        console.log('%s  %s', chalk.yellow.bold('WARN'), message);
+        console.log('%s\t%s', chalk.yellow.bold('WARN'), message);
         return this;
     }
     static trace(message, isTraceActive) {
         if (isTraceActive)
-            console.log('%s %s', chalk.yellow.bold('TRACE'), message);
+            console.log('%s\t%s', chalk.yellow.bold('TRACE'), message);
         return this;
     }
 
     static done(message) {
-        console.log('%s  %s', chalk.green.bold('DONE'), message);
+        console.log('%s\t%s', chalk.green.bold('DONE'), message);
         return this;
     }
 
     static tip(message) {
-        console.log('%s   %s', chalk.blue.bold('TIP'), message);
+        console.log('%s\t%s', chalk.blue.bold('TIP'), message);
         return this;
     }
 
