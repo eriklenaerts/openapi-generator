@@ -19,7 +19,7 @@ export default class template {
     constructor(options) {
         this.format = options.format;
         this.oasVersion = options.oasVersion;
-        this.name = 'basic.hbs';
+        this.name = options.template
         this.provider = templateProvider;
         this.verbose = options.verbose;
     }
@@ -59,6 +59,7 @@ export default class template {
             return content;
         } catch (error) {
             consola.error(error)
+            process.exit(1);
         }
     }
 
@@ -97,7 +98,8 @@ export default class template {
         let template;
         let templateLocation;
         consola.trace(`Retrieving template`, this.verbose);
-        consola.trace(`- template provider ${chalk.cyan(this.provider)} retrieved from '.env' configuration file`, this.verbose);
+        consola.trace(`- template ${chalk.cyan(this.name)}`, this.verbose);
+        consola.trace(`- template provider ${chalk.cyan(this.provider)} (retrieved from '.env' configuration file)`, this.verbose);
 
         if (this.provider == providers.FileSystem) {
             templateLocation = await this.getTemplateLocationForFS(this.name, this.format, this.oasVersion);

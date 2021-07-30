@@ -3,6 +3,8 @@ import chalk from 'chalk';
 import inquirer from 'inquirer';
 import consola from './consola.js';
 import { generate } from './main.js';
+import { defaultTemplate, defaultTarget } from './config'
+
 
 function parseArgumentsIntoOptions(rawArgs) {
     const args = arg(
@@ -13,6 +15,7 @@ function parseArgumentsIntoOptions(rawArgs) {
             '--apiVersion': String,
             '--resources': String,
             '--target': String,
+            '--template': String,
             '--verbose': Boolean,
             '--help': Boolean,
             '-f': '--format',
@@ -20,8 +23,9 @@ function parseArgumentsIntoOptions(rawArgs) {
             '-a': '--apiVersion',
             '-r': '--resources',
             '-t': '--target',
+            '-e': '--template',
             '-v': '--verbose',
-            '-h': '--help',
+            '-h': '--help'
         },
         {
             argv: rawArgs.slice(2),
@@ -33,8 +37,9 @@ function parseArgumentsIntoOptions(rawArgs) {
         resources: args['--resources'],
         oasVersion: args['--oasVersion'] || 'v3',
         apiVersion: args['--apiVersion'] || 'v1',
-        targetDirectory: args['--target'] || process.cwd(),
+        targetLocation: args['--target'] || defaultTarget || process.cwd(),
         verbose: args['--verbose'] || false,
+        template: args['--template'] || defaultTemplate || 'default.hbs',
         help: args['--help'] || false,
     }
 }
@@ -47,10 +52,10 @@ function showHeader() {
 }
 
 function showHelp() {
-    consola.log('Usage:');
-    consola.newline().log('   openapi-docgen <name> [options]');
+    consola.subtitle('Usage:');
+    consola.log('   openapi-docgen <name> [options]');
     consola.newline().log('<name>\t\t\t\tthe name of your API (You should omit the acronim \'API\' preferable)');
-    consola.newline().log('[OPTIONS)');
+    consola.newline().log('[options)');
     consola.log('--format|-f <value>\t\tspecify the format \'json\' or \'yaml\' ' + chalk.dim('(default)'));
     consola.log('--oasVersion|-o <value>\t\tthe Open API specification version \'v2\' or \'v3\' ' + chalk.dim('(default)'));
     consola.log('--apiVersion|-a <value>\t\tthe version for your API for example \'v1\' '  + chalk.dim('(default)') + ' or 1.2.0');
@@ -75,15 +80,23 @@ function showHelp() {
     consola.tab(4).log('For example \'location, location/address\' will add full location ' + chalk.dim('(with default ops)') + ' resource and then address resource as sub resource of the location resource.');
     consola.tab(4).log('For example \'location/address::mytag\' will set the tag to \'mytag\' for the address sub resource.\n');
     consola.log('--target|-t <value>\t\tspecify the target folder for the generated output '  + chalk.dim('(default it uses the current directory).'));
+    consola.log('--template|-e <value>\t\tspecify the template you like to use '  + chalk.dim('(default is \'default.hbs\'.)'));
     consola.log('--verbose|-v\t\t\tflag to include verbose tracing messages ' + chalk.dim('(default false)'));
     consola.log('--help|-h\t\t\tShows this help ');
+    consola.newline().subtitle('Configuration:')
+    consola.log('You can configure the following in the \'.env\' file.')
+    consola.newline().log('TEMPLATE_PROVIDER\t\tSpecify if you want templates to be served from the file system or online.');
+    consola.tab(4).log('Choose between the \'FileSystem\' or \'Online\'')
+    consola.log('TEMPLATES_BASE_LOCATION\t\tSet the base location for the given Template Provider.');
+    consola.log('DEFAULT_TEMPLATE\t\tOverrides the default template. Note that the --template argument still takes precedence.');
+    consola.newline();
 }
 
 async function promptForMissingOptions(options) {
     options = {
         ...options,
         format: options.format || 'yaml',
-        targetDirectory: options.targetDirectory || process.cwd(),
+        targetLocation: options.targetLocation || process.cwd(),
         oasVersion: options.oasVersion || 'v3',
         apiVersion: options.apiVersion || 'v1',
         verbose: options.verbose || false

@@ -61,6 +61,7 @@ export default class consola {
 
     static newline() {
         console.log();
+        this.tabsUsedInChain = 0;
         return this;
     }
 

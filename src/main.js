@@ -11,40 +11,40 @@ import template from './template';
 
 async function compileTemplate(template, templateData, targetPath, options) {
     // read the file and use the callback to render
-        consola.start('Brewing your OpenAPI document...');
+    consola.start('Brewing your OpenAPI document...');
 
-        // load handlebar helper functions that extend the capabilities
-        handlebarsHelpers.math({ handlebars: handlebars });
-        handlebarsHelpers.string({ handlebars: handlebars });
+    // load handlebar helper functions that extend the capabilities
+    handlebarsHelpers.math({ handlebars: handlebars });
+    handlebarsHelpers.string({ handlebars: handlebars });
 
-        handlebars.registerHelper('ifEquals', function (arg1, arg2, options) {
-            return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
-        });
+    handlebars.registerHelper('ifEquals', function (arg1, arg2, options) {
+        return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
+    });
 
-        handlebars.registerHelper('ifGT', function (arg1, arg2, options) {
-            return (arg1 > arg2) ? options.fn(this) : options.inverse(this);
-        });
+    handlebars.registerHelper('ifGT', function (arg1, arg2, options) {
+        return (arg1 > arg2) ? options.fn(this) : options.inverse(this);
+    });
 
-        handlebars.registerHelper('ifNotEquals', function (arg1, arg2, options) {
-            return (arg1 != arg2) ? options.fn(this) : options.inverse(this);
-        });
+    handlebars.registerHelper('ifNotEquals', function (arg1, arg2, options) {
+        return (arg1 != arg2) ? options.fn(this) : options.inverse(this);
+    });
 
-        var hbTemplate = handlebars.compile(template);
-        consola.trace('- Template succesfully compiled', options.verbose);
+    var hbTemplate = handlebars.compile(template);
+    consola.trace('- Template succesfully compiled', options.verbose);
 
-        var resultData = hbTemplate(templateData);
-        consola.trace('- Cooking the OpenAPI document by merging the Parsed API info with the template', options.verbose);
+    var resultData = hbTemplate(templateData);
+    consola.trace('- Cooking the OpenAPI document by merging the Parsed API info with the template', options.verbose);
 
-        fs.writeFile(targetPath, resultData, err => {
-            if (err)
-                consola.error('Error saving generated data.');
-            
-            process.exit(1);
-        });
+    fs.writeFile(targetPath, resultData, err => {
+        if (err)
+            consola.error('Error saving generated data.');
 
-        consola.trace('- OpenAPI document saved (FileSystem)', options.verbose);
-        consola.done(`OpenAPI document ready & served, you can find it here: ${chalk.blueBright.underline(targetPath)}`);
-        consola.tip(`Use '-t|--target <target>' to specify a different output location. ${chalk.dim.italic('(Standard it uses the working directory)')}`);
+        process.exit(1);
+    });
+
+    consola.trace('- OpenAPI document saved (FileSystem)', options.verbose);
+    consola.done(`OpenAPI document ready & served, you can find it here: ${chalk.blueBright.underline(targetPath)}`);
+    consola.tip(`Use '-t|--target <target>' to specify a different output location. ${chalk.dim.italic('(Standard it uses the working directory)')}`);
 }
 
 async function getTemplate(options) {
@@ -60,18 +60,33 @@ async function getTemplateData(options) {
 }
 
 async function determineTarget(options) {
-    var targetDir = options.targetDirectory || process.cwd();
+    var targetLocation = options.targetLocation;
 
-    if (!fs.existsSync(targetDir)) {
+    consola.trace('Checking Target location', options.verbose);
+
+    try {
+        fs.statSync(targetLocation);
+    } catch (err) {
         try {
-            fs.mkdirSync(targetDir);
-        } catch (err) {
-            consola.error('Can\'t write to target location ' + chalk.reset.blueBright.underline(targetDir));
-            exit(1);
+            consola.trace(`- creating target folder ${chalk.blueBright.underline(targetLocation)}`, options.verbose);
+            fs.mkdirSync(targetLocation);
+        } catch (error) {
+            consola.error('Can\'t create target folder\n\t' + error.message);
+            process.exit(1);
         }
     }
 
-    var targetPath = path.resolve(targetDir, options.name.replace(/[^a-z0-9_]+/gi, '-').replace(/^-|-$/g, '').toLowerCase() + '-api' + '.' + options.format.toLowerCase());
+    try {
+        fs.accessSync(targetLocation, fs.constants.W_OK);
+    } catch (error) {
+        consola.error('Can\'t write to target folder\n\t' + error.message);
+        process.exit(1);
+    }
+
+
+    consola.trace('- target folder: ' + chalk.reset.blueBright.underline(targetLocation) + ' looks good.', options.verbose);
+
+    var targetPath = path.resolve(targetLocation, options.name.replace(/[^a-z0-9_]+/gi, '-').replace(/^-|-$/g, '').toLowerCase() + '-api' + '.' + options.format.toLowerCase());
 
     return targetPath;
 }

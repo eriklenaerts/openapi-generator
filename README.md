@@ -17,6 +17,7 @@ Generate new Open API documents based on your own API REST guidelines.
 * Interactive prompt or provide command line arguments
 * Generate OAS documents based on your own specifications, there's one included for the [Digipolis API System 7.0](https://antwerp-api.digipolis.be/). 
 * Create your own templates (based on [Handlebars](https://handlebarsjs.com/))
+* Work with templates from the file system or online.
 
 ## Examples
 ``` bash
@@ -84,6 +85,11 @@ Some examples:
 // (it does not make much sense to have child resources with no way to access the parent resources)
 > openapi-docgen Appointment -r 'location/address[8]'
 ```
+
+## Configuration
+Use the .env configuration file to set the following: environment variables
+- TEMPLATE_PROVIDER: Specify if you want templates to be served from the file system or online. Choose between the 'FileSystem' or 'Online'
+- TEMPLATES_BASE_LOCATION: Set the base location for the given Template Provider.
 
 ## Development
 To debug:

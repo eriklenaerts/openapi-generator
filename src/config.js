@@ -13,6 +13,8 @@ if (result.error) {
 const { parsed: envs } = result;
 module.exports = {
     templateProvider: process.env.TEMPLATE_PROVIDER,
-    templateBaseLocation: process.env.TEMPLATES_BASE_LOCATION
+    templateBaseLocation: process.env.TEMPLATES_BASE_LOCATION,
+    defaultTemplate : process.env.DEFAULT_TEMPLATE,
+    defaultTarget : process.env.DEFAULT_TARGET,
 };
 
