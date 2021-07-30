@@ -2,12 +2,11 @@ import chalk from 'chalk';
 import fs from 'fs';
 import path from 'path';
 import handlebars from 'handlebars';
+import exit from 'process';
 import api from './api';
-import { exit } from 'process';
 import consola from './consola';
 
 async function compileTemplate(templatePath, templateData, targetPath, options) {
-
     // read the file and use the callback to render
     fs.readFile(templatePath, function (err, data) {
         if (!err) {
