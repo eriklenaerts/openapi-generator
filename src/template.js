@@ -3,29 +3,29 @@ import chalk from 'chalk';
 import fs from 'fs';
 import consola from "./consola";
 
-const storageSystems = {
+const providers = {
     FileSystem: 'filesystem',
-    Online: 'online'
+    Online: 'Online'
 }
 
 export default class template {
     name;
     oasVersion;
     format;
-    storageSystem;
+    provider;
     verbose;
 
     constructor(options) {
         this.format = options.format;
         this.oasVersion = options.oasVersion;
         this.name = 'basic.hbs';
-        this.storageSystem = storageSystems.FileSystem;
+        this.provider = providers.FileSystem;
         this.verbose = options.verbose;
     }
 
     async getTemplateFromOnline(templateLocation) {
         const axios = require("axios");
-        consola.trace(`- Downloading template ${chalk.blueBright.underline(templateLocation)}`, this.verbose);
+        consola.trace(`- Downloading template from ${chalk.blueBright.underline(templateLocation)} (Online)`, this.verbose);
 
         try {
             let response = await axios({
@@ -48,7 +48,7 @@ export default class template {
 
     async getTemplateFromFS(templateLocation) {
 
-        consola.trace(`- Reading template ${chalk.cyan(this.name)} from the filesystem`, this.verbose);
+        consola.trace(`- Reading template from ${chalk.cyan(templateLocation)} (FileSystem)`, this.verbose);
 
         try {
             let content = fs.readFileSync(templateLocation).toString();
@@ -84,12 +84,12 @@ export default class template {
         let templateLocation;
         consola.trace(`Retrieving template`, this.verbose);
 
-        if (this.storageSystem == storageSystems.FileSystem) {
+        if (this.provider == providers.FileSystem) {
             templateLocation = await this.getTemplateLocationForFS(this.name, this.format, this.oasVersion);
             template = await this.getTemplateFromFS(templateLocation);
         }
 
-        if (this.storageSystem == storageSystems.Online) {
+        if (this.provider == providers.Online) {
             templateLocation = await this.getTemplateLocationForOnline(this.name, this.format, this.oasVersion);
             template = await this.getTemplateFromOnline(templateLocation);
         }

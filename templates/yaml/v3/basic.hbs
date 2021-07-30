@@ -42,7 +42,7 @@ paths: {}
 {{/if}}
 {{#each resources}}
   {{#if collectionPath~}}'{{~collectionPath~}}':{{~/if}}
-    {{#if ops.list}}
+    {{#if ops.hasList}}
     get:
       summary: Retrieve a list of {{#if parent }}{{collection}} for a certain {{parent.name}}{{else}}{{collection}}{{/if}}
       description: 'Retrieve a paged result list of {{#if parent }}`{{collection}}` for a certain `{{parent.name}}`{{else}}`{{collection}}`{{/if}}.'
@@ -71,7 +71,7 @@ paths: {}
       tags:
         - {{capitalize tag}}
     {{/if}}
-    {{#if ops.post}}
+    {{#if ops.hasPost}}
     post:
       summary: Add a new {{name}} to the {{collection}} collection.
       description: 'Add a new `{{name}}` resource to the `{{collection}}` collection{{#if parent }} of the given `{{parent.name}}`{{/if}}.'
@@ -114,7 +114,7 @@ paths: {}
         - {{capitalize tag}}
     {{/if}}
   {{#if resourcePath ~}}'{{~resourcePath~}}':{{~/if}}
-    {{#if ops.get}}
+    {{#if ops.hasGet}}
     get:
       summary: Retrieve one {{name}}
       description: 'Retrieve exactly one `{{name}}` for the given id in the path.'
@@ -149,7 +149,7 @@ paths: {}
       tags:
         - {{capitalize tag}}
     {{/if}}
-    {{#if ops.head}}
+    {{#if ops.hasHead}}
     head:
       summary: Check if the {{name}} exist
       description: 'Check if the `{{name}}` with the given id exists.'
@@ -180,7 +180,7 @@ paths: {}
       tags:
         - {{capitalize tag}}
     {{/if}}
-    {{#if ops.put}}
+    {{#if ops.hasPut}}
     put:
       summary: Replace the {{name}} with the one given here
       description: 'Replace the complete `{{name}}` resource with the one provided in the payload. If {{name}} does not exist a 404 will be returned.'
@@ -228,7 +228,7 @@ paths: {}
       tags:
         - {{capitalize tag}} 
     {{/if}}
-    {{#if ops.patch}}
+    {{#if ops.hasPatch}}
     patch:
       summary: Update a {{name}}
       description: 'With this operation you can update parts of the `{{name}}` for the given id.'
@@ -271,7 +271,7 @@ paths: {}
       tags:
         - {{capitalize tag}}
     {{/if}}
-    {{#if ops.delete}}
+    {{#if ops.hasDelete}}
     delete:
       summary: Delete a {{name}}
       description: 'Remove the `{{capitalize name}}` with the given id.'

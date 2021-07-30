@@ -2,6 +2,7 @@ import chalk from 'chalk';
 import fs from 'fs';
 import path from 'path';
 import handlebars from 'handlebars';
+import handlebarsHelpers from 'handlebars-helpers';
 import exit from 'process';
 import api from './api';
 import consola from './consola';
@@ -13,13 +14,8 @@ async function compileTemplate(template, templateData, targetPath, options) {
         consola.start('Brewing your API...');
 
         // load handlebar helper functions that extend the capabilities
-        var helpers = require('handlebars-helpers');
-        var math = helpers.math({
-            handlebars: handlebars
-        });
-        var strings = helpers.string({
-            handlebars: handlebars
-        });
+        handlebarsHelpers.math({ handlebars: handlebars });
+        handlebarsHelpers.string({ handlebars: handlebars });
 
         handlebars.registerHelper('ifEquals', function (arg1, arg2, options) {
             return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
@@ -34,10 +30,10 @@ async function compileTemplate(template, templateData, targetPath, options) {
         });
 
         var hbTemplate = handlebars.compile(template);
-        consola.trace('Template succesfully interpreted.', options.verbose);
+        consola.trace('- Template succesfully compiled', options.verbose);
 
         var resultData = hbTemplate(templateData);
-        consola.trace('CLI input merged with the template.', options.verbose);
+        consola.trace('- API data merged with the template', options.verbose);
 
         fs.writeFile(targetPath, resultData, err => {
             if (err)
@@ -46,7 +42,7 @@ async function compileTemplate(template, templateData, targetPath, options) {
             process.exit(1);
         });
 
-        consola.trace('Output stored on disk.', options.verbose);
+        consola.trace('- Output save (FileSystem)', options.verbose);
         consola.done(`OpenAPI file ready & served, you can find it here: ${chalk.blueBright.underline(targetPath)}`);
         consola.tip(`Use '-t|--target <target>' to specify a different output location. ${chalk.dim.italic('(Standard it uses the working directory)')}`);
 }
@@ -59,10 +55,7 @@ async function getTemplate(options) {
 
 
 async function getTemplateData(options) {
-    let apiData = new api(options.name, options.apiVersion, options.resources);
-
-    consola.trace(`API data successfuly parsed, found ${apiData.resources.length} resource(s).`, options.verbose);
-
+    let apiData = new api(options);
     return apiData;
 }
 
@@ -79,8 +72,6 @@ async function determineTarget(options) {
     }
 
     var targetPath = path.resolve(targetDir, options.name.replace(/[^a-z0-9_]+/gi, '-').replace(/^-|-$/g, '').toLowerCase() + '-api' + '.' + options.format.toLowerCase());
-
-    consola.trace(`Output location (FileSystem): ${chalk.blueBright.underline(targetPath)}`, options.verbose);
 
     return targetPath;
 }
