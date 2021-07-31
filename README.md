@@ -90,6 +90,9 @@ Some examples:
 Use the .env configuration file to set the following: environment variables
 - TEMPLATE_PROVIDER: Specify if you want templates to be served from the file system or online. Choose between the 'FileSystem' or 'Online'
 - TEMPLATES_BASE_LOCATION: Set the base location for the given Template Provider.
+- DEFAULT_TEMPLATE: Set the default template in case nothing was provided using the --template cli argument. If both the cli argument and this config variable are missing, it is set to 'default.hbs'
+- DEFAULT_TARGET_LOCATION: Set the default target location in case nothing was provided using the --target cli argument. if this is not set here or via the cli argument, it is set to the current working folder.
+- UNIQUE_TARGET: if true, each target file will have a unique part in the filename so it always writes a new file. if false, the target file name stays the same over multiple generation runs and thus overwrites it each time.
 
 ## Development
 To debug:
