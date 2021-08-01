@@ -11,14 +11,10 @@ const providers = {
 
 export default class template {
     name;
-    oasVersion;
-    format;
     provider;
     verbose;
 
     constructor(options) {
-        this.format = options.format;
-        this.oasVersion = options.oasVersion;
         this.name = options.template
         this.provider = templateProvider;
         this.verbose = options.verbose;
@@ -62,31 +58,28 @@ export default class template {
         }
     }
 
-    async getTemplateLocationForFS(templateName, format, oasVersion) {
+    async getTemplateLocationForFS(templateName) {
 
         try {
             const templateFolder = path.join(
                 __dirname,
-                templateBaseLocation.trim(),
-                format.toLowerCase(),
-                oasVersion.toString().toLowerCase()
+                templateBaseLocation.trim()
             );
 
-            const status = fs.statSync(templateFolder);
+            fs.statSync(templateFolder);
+            var location = path.normalize(path.join(templateFolder, templateName));
 
-            var templateLocation = path.normalize(path.join(templateFolder, templateName));
-
-            return templateLocation;
+            return location;
         } catch (error) {
             throw new Error(error.message + '\n\tValidate your configuration in your \'env\' file.');
         }
 
     }
 
-    async getTemplateLocationForOnline(templateName, format, oasVersion) {
+    async getTemplateLocationForOnline(templateName) {
         try {
-            const templateLocation = new URL(`${format}/${oasVersion}/${templateName}`, templateBaseLocation.trim());
-            return templateLocation.toString();
+            const location = new URL(templateName, templateBaseLocation.trim());
+            return location.toString();
         } catch (error) {
             throw new Error(error.message + '\n\tValidate your configuration in your \'env\' file.');
         }
@@ -94,22 +87,23 @@ export default class template {
     }
 
     async getTemplate() {
-        let template;
         let templateLocation;
+        let content;
+
         consola.trace(`Retrieving template`, this.verbose);
         consola.trace(`- template ${chalk.cyan(this.name)}`, this.verbose);
-        consola.trace(`- template provider ${chalk.cyan(this.provider)} (retrieved from '.env' configuration file)`, this.verbose);
+        consola.trace(`- template provider ${chalk.cyan(this.provider)}`, this.verbose);
 
         if (this.provider == providers.FileSystem) {
-            templateLocation = await this.getTemplateLocationForFS(this.name, this.format, this.oasVersion);
-            template = await this.getTemplateFromFS(templateLocation);
+            templateLocation = await this.getTemplateLocationForFS(this.name);
+            content = await this.getTemplateFromFS(templateLocation);
         }
 
         if (this.provider == providers.Online) {
-            templateLocation = await this.getTemplateLocationForOnline(this.name, this.format, this.oasVersion);
-            template = await this.getTemplateFromOnline(templateLocation);
+            templateLocation = await this.getTemplateLocationForOnline(this.name);
+            content = await this.getTemplateFromOnline(templateLocation);
         }
 
-        return template;
+        return content;
     }
 }

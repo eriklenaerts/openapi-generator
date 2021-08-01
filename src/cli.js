@@ -3,29 +3,25 @@ import chalk from 'chalk';
 import inquirer from 'inquirer';
 import consola from './consola.js';
 import { generate } from './main.js';
-import { defaultTemplate, defaultTargetLocation, uniqueTarget } from './config'
+import { defaultTemplate, defaultOutputLocation, uniqueOutputFileName } from './config'
 
 
 function parseArgumentsIntoOptions(rawArgs) {
     const args = arg(
         {
             '--yes': Boolean,
-            '--format': String,
-            '--oasVersion': String,
             '--apiVersion': String,
             '--resources': String,
-            '--target': String,
+            '--output': String,
             '--unique': Boolean,
             '--template': String,
             '--verbose': Boolean,
             '--help': Boolean,
-            '-f': '--format',
-            '-o': '--oasVersion',
             '-a': '--apiVersion',
             '-r': '--resources',
-            '-t': '--target',
+            '-o': '--output',
             '-u': '--unique',
-            '-e': '--template',
+            '-t': '--template',
             '-v': '--verbose',
             '-h': '--help'
         },
@@ -35,12 +31,10 @@ function parseArgumentsIntoOptions(rawArgs) {
     );
     return {
         name: args._[0],
-        format: args['--format'] || 'yaml',
         resources: args['--resources'],
-        oasVersion: args['--oasVersion'] || 'v3',
         apiVersion: args['--apiVersion'] || 'v1',
-        targetLocation: args['--target'] || defaultTargetLocation || process.cwd(),
-        uniqueTarget: args['--unique'] || uniqueTarget || false,
+        outputLocation: args['--output'] || defaultOutputLocation || process.cwd(),
+        uniqueOutputFileName: args['--unique'] || uniqueOutputFileName || false,
         verbose: args['--verbose'] || false,
         template: args['--template'] || defaultTemplate || 'default.hbs',
         help: args['--help'] || false,
@@ -59,8 +53,6 @@ function showHelp() {
     consola.log('   openapi-docgen <name> [options]');
     consola.newline().log('<name>\t\t\t\tthe name of your API (You should omit the acronim \'API\' preferable)');
     consola.newline().log('[options)');
-    consola.log('--format|-f <value>\t\tspecify the format \'json\' or \'yaml\' ' + chalk.dim('(default)'));
-    consola.log('--oasVersion|-o <value>\t\tthe Open API specification version \'v2\' or \'v3\' ' + chalk.dim('(default)'));
     consola.log('--apiVersion|-a <value>\t\tthe version for your API for example \'v1\' '  + chalk.dim('(default)') + ' or 1.2.0');
     consola.log('--resources|-r <value>\t\ta comma seperated list of resource names, e.g. \'invoice, product\'');
     consola.tab(4).log('For each resource you can specify the operations you like and a specific tag.\n');
@@ -82,9 +74,9 @@ function showHelp() {
     consola.tab(4).log('For example \'location/address\' will add an address resource under a ' + chalk.dim('(minimal)') + ' location resource.');
     consola.tab(4).log('For example \'location, location/address\' will add full location ' + chalk.dim('(with default ops)') + ' resource and then address resource as sub resource of the location resource.');
     consola.tab(4).log('For example \'location/address::mytag\' will set the tag to \'mytag\' for the address sub resource.\n');
-    consola.log('--template|-e <value>\t\tspecify the template you like to use '  + chalk.dim('(default is \'default.hbs\'.)'));
-    consola.log('--target|-t <value>\t\tspecify the target folder for the generated output '  + chalk.dim('(default it uses the current directory).'));
-    consola.log('--unique|-u\t\t\tflag to request a unique target filename, if not, target files will be overwritten '  + chalk.dim('(default false).'));
+    consola.log('--template|-t <value>\t\tspecify the template you like to use '  + chalk.dim('(default is \'default.hbs\'.)'));
+    consola.log('--output|-o <value>\t\tspecify the output folder for the generated output '  + chalk.dim('(default it uses the current working directory).'));
+    consola.log('--unique|-u\t\t\tflag to request a unique output filename, if not, output files will be overwritten '  + chalk.dim('(default false).'));
     consola.log('--verbose|-v\t\t\tflag to include verbose tracing messages ' + chalk.dim('(default false)'));
     consola.log('--help|-h\t\t\tShows this help ');
     consola.newline().subtitle('Configuration:')
@@ -99,9 +91,7 @@ function showHelp() {
 async function promptForMissingOptions(options) {
     options = {
         ...options,
-        format: options.format || 'yaml',
-        targetLocation: options.targetLocation || process.cwd(),
-        oasVersion: options.oasVersion || 'v3',
+        outputLocation: options.outputLocation || process.cwd(),
         apiVersion: options.apiVersion || 'v1',
         verbose: options.verbose || false
     }
@@ -147,28 +137,6 @@ async function promptForMissingOptions(options) {
         });
     }
 
-    if (!options.format) {
-        questions.push({
-            type: 'list',
-            name: 'format',
-            message: 'Select the syntax you want to use:',
-            choices: ['json', 'yaml'],
-            default: defaultFormat
-        });
-    }
-    if (!options.oasVersion) {
-        questions.push({
-            type: 'list',
-            name: 'oasVersion',
-            message: 'Choose an Open API specification version:',
-            choices: [
-                ('v3 (Open API specification)', 'v3'),
-                ('v2 (former swagger)', 'v2'),
-            ],
-            default: defaultOASVersion
-
-        });
-    }
     if (!options.resources) {
         questions.push({
             type: 'input',
@@ -242,8 +210,6 @@ async function promptForMissingOptions(options) {
 
     return {
         ...options,
-        format: options.format || answers.format,
-        oasVersion: options.oasVersion || answers.oasVersion,
         apiVersion: options.apiVersion || answers.apiVersion,
         name: options.name || answers.name,
         resources: options.resources || answers.resources

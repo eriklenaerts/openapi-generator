@@ -94,10 +94,8 @@ Use the .env configuration file to set the following: environment variables
 | TEMPLATE_PROVIDER       	| Specify the source of the templates. ('FileSystem' or 'Online')                                                                                 	| FileSystem             	|
 | TEMPLATES_BASE_LOCATION 	| Set the base location for the given Template Provider.                                                                                          	|                        	|
 | DEFAULT_TEMPLATE        	| Set the default template, though the --template cli argument takes precedence.                                                                  	| default.hbs            	|
-| DEFAULT_TARGET_LOCATION 	| Set the default target location in case nothing was provided using the --target cli argument.                                                   	| current working folder 	|
-| UNIQUE_TARGET           	| If true, each target file will have a unique part in the filename so it always writes a new file.  if false, the file is overwritten each time. 	| false                  	|
-|                         	|                                                                                                                                                 	|                        	|
-|                         	|                                                                                                                                                 	|                        	|√
+| DEFAULT_OUTPUT_LOCATION 	| Set the default output location in case nothing was provided using the --output cli argument.                                                   	| current working folder 	|
+| UNIQUE_OUTPUT_FILENAME  	| If true, each output file will have a unique part in the filename so it always writes a new file.  if false, the file is overwritten each time. 	| false                  	|
 
 
 ## Contribute
