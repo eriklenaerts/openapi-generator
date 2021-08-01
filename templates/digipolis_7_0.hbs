@@ -10,8 +10,14 @@ info:
 
       - Check if all resources (like {{capitalize resources.0.name}}) require all operations that were generated, some parts of the API may be readOnly so remove the operations not needed
       - The schema (or models) of all resources are examples here, be sure to adjust them to your case at hand
-      - Have a look [here](https://antwerp-api.digipolis.be/#/content/common/swagger-docs) for tips on writing good documentation.
-        
+      - Have a look [here](https://antwerp-api.digipolis.be/#/content/common/swagger-docs) for tips on writing good documentation.        
+  contact:
+    name: John Doe
+    email: john.doe@gmail.com
+    url: https://www.johndoe.com
+  license:
+    name: MIT license
+    url: https://opensource.org/licenses/MIT
 servers:
   - url: 'https://{environment}.antwerpen.be/{catalog}/{provider}/{service}/{version}'
     description: OTAP servers

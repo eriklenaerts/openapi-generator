@@ -99,6 +99,7 @@ Use the .env configuration file to set the following: environment variables
 
 
 ## Contribute
+- Find me at https://github.com/eriklenaerts/openapi-generator
 - Fork away or sent Pull Requests :v:
 
 ## Note to myself: Development
