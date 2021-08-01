@@ -103,5 +103,5 @@ dist
 .tern-port
 
 # project specific files
-TODO.md
 *.yaml
+!/templates/*.yaml

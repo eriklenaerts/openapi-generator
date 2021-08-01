@@ -92,11 +92,11 @@ paths: {}
             application/json:
               schema:
                 type: object
-                description: 'The `id` of the newly created `{{capitalize name}}`'
+                description: 'The `id` of the newly created `{{name}}`'
                 properties:
                   id:
                     type: number
-                    description: 'A unique number for `{{capitalize name}}`'
+                    description: 'A unique number for `{{name}}`'
                     readOnly: true
                     example: {{random 1000 10000}}
           headers:
@@ -274,7 +274,7 @@ paths: {}
     {{#if ops.hasDelete}}
     delete:
       summary: Delete a {{name}}
-      description: 'Remove the `{{capitalize name}}` with the given id.'
+      description: 'Remove the `{{name}}` with the given id.'
       parameters:
         - $ref: '#/components/parameters/{{idParameter}}'
         {{#if parent }}
@@ -427,18 +427,18 @@ components:
       properties:
         id:
           type: number
-          description: 'A unique number for `{{capitalize name}}`'
+          description: 'A unique number for `{{name}}`'
           readOnly: true
           example: {{random 1000 10000}}
         date:
           type: string
           format: date
-          description: 'The date when this `{{capitalize name}}` was issued.'
+          description: 'The date when this `{{name}}` was issued.'
           example: '2020-04-16'
         logo:
           type: string
           format: uri
-          description: 'The logo for this `{{capitalize name}}`'
+          description: 'The logo for this `{{name}}`'
           example: 'https://s3.amazon.com/klj{{random 1000 10000}}/logo.xyz.png'
 {{/each}}
     healthStatus:

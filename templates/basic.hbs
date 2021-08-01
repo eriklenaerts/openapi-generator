@@ -25,15 +25,8 @@ paths: {}
         {{#if parent }}
         - $ref: '#/components/parameters/{{parent.idParameter}}'
         {{/if}}
-        - in: query
-          name: refnumber
-          description: Filter {{collection}} using a given refnumber
-          schema:
-            type: integer
-            example: {{random 1 500}}
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/pagesize'
-        - $ref: '#/components/parameters/pagingStrategy'
       responses:
         '200':
           description: OK
@@ -67,11 +60,11 @@ paths: {}
             application/json:
               schema:
                 type: object
-                description: 'The `id` of the newly created `{{capitalize name}}`'
+                description: 'The `id` of the newly created `{{name}}`'
                 properties:
                   id:
                     type: number
-                    description: 'A unique number for `{{capitalize name}}`'
+                    description: 'A unique number for `{{name}}`'
                     readOnly: true
                     example: {{random 1000 10000}}
           headers:
@@ -249,7 +242,7 @@ paths: {}
     {{#if ops.hasDelete}}
     delete:
       summary: Delete a {{name}}
-      description: 'Remove the `{{capitalize name}}` with the given id.'
+      description: 'Remove the `{{name}}` with the given id.'
       parameters:
         - $ref: '#/components/parameters/{{idParameter}}'
         {{#if parent }}
@@ -308,17 +301,6 @@ components:
       required: true
       schema:
         type: integer
-    pagingStrategy:
-      name: paging-strategy
-      in: query
-      description: Specify the paging strategy, i.e. if totalPages and totalElements
-        should be included in the response output
-      schema:
-        type: string
-        default: noCount
-        enum:
-        - noCount
-        - withCount
     page:
       name: page
       in: query
@@ -335,7 +317,7 @@ components:
             schema:
                 $ref: '#/components/schemas/problem'
             example:
-              type: 'https://api-gw-a.antwerpen.be/antwerpen/digipolis/{{name}}/{{version}}/errors/SVC0034'
+              type: 'https://api.somedomain.com/{{name}}/{{version}}/errors/SVC0034'
               title: 'The request is malformed, please check the URL in the queryparameters and header values.'
               status: 400
               identifier: 'DDD68BE6-B522-3E35-08BF-9563D1D11991'
@@ -347,7 +329,7 @@ components:
             schema:
                 $ref: '#/components/schemas/problem'
             example:
-              type: 'https://api-gw-a.antwerpen.be/antwerpen/digipolis/{{name}}/{{version}}/errors/SVC0032'
+              type: 'https://api.somedomain.com/{{name}}/{{version}}/errors/SVC0032'
               title: 'There seems to be an issue with the server at the moment. Please try again later.'
               status: 500
               identifier: 'C5C68BE6-B5FF-11E5-B08F-D1D119563991'
@@ -359,7 +341,7 @@ components:
             schema:
                 $ref: '#/components/schemas/problem'
             example:
-              type: 'https://api-gw-a.antwerpen.be/antwerpen/digipolis/{{name}}/{{version}}/errors/SVC0011'
+              type: 'https://api.somedomain.com/{{name}}/{{version}}/errors/SVC0011'
               title: 'Requested resource not found.'
               status: 404
               identifier: 'B5FF68BBB-DE23-89AB-CCC2-7891D1D11956'
@@ -414,26 +396,116 @@ components:
       properties:
         id:
           type: number
-          description: 'A unique number for `{{capitalize name}}`'
+          description: 'A unique number for `{{name}}`'
           readOnly: true
           example: {{random 1000 10000}}
         date:
           type: string
           format: date
-          description: 'The date when this `{{capitalize name}}` was issued.'
+          description: 'The date when this `{{name}}` was issued.'
           example: '2020-04-16'
         logo:
           type: string
           format: uri
-          description: 'The logo for this `{{capitalize name}}`'
+          description: 'The logo for this `{{name}}`'
           example: 'https://s3.amazon.com/klj{{random 1000 10000}}/logo.xyz.png'
 {{/each}}
     links:
-      $ref: 'https://raw.githubusercontent.com/digipolisantwerpdocumentation/api-system/master/components/paging.yaml#/components/schemas/Links'
+      type: object
+      description: provides navigational uri's to other pages of the collection
+      properties:
+        self:
+          type: object
+          properties:
+            href:
+              type: string
+              format: uri
+              example: https://api.somedomain.com/{{name}}/{{version}}/resource?pagesize=5&page=2
+          description: contains a link to this page of this collection
+        first:
+          type: object
+          properties:
+            href:
+              type: string
+              format: uri
+              example: https://api.somedomain.com/{{name}}/{{version}}/resource?pagesize=5&page=1
+          description: contains a link to the first page of this collection
+        last:
+          type: object
+          properties:
+            href:
+              type: string
+              format: uri
+              example: https://api.somedomain.com/{{name}}/{{version}}/resource?pagesize=5&page=last
+          description: contains a link to the last page of this collection
+        prev:
+          type: object
+          properties:
+            href:
+              type: string
+              format: uri
+              example: https://api.somedomain.com/{{name}}/{{version}}/resource?pagesize=5&page=1
+          description: contains a link to the previous page of this collection
+        next:
+          type: object
+          properties:
+            href:
+              type: string
+              format: uri
+              example: https://api.somedomain.com/{{name}}/{{version}}/resource?pagesize=5&page=3
+          description: contains a link to the next page of this collection
     pages:
-      $ref: 'https://raw.githubusercontent.com/digipolisantwerpdocumentation/api-system/master/components/paging.yaml#/components/schemas/Pages'
+      type: object
+      required:
+      - number
+      - size
+      properties:
+        size:
+          type: integer
+          description: returns the size of a page provided in the pagesize query parameter of the request
+          example: 10
+        totalElements:
+          type: integer
+          description: the total number of items in the resulting collection
+          example: 34
+        totalPages:
+          type: integer
+          description: the total number of pages in the resulting array. This is calculated with the given size value
+          example: 4
+        number:
+          type: integer
+          description: return the page number provided in the page query parameter of the request
+          example: 1
+      description: A generic model used to describe paging information when requesting a list of resources.
     problem:
-      $ref: 'https://raw.githubusercontent.com/eriklenaerts/api-requirements/generic-defs/components/problem.yaml#/components/schemas/Problem'
+      type: object
+      properties:
+        type:
+          type: string
+          description: A URI identifying this problem. The URI should resolve into human-readable documentation for this problem.
+          format: uri
+          example: https://api.somedomain.com/{{name}}/{{version}}/resource/FE0032
+        title:
+          type: string
+          description: A short, summary of the problem type. Written in english and readable for engineers (usually not suited for non technical stakeholders and not localized)
+          example: You do not have enough credit.
+        status:
+          maximum: 6E+2
+          exclusiveMaximum: true
+          minimum: 4E+2
+          type: integer
+          description: The HTTP status code generated by the origin server for this occurrence of the problem.
+          format: int32
+          example: 400
+        identifier:
+          type: string
+          description: a unique identifier of the given problem, usefull to recover this problem message into a logging system.
+          example: C5C68BE6-B5FF-11E5-B08F-D1D119563991
+        code:
+          type: string
+          description: the code of the given problem
+          example: FE0032
+      description: A generic model used to describe problems as a result of incorrect or failed HTTP requests.
 tags:
 {{#each tags}}
   - name: {{capitalize name}}
