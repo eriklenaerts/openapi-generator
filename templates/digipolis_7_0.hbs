@@ -305,11 +305,11 @@ paths: {}
 {{/each}}
 {{#if resources.length}}
   '/status/health':
-    $ref: 'https://raw.githubusercontent.com/eriklenaerts/openapi-generator/master/templates/yaml/v3/monitoring.yaml#/paths/~1status~1health'      
+    $ref: 'https://raw.githubusercontent.com/eriklenaerts/openapi-generator/master/templates/monitoring.yaml#/paths/~1status~1health'      
   '/status/health/components':
-    $ref: 'https://raw.githubusercontent.com/eriklenaerts/openapi-generator/master/templates/yaml/v3/monitoring.yaml#/paths/~1status~1health~1components'    
+    $ref: 'https://raw.githubusercontent.com/eriklenaerts/openapi-generator/master/templates/monitoring.yaml#/paths/~1status~1health~1components'    
   '/status/metrics':
-    $ref: 'https://raw.githubusercontent.com/eriklenaerts/openapi-generator/master/templates/yaml/v3/monitoring.yaml#/paths/~1status~1metrics'    
+    $ref: 'https://raw.githubusercontent.com/eriklenaerts/openapi-generator/master/templates/monitoring.yaml#/paths/~1status~1metrics'    
 {{/if}}
 components:
   parameters:
