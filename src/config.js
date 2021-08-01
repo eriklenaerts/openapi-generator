@@ -12,10 +12,10 @@ if (result.error) {
 
 const { parsed: envs } = result;
 module.exports = {
-    templateProvider: process.env.TEMPLATE_PROVIDER,
-    templateBaseLocation: process.env.TEMPLATES_BASE_LOCATION,
-    defaultTemplate : process.env.DEFAULT_TEMPLATE,
-    defaultTargetLocation : process.env.DEFAULT_TARGET_LOCATION,
-    uniqueTarget : (process.env.UNIQUE_TARGET.trim() == 'true'), 
+    templateProvider: process.env.TEMPLATE_PROVIDER || 'FileSystem',
+    templateBaseLocation: process.env.TEMPLATES_BASE_LOCATION || '../templates',
+    defaultTemplate : process.env.DEFAULT_TEMPLATE || 'default.hbs', 
+    defaultTargetLocation : process.env.DEFAULT_TARGET_LOCATION || process.cwd(),
+    uniqueTarget : process.env.UNIQUE_TARGET ? (process.env.UNIQUE_TARGET.trim() == 'true') : false, 
 };
 

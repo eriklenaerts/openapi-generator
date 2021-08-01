@@ -43,7 +43,7 @@ export default class template {
             return response.data;
 
         } catch (error) {
-            throw new Error(`Downloading template from ${templateLocation}\n\t${error}`);
+            throw new Error(`downloading template from ${templateLocation}\n\t${error}`);
         }
     }
 
@@ -58,8 +58,7 @@ export default class template {
 
             return content;
         } catch (error) {
-            consola.error(error)
-            process.exit(1)
+            throw new Error(`downloading template from ${templateLocation}\n\t${error}`);
         }
     }
 

@@ -88,23 +88,29 @@ Some examples:
 
 ## Configuration
 Use the .env configuration file to set the following: environment variables
-- TEMPLATE_PROVIDER: Specify if you want templates to be served from the file system or online. Choose between the 'FileSystem' or 'Online'
-- TEMPLATES_BASE_LOCATION: Set the base location for the given Template Provider.
-- DEFAULT_TEMPLATE: Set the default template in case nothing was provided using the --template cli argument. If both the cli argument and this config variable are missing, it is set to 'default.hbs'
-- DEFAULT_TARGET_LOCATION: Set the default target location in case nothing was provided using the --target cli argument. if this is not set here or via the cli argument, it is set to the current working folder.
-- UNIQUE_TARGET: if true, each target file will have a unique part in the filename so it always writes a new file. if false, the target file name stays the same over multiple generation runs and thus overwrites it each time.
 
-## Development
+| Config variable         	| Description                                                                                                                                     	| Default value          	|
+|-------------------------	|-------------------------------------------------------------------------------------------------------------------------------------------------	|------------------------	|
+| TEMPLATE_PROVIDER       	| Specify the source of the templates. ('FileSystem' or 'Online')                                                                                 	| FileSystem             	|
+| TEMPLATES_BASE_LOCATION 	| Set the base location for the given Template Provider.                                                                                          	|                        	|
+| DEFAULT_TEMPLATE        	| Set the default template, though the --template cli argument takes precedence.                                                                  	| default.hbs            	|
+| DEFAULT_TARGET_LOCATION 	| Set the default target location in case nothing was provided using the --target cli argument.                                                   	| current working folder 	|
+| UNIQUE_TARGET           	| If true, each target file will have a unique part in the filename so it always writes a new file.  if false, the file is overwritten each time. 	| false                  	|
+|                         	|                                                                                                                                                 	|                        	|
+|                         	|                                                                                                                                                 	|                        	|√
+
+
+## Contribute
+- Fork away or sent Pull Requests :v:
+
+## Note to myself: Development
 To debug:
 - set `Toggle Auto Attach` to smart or always using Command Palette (`⇧⌘P`), restart Terminal, see also https://code.visualstudio.com/docs/nodejs/nodejs-debugging#_auto-attach
 - open the code in Visual Studio Code. 
 - set breakpoints in the code
 - type `node bin/generator` in a terminal
 
-## Contribute:
-- Fork away or sent Pull Requests :v:
-
-# Publish this package on npm
+# Note to myself: Publish this package on npm
 - increase version number in the `package.json` file
 - ececute the `npm publish` command in a terminal
 - FYI: to check all versions of this package so far on npm, execute `npm show @eriklenaerts/openapi-docgen versions --json`
