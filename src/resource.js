@@ -2,6 +2,7 @@ import pluralize from "pluralize";
 import chalk from 'chalk';
 import consola from './consola';
 import operations from "./operations";
+import parameter from "./parameter";
 import { defaultOpsModifier } from './config'
 
 export default class resource {
@@ -23,14 +24,13 @@ export default class resource {
                 throw new Error(`There\'s something wrong with the format of this (${resourceString}) resource argument`);
 
             let saveName = match.groups.resource.replace(/[^a-z0-9_]+/gi, '-').replace(/^-|-$/g, '').toLowerCase();
-            let parameterName = match.groups.resource.replace(/\W+(.)/g, (match, chr) => { return chr.toUpperCase();}) + 'Id';
 
             this.verbose = verbose
             this.name = pluralize.singular(saveName);
             this.tag = match.groups.tag || match.groups.resource;
             this.collection = pluralize(saveName);
             this.parent = match.groups.parent ? new resource(match.groups.parent) : null;
-            this.idParameter = parameterName;
+            this.idParameter = new parameter(pluralize.singular(match.groups.resource), (this.parent != null));
             this.ops = new operations(match.groups.ops || defaultOpsModifier, this.verbose);
             this.collectionPath = this.ops.hasCollectionOps ? this.determinePath(this.parent, this.collection) : null;
             this.resourcePath = this.ops.hasResourceOps ? this.determinePath(this.parent, this.collection, this.idParameter) : null;
@@ -47,7 +47,7 @@ export default class resource {
         path += collection;
 
         if (idParameter)
-            path += '/{' + idParameter + '}';
+            path += '/{' + idParameter.key + '}';
 
         return path;
     }

@@ -54,7 +54,7 @@ paths: {}
       description: 'Retrieve a paged result list of {{#if parent }}`{{collection}}` for a certain `{{parent.name}}`{{else}}`{{collection}}`{{/if}}.'
       parameters:
         {{#if parent }}
-        - $ref: '#/components/parameters/{{parent.idParameter}}Param'
+        - $ref: '#/components/parameters/{{parent.idParameter.name}}'
         {{/if}}
         - in: query
           name: refnumber
@@ -85,7 +85,7 @@ paths: {}
       description: 'Add a new `{{name}}` resource to the `{{collection}}` collection{{#if parent }} of the given `{{parent.name}}`{{/if}}.'
       parameters:
       {{#if parent }}
-        - $ref: '#/components/parameters/{{parent.idParameter}}Param'
+        - $ref: '#/components/parameters/{{parent.idParameter.name}}'
       {{/if}}
         - $ref: '#/components/parameters/correlationParam'
         - $ref: '#/components/parameters/tenantIdParam'
@@ -129,9 +129,9 @@ paths: {}
       summary: Retrieve one {{name}}
       description: 'Retrieve exactly one `{{name}}` for the given id in the path.'
       parameters:
-        - $ref: '#/components/parameters/{{idParameter}}Param'
+        - $ref: '#/components/parameters/{{idParameter.name}}'
         {{#if parent }}
-        - $ref: '#/components/parameters/{{parent.idParameter}}Param'
+        - $ref: '#/components/parameters/{{parent.idParameter.name}}'
         {{/if}}
         - $ref: '#/components/parameters/correlationParam'
         - $ref: '#/components/parameters/tenantIdParam'
@@ -166,9 +166,9 @@ paths: {}
       summary: Check if the {{name}} exist
       description: 'Check if the `{{name}}` with the given id exists.'
       parameters:
-        - $ref: '#/components/parameters/{{idParameter}}Param'
+        - $ref: '#/components/parameters/{{idParameter.name}}'
         {{#if parent }}
-        - $ref: '#/components/parameters/{{parent.idParameter}}Param'
+        - $ref: '#/components/parameters/{{parent.idParameter.name}}'
         {{/if}}
         - $ref: '#/components/parameters/correlationParam'
         - $ref: '#/components/parameters/tenantIdParam'
@@ -199,9 +199,9 @@ paths: {}
       summary: Replace the {{name}} with the one given here
       description: 'Replace the complete `{{name}}` resource with the one provided in the payload. If {{name}} does not exist a 404 will be returned.'
       parameters:
-        - $ref: '#/components/parameters/{{idParameter}}Param'
+        - $ref: '#/components/parameters/{{idParameter.name}}'
         {{#if parent }}
-        - $ref: '#/components/parameters/{{parent.idParameter}}Param'
+        - $ref: '#/components/parameters/{{parent.idParameter.name}}'
         {{/if}}
         - $ref: '#/components/parameters/correlationParam'
         - $ref: '#/components/parameters/tenantIdParam'
@@ -249,9 +249,9 @@ paths: {}
       summary: Update a {{name}}
       description: 'With this operation you can update parts of the `{{name}}` for the given id.'
       parameters:
-        - $ref: '#/components/parameters/{{idParameter}}Param'
+        - $ref: '#/components/parameters/{{idParameter.name}}'
         {{#if parent }}
-        - $ref: '#/components/parameters/{{parent.idParameter}}Param'
+        - $ref: '#/components/parameters/{{parent.idParameter.name}}'
         {{/if}}
         - $ref: '#/components/parameters/correlationParam'
         - $ref: '#/components/parameters/tenantIdParam'
@@ -294,9 +294,9 @@ paths: {}
       summary: Delete a {{name}}
       description: 'Remove the `{{name}}` with the given id.'
       parameters:
-        - $ref: '#/components/parameters/{{idParameter}}Param'
+        - $ref: '#/components/parameters/{{idParameter.name}}'
         {{#if parent }}
-        - $ref: '#/components/parameters/{{parent.idParameter}}Param'
+        - $ref: '#/components/parameters/{{parent.idParameter.name}}'
         {{/if}}
         - $ref: '#/components/parameters/correlationParam'
         - $ref: '#/components/parameters/tenantIdParam'
@@ -352,8 +352,8 @@ components:
         format: byte
       example: 'eyAiaWQiOiAiYjg2MjVjIiwgInNvdXJjZSI6ICJhcHBOYW1lIiwgInVzZXJJZCI6ICJ1c2VyaWQiLCAiaXBBZGRyZXNzIjogIjE5NC4yNS43Ni4xMjIiIH0='
 {{#each resources}}
-    {{idParameter}}Param:
-      name: {{idParameter}}
+    {{idParameter.name}}:
+      name: {{idParameter.key}}
       in: path
       description: >-
         The unique `id` of this `{{name}}` in our system.

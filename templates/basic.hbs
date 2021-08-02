@@ -23,7 +23,7 @@ paths: {}
       description: 'Retrieve a paged result list of {{#if parent }}`{{collection}}` for a certain `{{parent.name}}`{{else}}`{{collection}}`{{/if}}.'
       parameters:
         {{#if parent }}
-        - $ref: '#/components/parameters/{{parent.idParameter}}'
+        - $ref: '#/components/parameters/{{parent.idParameter.name}}'
         {{/if}}
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/pagesize'
@@ -45,7 +45,7 @@ paths: {}
       description: 'Add a new `{{name}}` resource to the `{{collection}}` collection{{#if parent }} of the given `{{parent.name}}`{{/if}}.'
       {{#if parent }}
       parameters:
-        - $ref: '#/components/parameters/{{parent.idParameter}}'
+        - $ref: '#/components/parameters/{{parent.idParameter.name}}'
       {{/if}}
       requestBody:
         required: true
@@ -87,9 +87,9 @@ paths: {}
       summary: Retrieve one {{name}}
       description: 'Retrieve exactly one `{{name}}` for the given id in the path.'
       parameters:
-        - $ref: '#/components/parameters/{{idParameter}}'
+        - $ref: '#/components/parameters/{{idParameter.name}}'
         {{#if parent }}
-        - $ref: '#/components/parameters/{{parent.idParameter}}'
+        - $ref: '#/components/parameters/{{parent.idParameter.name}}'
         {{/if}}
       responses:
         '200':
@@ -122,9 +122,9 @@ paths: {}
       summary: Check if the {{name}} exist
       description: 'Check if the `{{name}}` with the given id exists.'
       parameters:
-        - $ref: '#/components/parameters/{{idParameter}}'
+        - $ref: '#/components/parameters/{{idParameter.name}}'
         {{#if parent }}
-        - $ref: '#/components/parameters/{{parent.idParameter}}'
+        - $ref: '#/components/parameters/{{parent.idParameter.name}}'
         {{/if}}
       responses:
         '200':
@@ -153,9 +153,9 @@ paths: {}
       summary: Replace the {{name}} with the one given here
       description: 'Replace the complete `{{name}}` resource with the one provided in the payload. If {{name}} does not exist a 404 will be returned.'
       parameters:
-        - $ref: '#/components/parameters/{{idParameter}}'
+        - $ref: '#/components/parameters/{{idParameter.name}}'
         {{#if parent }}
-        - $ref: '#/components/parameters/{{parent.idParameter}}'
+        - $ref: '#/components/parameters/{{parent.idParameter.name}}'
         {{/if}}
       requestBody:
         required: true
@@ -201,9 +201,9 @@ paths: {}
       summary: Update a {{name}}
       description: 'With this operation you can update parts of the `{{name}}` for the given id.'
       parameters:
-        - $ref: '#/components/parameters/{{idParameter}}'
+        - $ref: '#/components/parameters/{{idParameter.name}}'
         {{#if parent }}
-        - $ref: '#/components/parameters/{{parent.idParameter}}'
+        - $ref: '#/components/parameters/{{parent.idParameter.name}}'
         {{/if}}
       requestBody:
         required: true
@@ -281,8 +281,8 @@ components:
       schema:
         type: string
 {{#each resources}}
-    {{idParameter}}:
-      name: {{idParameter}}
+    {{idParameter.name}}:
+      name: {{idParameter.key}}
       in: path
       description: >-
         The unique `id` of this `{{name}}` in our system.
