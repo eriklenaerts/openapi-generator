@@ -206,7 +206,7 @@ async function promptForMissingOptions(options) {
     });
     answers.resources = answers.resources.slice(0, -1);
     consola.newline().trace('assembed the following resource structure: ' + chalk.cyan(answers.resources), options.verbose);
-    consola.newline().tip('Want to skip prompts next time? Copy and run this command: ' + chalk.cyan('openapi-docgen ' + (options.name || answers.name) + ' -r \'' + answers.resources + (options.verbose ? '\' -v\n' : '\'\n')));
+    consola.newline().tip('Want to skip prompts next time? Copy and run this command: ' + chalk.cyan('openapi-docgen ' + (options.name || answers.name) + ' -r ' + (process.platform == 'win32' ? '\"' : '\'') + answers.resources + (process.platform == 'win32' ? '\"' : '\'') + (options.verbose ? '-v\n' : '\n')));
 
     return {
         ...options,
