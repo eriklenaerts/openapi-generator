@@ -3,8 +3,8 @@ const { default: consola } = require('./consola');
 const result = env.config();
 
 if (result.error) {
-    getInstalledPathSync = require('get-installed-path');
-    isInstalled = require('is-installed');    
+    const { getInstalledPathSync } = require('get-installed-path');
+    const isInstalled = require('is-installed');    
     let installpath = isInstalled.sync('@eriklenaerts/openapi-docgen') ? getInstalledPathSync('@eriklenaerts/openapi-docgen') : process.cwd();
     consola.error('Missing environment file. Be sure that there\'s an \'.env\' file here ' + installpath);
     process.exit();
