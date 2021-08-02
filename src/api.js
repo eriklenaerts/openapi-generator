@@ -17,11 +17,10 @@ export default class api {
         consola.trace(`Parsing CLI input for API ${chalk.cyan(options.name + ' (' + options.apiVersion + ')')}`, options.verbose);
 
         if (options.name) {
-            let match = (/^(?:[a-zA-Z0-9-])*$/g).exec(options.name);
+            let match = (/^(?:[a-zA-Z0-9-\s])*$/g).exec(options.name);
             if (!match)
                 throw new Error(`The name (${options.name}) is invalid, please use small or big letters, numbers or hyphens (-) only.`);
         }
-
         this.name = options.name.toLowerCase();
         this.verbose = options.verbose;
         this.version = options.apiVersion;

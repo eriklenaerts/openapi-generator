@@ -73,4 +73,7 @@ export default class consola {
         return this;
     }
 
+    static get quoteSymbol() {
+        return (process.platform == 'win32' ? '\"' : '\'');
+    }
 }

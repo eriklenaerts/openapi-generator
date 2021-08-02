@@ -109,7 +109,7 @@ async function promptForMissingOptions(options) {
             options.name = null;
         }
 
-        let match = (/^(?:[a-zA-Z0-9-])*$/g).exec(options.name);
+        let match = (/^(?:[a-zA-Z0-9-\s])*$/g).exec(options.name);
         if (!match) {
             consola.warn(`Sorry m8, can't work with name ${chalk.cyan(options.name)}. Not fond of special characters here. Let's try again.`);
             options.name = null;
@@ -128,7 +128,7 @@ async function promptForMissingOptions(options) {
                 if (input.length < 3)
                     return `Seems ${chalk.cyan(input)} is rather short. How about providing 3 or more characters, that could work for me.`;
 
-                let match = (/^(?:[a-zA-Z0-9-])*$/g).exec(input);
+                let match = (/^(?:[a-zA-Z0-9-\s])*$/g).exec(input);
                 if (!match)
                     return `Sorry, I can't work with the name ${chalk.cyan(input)}, special characters throw me off. Please use letters, numbers or hyphens only. Cheers ;)`;
 
@@ -206,7 +206,7 @@ async function promptForMissingOptions(options) {
     });
     answers.resources = answers.resources.slice(0, -1);
     consola.newline().trace('assembed the following resource structure: ' + chalk.cyan(answers.resources), options.verbose);
-    consola.newline().tip('Want to skip prompts next time? Copy and run this command: ' + chalk.cyan('openapi-docgen ' + (options.name || answers.name) + ' -r ' + (process.platform == 'win32' ? '\"' : '\'') + answers.resources + (process.platform == 'win32' ? '\"' : '\'') + (options.verbose ? '-v\n' : '\n')));
+    consola.newline().tip('Want to skip prompts next time? Copy and run this command: ' + chalk.cyan('openapi-docgen ' + consola.quoteSymbol + (options.name || answers.name) + consola.quoteSymbol + ' -r ' + consola.quoteSymbol + answers.resources + consola.quoteSymbol + (options.verbose ? '-v\n' : '\n')));
 
     return {
         ...options,
