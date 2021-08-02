@@ -325,11 +325,11 @@ paths: {}
 {{/each}}
 {{#if resources.length}}
   '/status/health':
-    $ref: 'https://raw.githubusercontent.com/eriklenaerts/openapi-generator/master/templates/monitoring.yaml#/paths/~1status~1health'      
+    $ref: 'https://raw.githubusercontent.com/digipolisantwerpdocumentation/api-system/master/components/monitoring.yaml#/paths/~1status~1health'      
   '/status/health/components':
-    $ref: 'https://raw.githubusercontent.com/eriklenaerts/openapi-generator/master/templates/monitoring.yaml#/paths/~1status~1health~1components'    
+    $ref: 'https://raw.githubusercontent.com/digipolisantwerpdocumentation/api-system/master/components/monitoring.yaml#/paths/~1status~1health~1components'    
   '/status/metrics':
-    $ref: 'https://raw.githubusercontent.com/eriklenaerts/openapi-generator/master/templates/monitoring.yaml#/paths/~1status~1metrics'    
+    $ref: 'https://raw.githubusercontent.com/digipolisantwerpdocumentation/api-system/master/components/monitoring.yaml#/paths/~1status~1metrics'    
 {{/if}}
 components:
   parameters:
@@ -473,15 +473,15 @@ components:
           example: 'https://s3.amazon.com/klj{{random 1000 10000}}/logo.xyz.png'
 {{/each}}
     healthStatus:
-      $ref: 'https://raw.githubusercontent.com/eriklenaerts/openapi-generator/master/templates/yaml/v3/monitoring.yaml#/components/schemas/healthStatus'    
+      $ref: 'https://raw.githubusercontent.com/digipolisantwerpdocumentation/api-system/master/components/monitoring.yaml#/components/schemas/healthStatus'    
     healthStatusComponents:
-      $ref: 'https://raw.githubusercontent.com/eriklenaerts/openapi-generator/master/templates/yaml/v3/monitoring.yaml#/components/schemas/healthStatusComponents'    
+      $ref: 'https://raw.githubusercontent.com/digipolisantwerpdocumentation/api-system/master/components/monitoring.yaml#/components/schemas/healthStatusComponents'    
     links:
       $ref: 'https://raw.githubusercontent.com/digipolisantwerpdocumentation/api-system/master/components/paging.yaml#/components/schemas/Links'
     pages:
       $ref: 'https://raw.githubusercontent.com/digipolisantwerpdocumentation/api-system/master/components/paging.yaml#/components/schemas/Pages'
     problem:
-      $ref: 'https://raw.githubusercontent.com/eriklenaerts/api-requirements/generic-defs/components/problem.yaml#/components/schemas/Problem'
+      $ref: 'https://raw.githubusercontent.com/digipolisantwerpdocumentation/api-system/master/components/problem.yaml#/components/schemas/Problem'
   securitySchemes:
     ApiKeyAuth:        
       type: apiKey
