@@ -3,7 +3,7 @@ import chalk from 'chalk';
 import inquirer from 'inquirer';
 import consola from './consola.js';
 import { generate } from './main.js';
-import { defaultTemplate, defaultOutputLocation, uniqueOutputFileName } from './config'
+import { defaultTemplate, defaultOutputLocation, uniqueOutputFileName, defaultOpsModifier } from './config'
 
 
 function parseArgumentsIntoOptions(rawArgs) {
@@ -169,13 +169,13 @@ async function promptForMissingOptions(options) {
                 name: resource + 'Ops',
                 message: 'Select the operations for ' + chalk.reset.cyan(resource) + ':',
                 choices: [
-                    { name: '[GET] \tList all resources', short: 'List', value: 2, checked: true },
-                    { name: '[POST] \tCreate a resource', short: 'Create', value: 4, checked: true },
-                    { name: '[GET] \tRead one resource', short: 'Read', value: 8, checked: true },
-                    { name: '[HEAD] \tCheck if a resource exist', short: 'Check', value: 16 },
-                    { name: '[PUT] \tReplace a resource', short: 'Replace', value: 32, checked: true },
-                    { name: '[PATCH] \tUpdate a resource', short: 'Update', value: 64, checked: true },
-                    { name: "[DELETE] \tRemove a resource.", short: 'Delete', value: 128, checked: true }]
+                    { name: '[GET] \tList all resources', short: 'List', value: 2, checked: (defaultOpsModifier & 2) == 2 },
+                    { name: '[POST] \tCreate a resource', short: 'Create', value: 4, checked: (defaultOpsModifier & 4) == 4 },
+                    { name: '[GET] \tRead one resource', short: 'Read', value: 8, checked: (defaultOpsModifier & 8) == 8 },
+                    { name: '[HEAD] \tCheck if a resource exist', short: 'Check', value: 16, checked: (defaultOpsModifier & 16) == 16 },
+                    { name: '[PUT] \tReplace a resource', short: 'Replace', value: 32, checked: (defaultOpsModifier & 32) == 32 },
+                    { name: '[PATCH] \tUpdate a resource', short: 'Update', value: 64, checked: (defaultOpsModifier & 64) == 64 },
+                    { name: "[DELETE] \tRemove a resource.", short: 'Delete', value: 128, checked: (defaultOpsModifier & 64) == 64 }]
             });
             questions.push({
                 type: 'input',

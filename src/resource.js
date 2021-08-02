@@ -2,6 +2,7 @@ import pluralize from "pluralize";
 import chalk from 'chalk';
 import consola from './consola';
 import operations from "./operations";
+import { defaultOpsModifier } from './config'
 
 export default class resource {
     parent;
@@ -27,7 +28,7 @@ export default class resource {
             this.collection = pluralize(match.groups.resource);
             this.parent = match.groups.parent ? new resource(match.groups.parent) : null;
             this.idParameter = this.name + 'Id';
-            this.ops = new operations(match.groups.ops, this.verbose);
+            this.ops = new operations(match.groups.ops || defaultOpsModifier, this.verbose);
             this.collectionPath = this.ops.hasCollectionOps ? this.determinePath(this.parent, this.collection) : null;
             this.resourcePath = this.ops.hasResourceOps ? this.determinePath(this.parent, this.collection, this.idParameter) : null;
 
