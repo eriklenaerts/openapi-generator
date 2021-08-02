@@ -3,10 +3,8 @@ const { default: consola } = require('./consola');
 const result = env.config();
 
 if (result.error) {
-    const { getInstalledPathSync } = require('get-installed-path');
-    const isInstalled = require('is-installed');    
-    let installpath = isInstalled.sync('@eriklenaerts/openapi-docgen') ? getInstalledPathSync('@eriklenaerts/openapi-docgen') : process.cwd();
-    consola.error('Missing environment file. Be sure that there\'s an \'.env\' file here ' + installpath);
+    let installpath = process.cwd();
+    consola.error('Missing environment file. Be sure that there\'s an \'.env\' file here ' + installpath + '\nYou can create an .env file with the content found here: https://github.com/eriklenaerts/openapi-generator/blob/master/.env');
     process.exit();
 }
 
