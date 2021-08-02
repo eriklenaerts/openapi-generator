@@ -23,7 +23,7 @@ export default class resource {
                 throw new Error(`There\'s something wrong with the format of this (${resourceString}) resource argument`);
 
             this.verbose = verbose
-            this.name = match.groups.resource;
+            this.name = pluralize.singular(match.groups.resource);
             this.tag = match.groups.tag || match.groups.resource;
             this.collection = pluralize(match.groups.resource);
             this.parent = match.groups.parent ? new resource(match.groups.parent) : null;
