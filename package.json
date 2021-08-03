@@ -15,11 +15,9 @@
     "axios": "^0.21.1",
     "chalk": "^4.1.1",
     "dotenv": "^10.0.0",
-    "get-installed-path": "^4.0.8",
     "handlebars": "^4.7.7",
     "handlebars-helpers": "^0.10.0",
     "inquirer": "^8.1.2",
-    "is-installed": "^2.0.1",
     "pluralize": "^8.0.0",
     "shortid": "^2.2.16"
   },

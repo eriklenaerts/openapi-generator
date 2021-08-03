@@ -1,9 +1,14 @@
 # Open API Document Generator
 Generate new Open API documents based on your own API REST guidelines. 
 
+## Prerequisites
+You have nodejs installed on your computer: https://nodejs.org/en/download/
+
 ## Basic usage
+Open a command line terminal
 ``` bash
 > npm install -g @eriklenaerts/openapi-docgen
+> mkdir your-app
 > cd your-app
 > openapi-docgen
 ```
