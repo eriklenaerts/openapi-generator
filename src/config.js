@@ -1,18 +1,10 @@
 const env = require('dotenv');
-const { default: consola } = require('./consola');
-const result = env.config();
+env.config();
 
-if (result.error) {
-    let installpath = process.cwd();
-    consola.error('Missing environment file. Be sure that there\'s an \'.env\' file here ' + installpath + '\nYou can create an .env file with the content found here: https://github.com/eriklenaerts/openapi-generator/blob/master/.env');
-    process.exit();
-}
-
-const { parsed: envs } = result;
 module.exports = {
     templateProvider: process.env.TEMPLATE_PROVIDER || 'FileSystem',
     templateBaseLocation: process.env.TEMPLATES_BASE_LOCATION || '../templates',
-    defaultTemplate : process.env.DEFAULT_TEMPLATE || 'default.hbs', 
+    defaultTemplate : process.env.DEFAULT_TEMPLATE || 'basic.hbs', 
     defaultOutputLocation : process.env.DEFAULT_OUTPUT_LOCATION || process.cwd(),
     uniqueOutputFileName : process.env.UNIQUE_OUTPUT_FILENAME ? (process.env.UNIQUE_OUTPUT_FILENAME.trim() == 'true') : false, 
     defaultOpsModifier : isNaN(process.env.DEFAULT_OPS) ? 238 : parseInt(process.env.DEFAULT_OPS)
