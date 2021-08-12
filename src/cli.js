@@ -144,7 +144,7 @@ async function promptForMissingOptions(options) {
         questions.push({
             type: 'input',
             name: 'resources',
-            message: 'What resources would you like me to generate?' + chalk.reset.white(' (I like a comma saparated list of singular nouns, e.g. \'invoice, customer\'):'),
+            message: 'What resources would you like me to generate?' + chalk.reset.white(' (I like a comma saparated list of nouns, e.g. \'invoice, customer\'):'),
             validate: async (input) => {
                 if (input === '') {
                     return 'An API without any resources seems odd...';
