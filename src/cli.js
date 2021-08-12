@@ -80,6 +80,7 @@ function showHelp() {
     consola.log('--output|-o <value>\t\tspecify the output folder for the generated output ' + chalk.dim('(default it uses the current working directory).'));
     consola.log('--unique|-u\t\t\tflag to request a unique output filename, if not, output files will be overwritten ' + chalk.dim('(default false).'));
     consola.log('--verbose|-v\t\t\tflag to include verbose tracing messages ' + chalk.dim('(default false)'));
+    consola.log('--setup|-s\t\t\tflag to perform a setup, basically creating a draft environment configuration file ' + chalk.dim('(default false)'));
     consola.log('--help|-h\t\t\tShows this help ');
     consola.newline().subtitle('Configuration:')
     consola.log('You can configure the following in the \'.env\' file.')
@@ -224,6 +225,11 @@ export async function cli(args) {
 
         let options = parseArgumentsIntoOptions(args);
         consola.traceMode = options.verbose
+
+        if (options.setup) {
+            await config.setup();
+            process.exit(1);
+        }
 
         if (options.help) {
             showHelp();
