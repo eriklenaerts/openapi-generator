@@ -1,6 +1,6 @@
 {
   "name": "@eriklenaerts/openapi-docgen",
-  "version": "0.4.5",
+  "version": "0.4.6",
   "description": "Generate an Open API document to kick start your REST API design or development.",
   "main": "src/index.js",
   "bin": {
