@@ -2,7 +2,7 @@
 Generate new Open API documents based on your own API REST guidelines. 
 
 ## Prerequisites
-You have nodejs installed on your computer: https://nodejs.org/en/download/
+You have nodejs installed on your computer, if not download it here: https://nodejs.org/en/download/
 
 ## Basic usage
 Open a command line terminal
