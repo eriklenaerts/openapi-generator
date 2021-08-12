@@ -13,6 +13,14 @@ Open a command line terminal
 > openapi-docgen
 ```
 
+## First time setup
+For your convenience there's a command line switch to create local configuration file. (Basically a copy of the [.env.example](.env.example)).
+``` bash
+> openapi-docgen --setup
+```
+Read the [configuration](#configuration) chapter below for the various options.
+
+
 ## Features
 * Generate OAS (aka swagger) documents in JSON or YAML
 * Provide resource names and it will deal with pluralisaton (English only)
@@ -51,6 +59,8 @@ Open a command line terminal
 ## Calculate the Operations modifier 
 You can determine per resource what operations need to be generated. Simply provide a number - that is the sum of the modifiers in the table below, to modify the generator's behaviour.
 This modifier can be added in square brackets with each resource in the command line.
+
+> Tip: you can [change the default ops modifier](#configuration) yourself
 
 To calculcate this number, use the following table:
 | Operation 	| Description                          	| modifier 	|
@@ -92,16 +102,18 @@ Some examples:
 ```
 
 ## Configuration
-Use the .env configuration file to set the following: environment variables
+Use the .env configuration file to set the following environment variables. 
+
+> Tip: use the `--setup` command line switch to create a sample configuration file, see also [first time setup](#first-time-setup).
 
 | Config variable         	| Description                                                                                                                                     	| Default value          	|
 |-------------------------	|-------------------------------------------------------------------------------------------------------------------------------------------------	|------------------------	|
 | TEMPLATE_PROVIDER       	| Specify the source of the templates. ('FileSystem' or 'Online')                                                                                 	| FileSystem             	|
 | TEMPLATES_BASE_LOCATION 	| Set the base location for the given Template Provider.                                                                                          	|                        	|
-| DEFAULT_TEMPLATE        	| Set the default template, though the --template cli argument takes precedence.                                                                  	| basic.hbs            	|
+| DEFAULT_TEMPLATE        	| Set the default template, though the --template cli argument takes precedence.                                                                  	| basic.hbs              	|
 | DEFAULT_OUTPUT_LOCATION 	| Set the default output location in case nothing was provided using the --output cli argument.                                                   	| current working folder 	|
-| UNIQUE_OUTPUT_FILENAME  	| If true, each output file will have a unique part in the filename so it always writes a new file.  if false, the file is overwritten each time. 	| false                  	|
-
+| UNIQUE_OUTPUT_FILENAME  	| If true, each output file will have a unique part in the filename so it always writes a new file. if false, the file is overwritten each time. 	| false                  	|
+| DEFAULT_OPS_MODIFIER      | When no ops modifier was provided for a resource, use this default. Calculate the modifier [here](#calculate-the-operations-modifier) 	        | 238                     	|
 
 ## Contribute
 - Find me at https://github.com/eriklenaerts/openapi-generator

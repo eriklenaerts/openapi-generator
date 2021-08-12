@@ -76,7 +76,7 @@ function showHelp() {
     consola.tab(4).log('For example \'location/address\' will add an address resource under a ' + chalk.dim('(minimal)') + ' location resource.');
     consola.tab(4).log('For example \'location, location/address\' will add full location ' + chalk.dim('(with default ops)') + ' resource and then address resource as sub resource of the location resource.');
     consola.tab(4).log('For example \'location/address::mytag\' will set the tag to \'mytag\' for the address sub resource.\n');
-    consola.log('--template|-t <value>\t\tspecify the template you like to use ' + chalk.dim('(default is \'default.hbs\'.)'));
+    consola.log('--template|-t <value>\t\tspecify the template you like to use ' + chalk.dim('(default is \'basic.hbs\'.)'));
     consola.log('--output|-o <value>\t\tspecify the output folder for the generated output ' + chalk.dim('(default it uses the current working directory).'));
     consola.log('--unique|-u\t\t\tflag to request a unique output filename, if not, output files will be overwritten ' + chalk.dim('(default false).'));
     consola.log('--verbose|-v\t\t\tflag to include verbose tracing messages ' + chalk.dim('(default false)'));
