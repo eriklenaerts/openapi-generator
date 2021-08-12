@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: {{version}}
+  version: '{{version}}'
   title: {{capitalize name}} API
   description: > 
     This {{name}} API is generated based on the specifications of the [Digipolis API System 7.0](https://antwerp-api.digipolis.be/).
@@ -39,7 +39,7 @@ servers:
         default: {{name}}
         description: the name of this Service 
       version:
-        default: {{version}}
+        default: '{{version}}'
         description: specify the major version of this api
 {{#if resources.length}}
 paths:
