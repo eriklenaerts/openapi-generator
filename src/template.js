@@ -12,17 +12,15 @@ const providers = {
 export default class template {
     name;
     provider;
-    verbose;
 
-    constructor(options) {
-        this.name = options.template
+    constructor(name) {
+        this.name = name
         this.provider = templateProvider;
-        this.verbose = options.verbose;
     }
 
     async getTemplateFromOnline(templateLocation) {
         const axios = require("axios");
-        consola.trace(`- Downloading template from ${chalk.blueBright.underline(templateLocation)}`, this.verbose);
+        consola.trace(`- Downloading template from ${chalk.blueBright.underline(templateLocation)}`);
 
         try {
             let response = await axios({
@@ -33,7 +31,7 @@ export default class template {
                 }
             })
             if (response.status == 200) {
-                consola.trace(`- Finished download, retrieved ${response.data.length} bytes.`, this.verbose);
+                consola.trace(`- Finished download, retrieved ${response.data.length} bytes.`);
             }
 
             return response.data;
@@ -45,12 +43,12 @@ export default class template {
 
     async getTemplateFromFS(templateLocation) {
 
-        consola.trace(`- Reading template from ${chalk.blueBright.underline(templateLocation)}`, this.verbose);
+        consola.trace(`- Reading template from ${chalk.blueBright.underline(templateLocation)}`);
 
         try {
             let content = fs.readFileSync(templateLocation).toString();
 
-            consola.trace(`- Finished, retrieved ${content.length} bytes.`, this.verbose);
+            consola.trace(`- Finished, retrieved ${content.length} bytes.`);
 
             return content;
         } catch (error) {
@@ -90,9 +88,9 @@ export default class template {
         let templateLocation;
         let content;
 
-        consola.trace(`Retrieving template`, this.verbose);
-        consola.trace(`- template ${chalk.cyan(this.name)}`, this.verbose);
-        consola.trace(`- template provider ${chalk.cyan(this.provider)}`, this.verbose);
+        consola.trace(`Retrieving template`);
+        consola.trace(`- template ${chalk.cyan(this.name)}`);
+        consola.trace(`- template provider ${chalk.cyan(this.provider)}`);
 
         if (this.provider == providers.FileSystem) {
             templateLocation = await this.getTemplateLocationForFS(this.name);

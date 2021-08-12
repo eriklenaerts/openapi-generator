@@ -9,7 +9,7 @@ export default class operations {
     hasCollectionOps = true;
     hasResourceOps = true;
 
-    constructor(opsModifier, verbose) {
+    constructor(opsModifier) {
         this.parseOps(opsModifier);
     }
 

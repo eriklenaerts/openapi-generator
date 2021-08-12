@@ -2,6 +2,7 @@ import chalk from "chalk";
 
 export default class consola {
     tabsUsedInChain;
+    isTracingOn;
 
     static log(message) {
         console.log(message);
@@ -27,8 +28,12 @@ export default class consola {
         console.log('%s\t%s', chalk.yellow.bold('WARN'), message);
         return this;
     }
-    static trace(message, isTraceActive) {
-        if (isTraceActive)
+
+    static set traceMode(mode) { this.isTracingOn = mode;}
+    static get traceMode() { return this.isTracingOn}
+
+    static trace(message, traceRequired) {
+        if (this.isTracingOn || traceRequired)
             console.log('%s\t%s', chalk.yellow.bold('TRACE'), message);
         return this;
     }

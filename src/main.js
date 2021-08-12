@@ -8,7 +8,7 @@ import api from './api';
 import consola from './consola';
 import template from './template';
 
-async function compileTemplate(template, templateData, outputPath, options) {
+async function compileTemplate(template, templateData, outputPath) {
     // read the file and use the callback to render
     consola.start('Brewing your OpenAPI document...');
 
@@ -29,10 +29,10 @@ async function compileTemplate(template, templateData, outputPath, options) {
     });
 
     var hbTemplate = handlebars.compile(template);
-    consola.trace('- Template succesfully compiled', options.verbose);
+    consola.trace('- Template succesfully compiled');
 
     var resultData = hbTemplate(templateData);
-    consola.trace('- Cooking the OpenAPI document by merging the Parsed API info with the template', options.verbose);
+    consola.trace('- Cooking the OpenAPI document by merging the Parsed API info with the template');
 
     fs.writeFile(outputPath, resultData, err => {
         if (err)
@@ -41,13 +41,13 @@ async function compileTemplate(template, templateData, outputPath, options) {
         process.exit(1);
     });
 
-    consola.trace('- OpenAPI document saved (FileSystem)', options.verbose);
+    consola.trace('- OpenAPI document saved (FileSystem)');
     consola.done(`OpenAPI document ready & served, you can find it here: ${chalk.blueBright.underline(outputPath)}`);
     consola.tip(`Use '-t|--output <output>' to specify a different output location. ${chalk.dim.italic('(Standard it uses the working directory)')}`);
 }
 
 async function getTemplate(options) {
-    let t = new template(options);
+    let t = new template(options.template);
     let content = await t.getTemplate();
     return content;
 }
@@ -61,13 +61,13 @@ async function determineOutputPath(options) {
     // convert a ~ path to an absolute path if needed.
     let outputLocation = options.outputLocation.replace(/^~($|\/|\\)/,`${require('os').homedir()}$1`);
 
-    consola.trace('Checking output location', options.verbose);
+    consola.trace('Checking output location');
 
     try {
         fs.statSync(outputLocation);
     } catch (err) {
         try {
-            consola.trace(`- creating output folder ${chalk.blueBright.underline(outputLocation)}`, options.verbose);
+            consola.trace(`- creating output folder ${chalk.blueBright.underline(outputLocation)}`);
             fs.mkdirSync(outputLocation);
         } catch (error) {
             consola.error('Can\'t create output folder\n\t' + error.message);
@@ -82,11 +82,11 @@ async function determineOutputPath(options) {
         process.exit(1);
     }
 
-    consola.trace('- output folder: ' + chalk.reset.blueBright.underline(outputLocation) + ' looks good.', options.verbose);
+    consola.trace('- output folder: ' + chalk.reset.blueBright.underline(outputLocation) + ' looks good.');
 
     let uniqueFileNamePostfix = options.uniqueOutputFileName ? '_' + shortid.generate() : '';
     if (options.uniqueOutputFileName)
-        consola.trace('- generating a unique output postfix ' + chalk.cyan(uniqueFileNamePostfix), options.verbose);
+        consola.trace('- generating a unique output postfix ' + chalk.cyan(uniqueFileNamePostfix));
 
     let outputPath = path.resolve(outputLocation, options.name.replace(/[^a-z0-9_]+/gi, '-').replace(/^-|-$/g, '').toLowerCase() + '-api' + uniqueFileNamePostfix + '.yaml');
 
@@ -100,7 +100,7 @@ export async function generate(options) {
     var outputPath = await determineOutputPath(options);
     consola.done('All ingredients prepared.');
 
-    await compileTemplate(template, templateData, outputPath, options);
+    await compileTemplate(template, templateData, outputPath);
 
     return true;
 }

@@ -3,8 +3,7 @@ import chalk from 'chalk';
 import inquirer from 'inquirer';
 import consola from './consola.js';
 import { generate } from './main.js';
-import { defaultTemplate, defaultOutputLocation, uniqueOutputFileName, defaultOpsModifier } from './config'
-
+import config from './config'
 
 function parseArgumentsIntoOptions(rawArgs) {
     const args = arg(
@@ -16,6 +15,7 @@ function parseArgumentsIntoOptions(rawArgs) {
             '--unique': Boolean,
             '--template': String,
             '--verbose': Boolean,
+            '--setup': Boolean,
             '--help': Boolean,
             '-a': '--apiVersion',
             '-r': '--resources',
@@ -23,6 +23,7 @@ function parseArgumentsIntoOptions(rawArgs) {
             '-u': '--unique',
             '-t': '--template',
             '-v': '--verbose',
+            '-s': '--setup',
             '-h': '--help'
         },
         {
@@ -33,10 +34,11 @@ function parseArgumentsIntoOptions(rawArgs) {
         name: args._[0],
         resources: args['--resources'],
         apiVersion: args['--apiVersion'] || 'v1',
-        outputLocation: args['--output'] || defaultOutputLocation || process.cwd(),
-        uniqueOutputFileName: args['--unique'] || uniqueOutputFileName || false,
+        outputLocation: args['--output'] || config.defaultOutputLocation || process.cwd(),
+        uniqueOutputFileName: args['--unique'] || config.uniqueOutputFileName || false,
         verbose: args['--verbose'] || false,
-        template: args['--template'] || defaultTemplate || 'default.hbs',
+        setup: args['--setup'] || false,
+        template: args['--template'] || config.defaultTemplate || 'default.hbs',
         help: args['--help'] || false,
     }
 }
@@ -53,7 +55,7 @@ function showHelp() {
     consola.log('   openapi-docgen <name> [options]');
     consola.newline().log('<name>\t\t\t\tthe name of your API (You should omit the acronim \'API\' preferable)');
     consola.newline().log('[options)');
-    consola.log('--apiVersion|-a <value>\t\tthe version for your API for example \'v1\' '  + chalk.dim('(default)') + ' or 1.2.0');
+    consola.log('--apiVersion|-a <value>\t\tthe version for your API for example \'v1\' ' + chalk.dim('(default)') + ' or 1.2.0');
     consola.log('--resources|-r <value>\t\ta comma seperated list of resource names, e.g. \'invoice, product\'');
     consola.tab(4).log('For each resource you can specify the operations you like and a specific tag.\n');
     consola.tab(4).subtitle('Select your operators:');
@@ -74,9 +76,9 @@ function showHelp() {
     consola.tab(4).log('For example \'location/address\' will add an address resource under a ' + chalk.dim('(minimal)') + ' location resource.');
     consola.tab(4).log('For example \'location, location/address\' will add full location ' + chalk.dim('(with default ops)') + ' resource and then address resource as sub resource of the location resource.');
     consola.tab(4).log('For example \'location/address::mytag\' will set the tag to \'mytag\' for the address sub resource.\n');
-    consola.log('--template|-t <value>\t\tspecify the template you like to use '  + chalk.dim('(default is \'default.hbs\'.)'));
-    consola.log('--output|-o <value>\t\tspecify the output folder for the generated output '  + chalk.dim('(default it uses the current working directory).'));
-    consola.log('--unique|-u\t\t\tflag to request a unique output filename, if not, output files will be overwritten '  + chalk.dim('(default false).'));
+    consola.log('--template|-t <value>\t\tspecify the template you like to use ' + chalk.dim('(default is \'default.hbs\'.)'));
+    consola.log('--output|-o <value>\t\tspecify the output folder for the generated output ' + chalk.dim('(default it uses the current working directory).'));
+    consola.log('--unique|-u\t\t\tflag to request a unique output filename, if not, output files will be overwritten ' + chalk.dim('(default false).'));
     consola.log('--verbose|-v\t\t\tflag to include verbose tracing messages ' + chalk.dim('(default false)'));
     consola.log('--help|-h\t\t\tShows this help ');
     consola.newline().subtitle('Configuration:')
@@ -169,13 +171,13 @@ async function promptForMissingOptions(options) {
                 name: resource + 'Ops',
                 message: 'Select the operations for ' + chalk.reset.cyan(resource) + ':',
                 choices: [
-                    { name: '[GET] \tList all resources', short: 'List', value: 2, checked: (defaultOpsModifier & 2) == 2 },
-                    { name: '[POST] \tCreate a resource', short: 'Create', value: 4, checked: (defaultOpsModifier & 4) == 4 },
-                    { name: '[GET] \tRead one resource', short: 'Read', value: 8, checked: (defaultOpsModifier & 8) == 8 },
-                    { name: '[HEAD] \tCheck if a resource exist', short: 'Check', value: 16, checked: (defaultOpsModifier & 16) == 16 },
-                    { name: '[PUT] \tReplace a resource', short: 'Replace', value: 32, checked: (defaultOpsModifier & 32) == 32 },
-                    { name: '[PATCH] \tUpdate a resource', short: 'Update', value: 64, checked: (defaultOpsModifier & 64) == 64 },
-                    { name: "[DELETE] \tRemove a resource.", short: 'Delete', value: 128, checked: (defaultOpsModifier & 64) == 64 }]
+                    { name: '[GET] \tList all resources', short: 'List', value: 2, checked: (config.defaultOpsModifier & 2) == 2 },
+                    { name: '[POST] \tCreate a resource', short: 'Create', value: 4, checked: (config.defaultOpsModifier & 4) == 4 },
+                    { name: '[GET] \tRead one resource', short: 'Read', value: 8, checked: (config.defaultOpsModifier & 8) == 8 },
+                    { name: '[HEAD] \tCheck if a resource exist', short: 'Check', value: 16, checked: (config.defaultOpsModifier & 16) == 16 },
+                    { name: '[PUT] \tReplace a resource', short: 'Replace', value: 32, checked: (config.defaultOpsModifier & 32) == 32 },
+                    { name: '[PATCH] \tUpdate a resource', short: 'Update', value: 64, checked: (config.defaultOpsModifier & 64) == 64 },
+                    { name: "[DELETE] \tRemove a resource.", short: 'Delete', value: 128, checked: (config.defaultOpsModifier & 64) == 64 }]
             });
             questions.push({
                 type: 'input',
@@ -221,6 +223,8 @@ export async function cli(args) {
         showHeader();
 
         let options = parseArgumentsIntoOptions(args);
+        consola.traceMode = options.verbose
+
         if (options.help) {
             showHelp();
             process.exit(1);

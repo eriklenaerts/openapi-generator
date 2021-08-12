@@ -10,11 +10,10 @@ export default class api {
     resources;
     tags;
     version;
-    verbose;
 
     constructor(options) {
 
-        consola.trace(`Parsing CLI input for API ${chalk.cyan(options.name + ' (' + options.apiVersion + ')')}`, options.verbose);
+        consola.trace(`Parsing CLI input for API ${chalk.cyan(options.name + ' (' + options.apiVersion + ')')}`);
 
         if (options.name) {
             let match = (/^(?:[a-zA-Z0-9-\s])*$/g).exec(options.name);
@@ -22,7 +21,6 @@ export default class api {
                 throw new Error(`The name (${options.name}) is invalid, please use small or big letters, numbers or hyphens (-) only.`);
         }
         this.name = options.name.toLowerCase();
-        this.verbose = options.verbose;
         this.version = options.apiVersion;
         this.urlFriendlyName = options.name.replace(/[^a-z0-9_]+/gi, '-').replace(/^-|-$/g, '').toLowerCase();
         this.resources = this.parseResources(options.resources);
@@ -30,12 +28,12 @@ export default class api {
     };
 
     parseResources(resourcesString) {
-        consola.trace(`- Parsing resources`, this.verbose);
+        consola.trace(`- Parsing resources`);
         if (resourcesString) {
             var resourceArray = resourcesString.toString().split(',').map(r => r.trim());
             var resources = [];
             resourceArray.forEach(element => {
-                resources.push(new resource(element, this.verbose));
+                resources.push(new resource(element));
             });
         }
 
@@ -59,7 +57,7 @@ export default class api {
 
         if (missingParents && missingParents.length > 0) {
             resources = [].concat(missingParents, resources);
-            consola.trace(`- Added ${missingParents.length} missing ${pluralize('parent', missingParents.length)} ${chalk.cyan(missingParents.join(', '))}`, this.verbose);
+            consola.trace(`- Added ${missingParents.length} missing ${pluralize('parent', missingParents.length)} ${chalk.cyan(missingParents.join(', '))}`);
         }
 
         return resources;
@@ -80,7 +78,7 @@ export default class api {
 
         });
 
-        consola.trace(`- Found ${taglist.length} unique ${pluralize('tag', taglist.length)} ${chalk.cyan(taglist.join(', '))}`, this.verbose);
+        consola.trace(`- Found ${taglist.length} unique ${pluralize('tag', taglist.length)} ${chalk.cyan(taglist.join(', '))}`);
 
         return taglist;
     }
