@@ -7,11 +7,9 @@ import shortid from 'shortid'
 import api from './api';
 import consola from './consola';
 import template from './template';
+import config from './config'
 
 async function compileTemplate(template, templateData, outputPath) {
-    // read the file and use the callback to render
-    consola.start('Brewing your OpenAPI document...');
-
     // load handlebar helper functions that extend the capabilities
     handlebarsHelpers.math({ handlebars: handlebars });
     handlebarsHelpers.string({ handlebars: handlebars });
@@ -42,8 +40,6 @@ async function compileTemplate(template, templateData, outputPath) {
     });
 
     consola.trace('- OpenAPI document saved (FileSystem)');
-    consola.done(`OpenAPI document ready & served, you can find it here: ${chalk.blueBright.underline(outputPath)}`);
-    consola.tip(`Use '-t|--output <output>' to specify a different output location. ${chalk.dim.italic('(Standard it uses the working directory)')}`);
 }
 
 async function getTemplate(options) {
@@ -85,10 +81,10 @@ async function determineOutputPath(options) {
     consola.trace('- output folder: ' + chalk.reset.blueBright.underline(outputLocation) + ' looks good.');
 
     let uniqueFileNamePostfix = options.uniqueOutputFileName ? '_' + shortid.generate() : '';
-    if (options.uniqueOutputFileName)
+    if (options.uniqueOutputFileName) 
         consola.trace('- generating a unique output postfix ' + chalk.cyan(uniqueFileNamePostfix));
 
-    let outputPath = path.resolve(outputLocation, options.name.replace(/[^a-z0-9_]+/gi, '-').replace(/^-|-$/g, '').toLowerCase() + '-api' + uniqueFileNamePostfix + '.yaml');
+    let outputPath = path.resolve(outputLocation, options.name.replace(/[^a-z0-9_]+/gi, '-').replace(/^-|-$/g, '').toLowerCase() + '-api-' + options.apiVersion + uniqueFileNamePostfix + '.yaml');
 
     return outputPath;
 }
@@ -100,7 +96,12 @@ export async function generate(options) {
     var outputPath = await determineOutputPath(options);
     consola.done('All ingredients prepared.');
 
+    consola.start('Brewing your OpenAPI document...');
     await compileTemplate(template, templateData, outputPath);
+    consola.done(`OpenAPI document ready & served, you can find it here: ${chalk.blueBright.underline(outputPath)}`);
+
+    if (config.noSetupFound)
+        consola.newline().tip(`Use '--setup' to prepare a sample configuration file where you can set some defaults, handy if you use this tool often.`)
 
     return true;
 }

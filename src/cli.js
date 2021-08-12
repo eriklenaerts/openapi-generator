@@ -237,6 +237,8 @@ export async function cli(args) {
         }
         options = await promptForMissingOptions(options);
         await generate(options);
+
+        consola.newline().log(chalk.whiteBright.bold('Enjoy the results, goodbye & have a nice day ;)'))
     }
     catch (err) {
         consola.error(chalk.red.italic(err.message));
