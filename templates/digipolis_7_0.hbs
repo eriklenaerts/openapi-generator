@@ -66,7 +66,7 @@ paths: {}
         - $ref: '#/components/parameters/pagesize'
         - $ref: '#/components/parameters/pagingStrategy'
         - $ref: '#/components/parameters/correlationParam'
-        - $ref: '#/components/parameters/tenantIdParam'
+        {{#ifNotEquals name 'tenant'}}- $ref: '#/components/parameters/dgptenantIdParam'{{/ifNotEquals}}
       responses:
         '200':
           description: OK
@@ -88,7 +88,7 @@ paths: {}
         - $ref: '#/components/parameters/{{parent.idParameter.name}}'
       {{/if}}
         - $ref: '#/components/parameters/correlationParam'
-        - $ref: '#/components/parameters/tenantIdParam'
+        {{#ifNotEquals name 'tenant'}}- $ref: '#/components/parameters/dgptenantIdParam'{{/ifNotEquals}}
       requestBody:
         required: true
         content:
@@ -134,7 +134,7 @@ paths: {}
         - $ref: '#/components/parameters/{{parent.idParameter.name}}'
         {{/if}}
         - $ref: '#/components/parameters/correlationParam'
-        - $ref: '#/components/parameters/tenantIdParam'
+        {{#ifNotEquals name 'tenant'}}- $ref: '#/components/parameters/dgptenantIdParam'{{/ifNotEquals}}
       responses:
         '200':
           description: OK
@@ -171,7 +171,7 @@ paths: {}
         - $ref: '#/components/parameters/{{parent.idParameter.name}}'
         {{/if}}
         - $ref: '#/components/parameters/correlationParam'
-        - $ref: '#/components/parameters/tenantIdParam'
+        {{#ifNotEquals name 'tenant'}}- $ref: '#/components/parameters/dgptenantIdParam'{{/ifNotEquals}}
       responses:
         '200':
           description: '`{{name}}` exist.'
@@ -204,7 +204,7 @@ paths: {}
         - $ref: '#/components/parameters/{{parent.idParameter.name}}'
         {{/if}}
         - $ref: '#/components/parameters/correlationParam'
-        - $ref: '#/components/parameters/tenantIdParam'
+        {{#ifNotEquals name 'tenant'}}- $ref: '#/components/parameters/dgptenantIdParam'{{/ifNotEquals}}
       requestBody:
         required: true
         content:
@@ -254,7 +254,7 @@ paths: {}
         - $ref: '#/components/parameters/{{parent.idParameter.name}}'
         {{/if}}
         - $ref: '#/components/parameters/correlationParam'
-        - $ref: '#/components/parameters/tenantIdParam'
+        {{#ifNotEquals name 'tenant'}}- $ref: '#/components/parameters/dgptenantIdParam'{{/ifNotEquals}}
       requestBody:
         required: true
         content:
@@ -299,7 +299,7 @@ paths: {}
         - $ref: '#/components/parameters/{{parent.idParameter.name}}'
         {{/if}}
         - $ref: '#/components/parameters/correlationParam'
-        - $ref: '#/components/parameters/tenantIdParam'
+        {{#ifNotEquals name 'tenant'}}- $ref: '#/components/parameters/dgptenantIdParam'{{/ifNotEquals}}
       responses:
         '204':
           description: '`{{name}}` removed'
@@ -333,7 +333,7 @@ paths: {}
 {{/if}}
 components:
   parameters:
-    tenantIdParam:
+    dgptenantIdParam:
       name: dgp-tenant-id
       description: The id of the tenant you want to use for this operation, more info [here](https://opdrachten.digipolis.be/nl/multitenancy-requirements)
       in: header
