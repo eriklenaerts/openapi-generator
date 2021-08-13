@@ -25,9 +25,9 @@ export default class resource {
             let saveName = match.groups.resource.replace(/[^a-z0-9_]+/gi, '-').replace(/^-|-$/g, '').toLowerCase();
 
             this.name = pluralize.singular(saveName);
-            this.tag = match.groups.tag || match.groups.resource;
             this.collection = pluralize(saveName);
             this.parent = match.groups.parent ? new resource(match.groups.parent) : null;
+            this.tag = this.determineTag(match.groups.tag, this.name, this.parent)
             this.idParameter = new parameter(pluralize.singular(match.groups.resource), (this.parent != null));
             this.ops = new operations(match.groups.ops || defaultOpsModifier);
             this.collectionPath = this.ops.hasCollectionOps ? this.determinePath(this.parent, this.collection) : null;
@@ -35,6 +35,16 @@ export default class resource {
 
             consola.trace(`-- Found ${chalk.cyan(this.name)} resource with ops ${chalk.cyan(this.ops)}`);
         }
+    }
+
+    determineTag(tag, resourceName, parent ) {
+        if (tag)
+            return tag;
+        
+        if (parent)
+            return parent.tag
+
+        return resourceName
     }
 
     determinePath(parent, collection, idParameter) {

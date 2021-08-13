@@ -496,9 +496,9 @@ security:
 tags:
 {{#each tags}}
   - name: {{capitalize name}}
-    {{#ifGT collection.length 1}} 
-    description: Operations related to {{#each collection}}{{capitalize .}}, {{/each}}... 
+    {{#ifGT usedInCollection.length 1}} 
+    description: Operations related to {{#each usedInCollection}}{{capitalize .}}, {{/each}}... 
     {{else}} 
-    description: Operations related to {{#each collection}}{{capitalize .}} {{/each}}
+    description: Operations related to {{#each usedInCollection}}{{capitalize .}} {{/each}}
     {{/ifGT}}
 {{/each}}
