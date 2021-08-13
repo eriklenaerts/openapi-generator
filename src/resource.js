@@ -38,7 +38,7 @@ export default class resource {
     }
 
     determinePath(parent, collection, idParameter) {
-        var path = '/';
+        let path = '/';
         if (parent)
             path = parent.resourcePath + '/';
 

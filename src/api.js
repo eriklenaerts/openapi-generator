@@ -30,7 +30,7 @@ export default class api {
     parseResources(resourcesString) {
         consola.trace(`- Parsing resources`);
         if (resourcesString) {
-            var resourceArray = resourcesString.toString().split(',').map(r => r.trim());
+            let resourceArray = resourcesString.toString().split(',').map(r => r.trim());
             var resources = [];
             resourceArray.forEach(element => {
                 resources.push(new resource(element));
@@ -65,10 +65,10 @@ export default class api {
     }
 
     findUniqueTags(resources) {
-        var taglist = [ new tag('system', ['health checks', 'monitoring', 'caching'])];
+        let taglist = [ new tag('system', ['health checks', 'monitoring', 'caching'])];
 
         resources.forEach(resource => {
-            var t = taglist.find(t => t.name.toLowerCase() === resource.tag.toLowerCase());
+            let t = taglist.find(t => t.name.toLowerCase() === resource.tag.toLowerCase());
             if (!t) {
                 taglist.unshift(new tag(resource.tag, new Array(resource.collection)))
             }

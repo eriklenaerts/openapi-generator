@@ -26,10 +26,10 @@ async function compileTemplate(template, templateData, outputPath) {
         return (arg1 != arg2) ? options.fn(this) : options.inverse(this);
     });
 
-    var hbTemplate = handlebars.compile(template);
+    const hbTemplate = handlebars.compile(template);
     consola.trace('- Template succesfully compiled');
 
-    var resultData = hbTemplate(templateData);
+    let resultData = hbTemplate(templateData);
     consola.trace('- Cooking the OpenAPI document by merging the Parsed API info with the template');
 
     fs.writeFile(outputPath, resultData, err => {
@@ -43,13 +43,13 @@ async function compileTemplate(template, templateData, outputPath) {
 }
 
 async function getTemplate(options) {
-    let t = new template(options.template);
+    const t = new template(options.template);
     let content = await t.getTemplate();
     return content;
 }
 
 async function getTemplateData(options) {
-    let apiData = new api(options);
+    const apiData = new api(options);
     return apiData;
 }
 
@@ -91,9 +91,9 @@ async function determineOutputPath(options) {
 
 export async function generate(options) {
     consola.start('Gathering ingredients ...');
-    var template = await getTemplate(options);
-    var templateData = await getTemplateData(options);
-    var outputPath = await determineOutputPath(options);
+    let template = await getTemplate(options);
+    let templateData = await getTemplateData(options);
+    let outputPath = await determineOutputPath(options);
     consola.done('All ingredients prepared.');
 
     consola.start('Brewing your OpenAPI document...');

@@ -44,7 +44,7 @@ function parseArgumentsIntoOptions(rawArgs) {
 }
 
 function showHeader() {
-    var pjson = require('../package.json');
+    const pjson = require('../package.json');
     consola.newline().title(`Open API document generator (v${pjson.version})`);
     consola.log('Use this commandline to generate an Open API document (aka a \'swagger\' file) to get you kick started for design and development of a REST API.');
     consola.sub('Developed by Erik Lenaerts, 2021. Contact me at erik.lenaerts@line20.be').newline();
@@ -105,7 +105,7 @@ async function promptForMissingOptions(options) {
         return options;
     }
 
-    const questions = [];
+    let questions = [];
     if (options.name) {
         if (options.name.length < 3) {
             consola.warn(`Seems ${chalk.cyan(options.name)} is rather short, I'd like 3 or more characters much better. Let's try again.`);
@@ -164,7 +164,7 @@ async function promptForMissingOptions(options) {
     // prompts based on the given resources
     // ask the tag & operations for each resource
     questions.length = 0;
-    const resources = answers.resources.split(',').map(r => r.trim());
+    let resources = answers.resources.split(',').map(r => r.trim());
     if (resources) {
         resources.forEach(resource => {
             questions.push({

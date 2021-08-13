@@ -17,8 +17,8 @@ module.exports = {
 
 async function setup() {
     consola.trace(`Retrieving sample config file.`);
-    const configContent = await downloadConfig('https://raw.githubusercontent.com/eriklenaerts/openapi-generator/master/.env.example');
-    const configFileLocation = await saveConfig(configContent)
+    let configContent = await downloadConfig('https://raw.githubusercontent.com/eriklenaerts/openapi-generator/master/.env.example');
+    let configFileLocation = await saveConfig(configContent)
     consola.done(`Prepared a configuration file for you here ${chalk.blueBright.underline(configFileLocation)}`);
     consola.tab().log('Feel free to have a peek or change some settings')
 }
@@ -50,7 +50,7 @@ async function saveConfig(content) {
     const fs = require('fs')
     const path = require('path');
 
-    const outputPath = path.join(process.cwd(), '.env');
+    let outputPath = path.join(process.cwd(), '.env');
     consola.trace(`- Config file will be saved here ${chalk.blueBright.underline(outputPath)}`);
 
     try {
