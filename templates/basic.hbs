@@ -19,7 +19,7 @@ paths: {}
   {{#if collectionPath~}}'{{~collectionPath~}}':{{~/if}}
     {{#if ops.hasList}}
     get:
-      summary: Retrieve a list of {{#if parent }}{{collection}} for a certain {{parent.name}}{{else}}{{collection}}{{/if}}
+      summary: List {{collection}}
       description: 'Retrieve a paged result list of {{#if parent }}`{{collection}}` for a certain `{{parent.name}}`{{else}}`{{collection}}`{{/if}}.'
       parameters:
         {{#if parent }}
@@ -41,8 +41,8 @@ paths: {}
     {{/if}}
     {{#if ops.hasPost}}
     post:
-      summary: Add a new {{name}} to the {{collection}} collection.
-      description: 'Add a new `{{name}}` resource to the `{{collection}}` collection{{#if parent }} of the given `{{parent.name}}`{{/if}}.'
+      summary: Create {{name}}
+      description: 'Create a new `{{name}}` resource to the `{{collection}}` collection{{#if parent }} of the given `{{parent.name}}`{{/if}}.'
       {{#if parent }}
       parameters:
         - $ref: '#/components/parameters/{{parent.idParameter.name}}'
@@ -84,7 +84,7 @@ paths: {}
   {{#if resourcePath ~}}'{{~resourcePath~}}':{{~/if}}
     {{#if ops.hasGet}}
     get:
-      summary: Retrieve one {{name}}
+      summary: Retrieve {{name}}
       description: 'Retrieve exactly one `{{name}}` for the given id in the path.'
       parameters:
         - $ref: '#/components/parameters/{{idParameter.name}}'
@@ -119,7 +119,7 @@ paths: {}
     {{/if}}
     {{#if ops.hasHead}}
     head:
-      summary: Check if the {{name}} exist
+      summary: Check if {{name}} exist
       description: 'Check if the `{{name}}` with the given id exists.'
       parameters:
         - $ref: '#/components/parameters/{{idParameter.name}}'
@@ -150,7 +150,7 @@ paths: {}
     {{/if}}
     {{#if ops.hasPut}}
     put:
-      summary: Replace the {{name}} with the one given here
+      summary: Replace {{name}} 
       description: 'Replace the complete `{{name}}` resource with the one provided in the payload. If {{name}} does not exist a 404 will be returned.'
       parameters:
         - $ref: '#/components/parameters/{{idParameter.name}}'
@@ -198,7 +198,7 @@ paths: {}
     {{/if}}
     {{#if ops.hasPatch}}
     patch:
-      summary: Update a {{name}}
+      summary: Update {{name}}
       description: 'With this operation you can update parts of the `{{name}}` for the given id.'
       parameters:
         - $ref: '#/components/parameters/{{idParameter.name}}'
@@ -241,7 +241,7 @@ paths: {}
     {{/if}}
     {{#if ops.hasDelete}}
     delete:
-      summary: Delete a {{name}}
+      summary: Delete {{name}}
       description: 'Remove the `{{name}}` with the given id.'
       parameters:
         - $ref: '#/components/parameters/{{idParameter}}'
