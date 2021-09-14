@@ -126,7 +126,7 @@ To debug:
 - set breakpoints in the code
 - type `node bin/generator` in a terminal
 
-# Note to myself: Publish this package on npm
+## Note to myself: Publish this package on npm
 - increase version number in the `package.json` file
 - ececute the `npm publish` command in a terminal
 - FYI: to check all versions of this package so far on npm, execute `npm show @eriklenaerts/openapi-docgen versions --json`
