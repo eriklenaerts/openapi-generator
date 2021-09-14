@@ -47,7 +47,7 @@ paths:
 paths: {}    
 {{/if}}
 {{#each resources}}
-  {{#if collectionPath~}}'{{~collectionPath~}}':{{~/if}}
+  {{#if ops.hasCollectionOps~}}'{{~collectionPath~}}':{{~/if}}
     {{#if ops.hasList}}
     get:
       summary: Retrieve {{collection}}
@@ -81,8 +81,9 @@ paths: {}
     {{/if}}
     {{#if ops.hasPost}}
     post:
-      summary: Create {{name}} 
-      description: 'Add a new `{{name}}` resource to the `{{collection}}` collection{{#if parent }} of the given `{{parent.name}}`{{/if}}.'
+      summary: Create {{name}}
+      description: >
+        Add a new `{{name}}` resource to the `{{collection}}` collection{{#if parent }} of the given `{{parent.name}}`{{/if}}.
       parameters:
       {{#if parent }}
         - $ref: '#/components/parameters/{{parent.idParameter.name}}'
@@ -123,7 +124,42 @@ paths: {}
       tags:
         - {{capitalize tag}}
     {{/if}}
-  {{#if resourcePath ~}}'{{~resourcePath~}}':{{~/if}}
+    {{#if ops.hasPostAsync}}
+    post:
+      summary: Create {{name}} (Async)
+      description: >
+        Add a new `{{name}}` resource to the `{{collection}}` collection{{#if parent }} of the given `{{parent.name}}`{{/if}}.
+        The creation of {{name}} can take quite some time, therefore this operatoins is asynchronously. You will get a `task` resource instead. This allows you to follow up on the creation status. When finished, the task resource provides more info where you can find the final {{name}} resource.
+      parameters:
+      {{#if parent }}
+        - $ref: '#/components/parameters/{{parent.idParameter.name}}'
+      {{/if}}
+        - $ref: '#/components/parameters/correlationParam'
+        {{#ifNotEquals name 'tenant'}}- $ref: '#/components/parameters/dgptenantIdParam'{{/ifNotEquals}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/{{name}}'
+      responses:
+        '202':
+          description: Accepted. A `task` resource is created to follow up on the creation of the {{name}} resource. Check the location header.
+          headers:
+            Location:
+              description: The location of `task` resource
+              schema: 
+                type: string
+                format: uri
+                example: 'tasks/{{random 1000 10000}}'
+        '400':
+          $ref: '#/components/responses/badrequest'
+        '500':
+          $ref: '#/components/responses/internalserver'
+      tags:
+        - {{capitalize tag}}
+    {{/if}}
+  {{#if ops.hasResourceOps ~}}'{{~resourcePath~}}':{{~/if}}
     {{#if ops.hasGet}}
     get:
       summary: Retrieve {{name}}
@@ -323,6 +359,50 @@ paths: {}
         - {{capitalize tag}}  
     {{/if}}
 {{/each}}
+{{#if hasAsyncOps}}
+  '/tasks/{id}':
+    get:
+      summary: Check the creation status of a resource created asynchronously.
+      description: >
+        A resource is being created, though this may take a while. To prevent the consumer from blocking its operations for this long running transaction, this `task` is created. Check the [API system](https://antwerp-api.digipolis.be/#/content/developers/long-running) regarding this aproach. 
+      parameters:
+        - $ref: '#/components/parameters/taskIdParam'
+        - $ref: '#/components/parameters/correlationParam'
+        {{#ifNotEquals name 'tenant'}}- $ref: '#/components/parameters/dgptenantIdParam'{{/ifNotEquals}}
+      responses:
+        '200':
+          description: OK, though, still busy creating the resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/task'
+        '303':
+          description: OK, finished creating the resource. You can find it using this location header.
+          headers:
+            Location:
+              description: The location of the new resource
+              schema: 
+                type: string
+                format: uri
+        '400':
+          $ref: '#/components/responses/badrequest'
+        '404':
+          description: '`task` Not Found'
+          content:
+            application/problem+json:
+                schema:
+                  $ref: '#/components/schemas/problem'
+                example:
+                  type: 'https://api-gw-a.antwerpen.be/antwerpen/digipolis/tasks/{{version}}/errors/SVC0011'
+                  title: '`task` Not Found'
+                  status: 404
+                  identifier: 'B5FF68BBB-DE23-89AB-CCC2-7891D1D11956'
+                  code: 'SVC0011'
+        '500':
+          $ref: '#/components/responses/internalserver'
+      tags:
+        - System
+{{/if}}
 {{#if resources.length}}
   '/status/health':
     $ref: 'https://raw.githubusercontent.com/digipolisantwerpdocumentation/api-system/master/components/monitoring.yaml#/paths/~1status~1health'      
@@ -351,18 +431,25 @@ components:
         type: string
         format: byte
       example: 'eyAiaWQiOiAiYjg2MjVjIiwgInNvdXJjZSI6ICJhcHBOYW1lIiwgInVzZXJJZCI6ICJ1c2VyaWQiLCAiaXBBZGRyZXNzIjogIjE5NC4yNS43Ni4xMjIiIH0='
-{{#each resources}}
-    {{idParameter.name}}:
-      name: {{idParameter.key}}
+    taskIdParam:
+      name: id
+      description: The unique `id` of this specific task in our system. 
       in: path
-      description: >-
-        The unique `id` of this `{{name}}` in our system.
       required: true
       schema:
         minimum: 1
         type: string
-        description: >-
-         'The `{{name}}` id. This is a unique number issued by this API.'
+        example: {{random 2000 10000}}  
+{{#each resources}}
+    {{idParameter.name}}:
+      name: {{idParameter.key}}
+      in: path
+      description: The unique `id` of this `{{name}}` in our system.
+      required: true
+      schema:
+        minimum: 1
+        type: string
+        description: 'The `{{name}}` id. This is a unique number issued by this API.'
         example: {{random 2000 10000}}  
 {{/each}}
     page:
@@ -472,6 +559,19 @@ components:
           description: 'The logo for this `{{name}}`'
           example: 'https://s3.amazon.com/klj{{random 1000 10000}}/logo.xyz.png'
 {{/each}}
+  {{#if hasAsyncOps}}
+    task:
+      type: object
+      properties:
+        resource:
+          type: string
+          description: 'The name of the resource that is subject of this long running async task.'
+        status:
+          type: string
+          description: 'The current status for the creation of the resource.'
+          readOnly: true
+          example: 'ongoing'
+  {{/if}}
     healthStatus:
       $ref: 'https://raw.githubusercontent.com/digipolisantwerpdocumentation/api-system/master/components/monitoring.yaml#/components/schemas/healthStatus'    
     healthStatusComponents:

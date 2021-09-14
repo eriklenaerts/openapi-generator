@@ -65,8 +65,9 @@ This modifier can be added in square brackets with each resource in the command 
 To calculcate this number, use the following table:
 | Operation 	| Description                          	| modifier 	|
 |-----------	|--------------------------------------	|----------	|
-| GET       	| list all resources of the collection 	| 2        	|
-| POST      	| add a resource to the collection     	| 4        	|
+| GET       	| list all resources of the collection 	| 1        	|
+| POST      	| add a resource to the collection     	| 2        	|
+| POST (async) 	| add a resource asynchronously         | 4      	|
 | GET       	| retrieve a resource (by id)          	| 8        	|
 | HEAD      	| check if resource exist              	| 16       	|
 | PUT       	| replace a resource                   	| 32       	|
@@ -96,7 +97,7 @@ Some examples:
 // this is what you need 
 > openapi-docgen Appointment -r 'location[2], location/address[8]'
 
-// or this works as well. Basically, the generator will use [10] as a modifier for location that is, both the list and retrieve GET operations.
+// or this works as well. Basically, the generator will use [9] as a modifier for location that is, both the list and retrieve GET operations.
 // (it does not make much sense to have child resources with no way to access the parent resources)
 > openapi-docgen Appointment -r 'location/address[8]'
 ```
@@ -113,7 +114,7 @@ Use the .env configuration file to set the following environment variables.
 | DEFAULT_TEMPLATE        	| Set the default template, though the --template cli argument takes precedence.                                                                  	| basic.hbs              	|
 | DEFAULT_OUTPUT_LOCATION 	| Set the default output location in case nothing was provided using the --output cli argument.                                                   	| current working folder 	|
 | UNIQUE_OUTPUT_FILENAME  	| If true, each output file will have a unique part in the filename so it always writes a new file. if false, the file is overwritten each time. 	| false                  	|
-| DEFAULT_OPS_MODIFIER      | When no ops modifier was provided for a resource, use this default. Calculate the modifier [here](#calculate-the-operations-modifier) 	        | 238                     	|
+| DEFAULT_OPS_MODIFIER      | When no ops modifier was provided for a resource, use this default. Calculate the modifier [here](#calculate-the-operations-modifier) 	        | 235                     	|
 
 ## Contribute
 - Find me at https://github.com/eriklenaerts/openapi-generator

@@ -10,6 +10,7 @@ export default class api {
     resources;
     tags;
     version;
+    hasAsyncOps;
 
     constructor(options) {
 
@@ -25,6 +26,7 @@ export default class api {
         this.urlFriendlyName = options.name.replace(/[^a-z0-9_]+/gi, '-').replace(/^-|-$/g, '').toLowerCase();
         this.resources = this.parseResources(options.resources);
         this.tags = this.findUniqueTags(this.resources);
+        this.hasAsyncOps = this.resources.find(r => r.ops.hasPostAsync) !== undefined;
     };
 
     parseResources(resourcesString) {
@@ -33,7 +35,9 @@ export default class api {
             let resourceArray = resourcesString.toString().split(',').map(r => r.trim());
             var resources = [];
             resourceArray.forEach(element => {
-                resources.push(new resource(element));
+                const r = new resource(element);
+                resources.push(r);
+                consola.trace(`-- Found ${chalk.cyan(r.name)} resource with ops ${chalk.cyan(r.ops)}`);
             });
         }
 
@@ -49,15 +53,15 @@ export default class api {
             if (res.parent) {
                 if (!resources.find(parentResource => parentResource.name === res.parent.name)) {
                     // the parent is added under the same tag as the orphan and with only the two GET ops
-                    missingParents.push(new resource(res.parent.name + '[10]::' + res.tag));
-                    consola.trace(`parent ${chalk.cyan(res.parent.name)} added for orphant ${chalk.cyan(res.name)} child`);
+                    missingParents.push(new resource(res.parent.name + '[9]::' + res.tag));
+                    consola.trace(`-- Discovered missing parent ${chalk.cyan(res.parent.name)} for ${chalk.cyan(res.name)}`);
                 }
             }
         })
 
         if (missingParents && missingParents.length > 0) {
             resources = [].concat(missingParents, resources);
-            consola.trace(`- Added ${missingParents.length} missing ${pluralize('parent', missingParents.length)} ${chalk.cyan(missingParents.join(', '))}`);
+            consola.trace(`-- Added the ${missingParents.length} missing ${pluralize('parent', missingParents.length)} ${chalk.cyan(missingParents.join(', '))} ${pluralize('resource', missingParents.length)} with ops ${chalk.cyan('list, get')}`);
         }
 
         return resources;

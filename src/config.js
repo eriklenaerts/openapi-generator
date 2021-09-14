@@ -10,7 +10,7 @@ module.exports = {
     defaultTemplate: process.env.DEFAULT_TEMPLATE || 'basic.hbs',
     defaultOutputLocation: process.env.DEFAULT_OUTPUT_LOCATION || process.cwd(),
     uniqueOutputFileName: process.env.UNIQUE_OUTPUT_FILENAME ? (process.env.UNIQUE_OUTPUT_FILENAME.trim() == 'true') : false,
-    defaultOpsModifier: isNaN(process.env.DEFAULT_OPS_MODIFIER) ? 238 : parseInt(process.env.DEFAULT_OPS_MODIFIER),
+    defaultOpsModifier: isNaN(process.env.DEFAULT_OPS_MODIFIER) ? 235 : parseInt(process.env.DEFAULT_OPS_MODIFIER),
     noSetupFound: !(process.env.TEMPLATE_PROVIDER | process.env.TEMPLATES_BASE_LOCATION | process.env.DEFAULT_TEMPLATE | process.env.DEFAULT_OUTPUT_LOCATION | process.env.UNIQUE_OUTPUT_FILENAME | process.env.DEFAULT_OPS_MODIFIER),
     setup,
 };
