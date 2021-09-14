@@ -77,13 +77,13 @@ To calculcate this number, use the following table:
 Some examples:
 ``` bash
 // generate only an operation to list (GET) all locations resources
-> openapi-docgen Appointment -r 'location[2]'
+> openapi-docgen Appointment -r 'location[1]'
 
 // generate operation to list (GET) all locations resources and delete a resource
-> openapi-docgen Appointment -r 'location[130]'
+> openapi-docgen Appointment -r 'location[129]'
 
 // generate operation to list (GET) all locations resources, retrieve one by id (GET) and check if one exists (HEAD)
-> openapi-docgen Appointment -r 'location[26]'
+> openapi-docgen Appointment -r 'location[25]'
 ```
 
 **Note:** be sure to specify the modifier on the resource itself, not on the parent indicator 

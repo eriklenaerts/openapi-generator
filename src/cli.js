@@ -60,8 +60,9 @@ function showHelp() {
     consola.tab(4).log('For each resource you can specify the operations you like and a specific tag.\n');
     consola.tab(4).subtitle('Select your operators:');
     consola.tab(4).log('Add a number between squar brackets after your resource name. This is a calculated binary number based on the following values');
-    consola.tab(4).log('  2 - GET the resource collection ' + chalk.dim('(default)'));
-    consola.tab(4).log('  4 - POST to the collection ' + chalk.dim('(default)'));
+    consola.tab(4).log('  1 - GET the resource collection ' + chalk.dim('(default)'));
+    consola.tab(4).log('  2 - POST to the collection ' + chalk.dim('(default)'));
+    consola.tab(4).log('  4 - POST (Async) to the collection ' + chalk.dim('(default)'));
     consola.tab(4).log('  8 - GET one resource ' + chalk.dim('(default)'));
     consola.tab(4).log(' 16 - HEAD or check if resource exists.');
     consola.tab(4).log(' 32 - PUT or replace a resource ' + chalk.dim('(default)'));
@@ -71,7 +72,7 @@ function showHelp() {
     consola.tab(4).log('For example \'location[96]\' will generate a PUT and PATCH operation only.\n');
     consola.tab(4).subtitle('Specify a tag:');
     consola.tab(4).log('For example \'location::mytag\' will set the tag of the location operations to \'mytag\'');
-    consola.tab(4).log('For example \'location[2]::mytag\' will set the tag to \'mytag\' for only the GET collection operation\n');
+    consola.tab(4).log('For example \'location[1]::mytag\' will set the tag to \'mytag\' for only the GET collection operation\n');
     consola.tab(4).subtitle('Add a child resource:');
     consola.tab(4).log('For example \'location/address\' will add an address resource under a ' + chalk.dim('(minimal)') + ' location resource.');
     consola.tab(4).log('For example \'location, location/address\' will add full location ' + chalk.dim('(with default ops)') + ' resource and then address resource as sub resource of the location resource.');
@@ -172,8 +173,9 @@ async function promptForMissingOptions(options) {
                 name: resource + 'Ops',
                 message: 'Select the operations for ' + chalk.reset.cyan(resource) + ':',
                 choices: [
-                    { name: '[GET] \tList all resources', short: 'List', value: 2, checked: (config.defaultOpsModifier & 2) == 2 },
-                    { name: '[POST] \tCreate a resource', short: 'Create', value: 4, checked: (config.defaultOpsModifier & 4) == 4 },
+                    { name: '[GET] \tList all resources', short: 'List', value: 1, checked: (config.defaultOpsModifier & 1) == 1 },
+                    { name: '[POST] \tCreate a resource', short: 'Create', value: 2, checked: (config.defaultOpsModifier & 2) == 2 },
+                    { name: '[POST] \tCreate a resource (async)', short: 'Create (async)', value: 4, checked: (config.defaultOpsModifier & 4) == 4 },
                     { name: '[GET] \tRead one resource', short: 'Read', value: 8, checked: (config.defaultOpsModifier & 8) == 8 },
                     { name: '[HEAD] \tCheck if a resource exist', short: 'Check', value: 16, checked: (config.defaultOpsModifier & 16) == 16 },
                     { name: '[PUT] \tReplace a resource', short: 'Replace', value: 32, checked: (config.defaultOpsModifier & 32) == 32 },
