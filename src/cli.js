@@ -175,7 +175,7 @@ async function promptForMissingOptions(options) {
                 choices: [
                     { name: '[GET] \tList all resources', short: 'List', value: 1, checked: (config.defaultOpsModifier & 1) == 1 },
                     { name: '[POST] \tCreate a resource', short: 'Create', value: 2, checked: (config.defaultOpsModifier & 2) == 2 },
-                    { name: '[POST] \tCreate a resource (async)', short: 'Create (async)', value: 4, checked: (config.defaultOpsModifier & 4) == 4 },
+                    // { name: '[POST] \tCreate a resource (async)', short: 'Create (async)', value: 4, checked: (config.defaultOpsModifier & 4) == 4 }, //we don't provide this option anymore, instead we ask an additional question for a synchronous or asynchronous version.
                     { name: '[GET] \tRead one resource', short: 'Read', value: 8, checked: (config.defaultOpsModifier & 8) == 8 },
                     { name: '[HEAD] \tCheck if a resource exist', short: 'Check', value: 16, checked: (config.defaultOpsModifier & 16) == 16 },
                     { name: '[PUT] \tReplace a resource', short: 'Replace', value: 32, checked: (config.defaultOpsModifier & 32) == 32 },
@@ -183,15 +183,25 @@ async function promptForMissingOptions(options) {
                     { name: "[DELETE] \tRemove a resource.", short: 'Delete', value: 128, checked: (config.defaultOpsModifier & 64) == 64 }]
             });
             questions.push({
+                type: 'confirm',
+                name: resource + 'AsyncCreate',
+                message: 'Would you like the creation of ' + chalk.reset.cyan(resource) + ' to be asynchronous? (useful in case it takes a very long time to create)',
+                default: false,
+                when: (answers) => {
+                    const createFound = answers[resource + 'Ops'].find(a => a == 2);
+                    return createFound !== undefined;
+                }
+            });
+            questions.push({
                 type: 'input',
                 name: resource + 'Tag',
-                message: 'What tag would you like to use for ' + chalk.reset.cyan(resource) + '?' + chalk.reset.white(' Typically I tag the resource using it\'s own name') + ':',
+                message: 'What tag would you like to use for ' + chalk.reset.cyan(resource) + '?' + chalk.reset.white(' Typically the tag is the same as the resource name.') + ':',
                 default: resource
             });
             questions.push({
                 type: 'input',
                 name: resource + 'Parent',
-                message: 'What parent would you like for ' + chalk.reset.cyan(resource) + '?' + chalk.reset.white(' (Hit enter if you do not need one)') + ':',
+                message: 'What\'s the parent resource for ' + chalk.reset.cyan(resource) + '?' + chalk.reset.white(' (Hit enter if you do not need one)') + ':',
                 default: null
             });
         });
@@ -202,6 +212,9 @@ async function promptForMissingOptions(options) {
     answers.resources = '';
     resources.forEach(resource => {
         let ops = resourceDetails[resource + 'Ops'].reduce((a, b) => a + b, 0);
+        // adjust if an async create was requested
+        if (resourceDetails[resource + 'AsyncCreate'])
+            ops += 2;
         let parent = resourceDetails[resource + 'Parent'];
         let tag = (resource != resourceDetails[resource + 'Tag']) ? '::' + resourceDetails[resource + 'Tag'] : '';
         answers.resources += (parent) ? parent + '/' : '';
@@ -210,8 +223,18 @@ async function promptForMissingOptions(options) {
         answers.resources += ','
     });
     answers.resources = answers.resources.slice(0, -1);
+
+    // assemble from the answers the command suggestion
+    const commandSuggestion = 
+        'openapi-docgen ' + 
+        consola.quoteSymbol + (options.name || answers.name) + consola.quoteSymbol + 
+        ' -r ' + consola.quoteSymbol + answers.resources + consola.quoteSymbol + 
+        (options.verbose ? ' -v ' : '') +
+        (options.template ? ' -t ' + consola.quoteSymbol + options.template + consola.quoteSymbol: '');
+
     consola.newline().trace('assembed the following resource structure: ' + chalk.cyan(answers.resources), options.verbose);
-    consola.newline().tip('Want to skip prompts next time? Copy and run this command: ' + chalk.cyan('openapi-docgen ' + consola.quoteSymbol + (options.name || answers.name) + consola.quoteSymbol + ' -r ' + consola.quoteSymbol + answers.resources + consola.quoteSymbol + (options.verbose ? '-v\n' : '\n')));
+    consola.newline().tip('Want to skip prompts next time? Copy and run this command: ' + chalk.cyan(commandSuggestion));
+    consola.newline();
 
     return {
         ...options,
