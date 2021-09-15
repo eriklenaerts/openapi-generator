@@ -4,9 +4,14 @@
 }} --}}
 openapi: 3.0.3
 info:
-  version: '{{version}}'
-  title: {{capitalize name}} API
-  description: Your shiny new OAS Document for your {{capitalize name}} API
+  version: '{{api.version}}'
+  title: {{capitalize api.name}} API
+  description: >
+  
+    Your shiny new OAS Document for your {{capitalize api.name}} API.
+
+
+    *(Generated with [OpenAPI Generator](https://github.com/eriklenaerts/openapi-generator) v{{generator.version}} on {{generator.timestamp}})*
   contact:
     name: John Doe
     email: john.doe@gmail.com
@@ -14,12 +19,12 @@ info:
   license:
     name: MIT license
     url: https://opensource.org/licenses/MIT
-{{#if resources.length}}
+{{#if api.resources.length}}
 paths:
 {{else}}
 paths: {}    
 {{/if}}
-{{#each resources}}
+{{#each api.resources}}
   {{#if collectionPath~}}'{{~collectionPath~}}':{{~/if}}
     {{#if ops.hasList}}
     get:
@@ -284,7 +289,7 @@ components:
       required: true
       schema:
         type: string
-{{#each resources}}
+{{#each api.resources}}
     {{idParameter.name}}:
       name: {{idParameter.key}}
       in: path
@@ -321,7 +326,7 @@ components:
             schema:
                 $ref: '#/components/schemas/problem'
             example:
-              type: 'https://api.somedomain.com/{{name}}/{{version}}/errors/SVC0034'
+              type: 'https://api.somedomain.com/{{api.name}}/{{api.version}}/errors/SVC0034'
               title: 'The request is malformed, please check the URL in the queryparameters and header values.'
               status: 400
               identifier: 'DDD68BE6-B522-3E35-08BF-9563D1D11991'
@@ -333,7 +338,7 @@ components:
             schema:
                 $ref: '#/components/schemas/problem'
             example:
-              type: 'https://api.somedomain.com/{{name}}/{{version}}/errors/SVC0032'
+              type: 'https://api.somedomain.com/{{api.name}}/{{api.version}}/errors/SVC0032'
               title: 'There seems to be an issue with the server at the moment. Please try again later.'
               status: 500
               identifier: 'C5C68BE6-B5FF-11E5-B08F-D1D119563991'
@@ -345,13 +350,13 @@ components:
             schema:
                 $ref: '#/components/schemas/problem'
             example:
-              type: 'https://api.somedomain.com/{{name}}/{{version}}/errors/SVC0011'
+              type: 'https://api.somedomain.com/{{api.name}}/{{api.version}}/errors/SVC0011'
               title: 'Requested resource not found.'
               status: 404
               identifier: 'B5FF68BBB-DE23-89AB-CCC2-7891D1D11956'
               code: 'SVC0011'
   schemas:
-{{#each resources}}
+{{#each api.resources}}
   {{#if ops.hasCollectionOps}}
     {{collection}}:
       type: object
@@ -424,7 +429,7 @@ components:
             href:
               type: string
               format: uri
-              example: https://api.somedomain.com/{{name}}/{{version}}/resource?pagesize=5&page=2
+              example: https://api.somedomain.com/{{api.name}}/{{api.version}}/resource?pagesize=5&page=2
           description: contains a link to this page of this collection
         first:
           type: object
@@ -432,7 +437,7 @@ components:
             href:
               type: string
               format: uri
-              example: https://api.somedomain.com/{{name}}/{{version}}/resource?pagesize=5&page=1
+              example: https://api.somedomain.com/{{api.name}}/{{api.version}}/resource?pagesize=5&page=1
           description: contains a link to the first page of this collection
         last:
           type: object
@@ -448,7 +453,7 @@ components:
             href:
               type: string
               format: uri
-              example: https://api.somedomain.com/{{name}}/{{version}}/resource?pagesize=5&page=1
+              example: https://api.somedomain.com/{{api.name}}/{{api.version}}/resource?pagesize=5&page=1
           description: contains a link to the previous page of this collection
         next:
           type: object
@@ -456,7 +461,7 @@ components:
             href:
               type: string
               format: uri
-              example: https://api.somedomain.com/{{name}}/{{version}}/resource?pagesize=5&page=3
+              example: https://api.somedomain.com/{{api.name}}/{{api.version}}/resource?pagesize=5&page=3
           description: contains a link to the next page of this collection
     pages:
       type: object
@@ -488,7 +493,7 @@ components:
           type: string
           description: A URI identifying this problem. The URI should resolve into human-readable documentation for this problem.
           format: uri
-          example: https://api.somedomain.com/{{name}}/{{version}}/resource/FE0032
+          example: https://api.somedomain.com/{{api.name}}/{{api.version}}/resource/FE0032
         title:
           type: string
           description: A short, summary of the problem type. Written in english and readable for engineers (usually not suited for non technical stakeholders and not localized)
@@ -511,7 +516,7 @@ components:
           example: FE0032
       description: A generic model used to describe problems as a result of incorrect or failed HTTP requests.
 tags:
-{{#each tags}}
+{{#each api.tags}}
   - name: {{capitalize name}}
     {{#ifGT usedInCollection.length 1}} 
     description: Operations related to {{#each usedInCollection}}{{capitalize .}}, {{/each}}... 

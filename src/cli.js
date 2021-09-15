@@ -47,7 +47,8 @@ function showHeader() {
     const pjson = require('../package.json');
     consola.newline().title(`Open API document generator (v${pjson.version})`);
     consola.log('Use this commandline to generate an Open API document (aka a \'swagger\' file) to get you kick started for design and development of a REST API.');
-    consola.sub('Developed by Erik Lenaerts, 2021. Contact me at erik.lenaerts@line20.be').newline();
+    consola.sub('Developed by Erik Lenaerts, 2021. Contact me at erik.lenaerts@line20.be');
+    consola.newline().tip(`start your journey with the command '${chalk.cyan('openapi-docgen --setup')}' this will create a setup file with some sweet configuration options.`).newline();
 }
 
 function showHelp() {
@@ -97,7 +98,9 @@ async function promptForMissingOptions(options) {
         ...options,
         outputLocation: options.outputLocation || process.cwd(),
         apiVersion: options.apiVersion || 'v1',
-        verbose: options.verbose || false
+        verbose: options.verbose || false,
+        generatorVersion: require('../package.json').version,
+        generationTimestamp: new Date(Date.now()).toUTCString()
     }
 
     if (options.name && options.resources) {

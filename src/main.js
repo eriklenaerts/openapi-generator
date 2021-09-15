@@ -49,8 +49,11 @@ async function getTemplate(options) {
 }
 
 async function getTemplateData(options) {
-    const apiData = new api(options);
-    return apiData;
+    let templateData = {
+        api : new api(options),
+        generator: { version: options.generatorVersion, timestamp : options.generationTimestamp}
+    }
+    return templateData;
 }
 
 async function determineOutputPath(options) {

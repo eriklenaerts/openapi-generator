@@ -3,9 +3,14 @@
 }} --}}
 openapi: 3.0.3
 info:
-  version: '{{version}}'
-  title: {{capitalize name}} API
-  description: Your shiny new OAS Document for your {{capitalize name}} API
+  version: '{{api.version}}'
+  title: {{capitalize api.name}} API
+  description: >
+  
+    Your shiny new OAS Document for your {{capitalize api.name}} API.
+
+
+    *(Generated with [OpenAPI Generator](https://github.com/eriklenaerts/openapi-generator) v{{generator.version}} on {{generator.timestamp}})*
   contact:
     name: John Doe
     email: john.doe@gmail.com

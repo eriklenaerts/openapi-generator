@@ -3,17 +3,20 @@
 }} --}}
 openapi: 3.0.3
 info:
-  version: '{{version}}'
-  title: {{capitalize name}} API
+  version: '{{api.version}}'
+  title: {{capitalize api.name}} API
   description: > 
-    This {{name}} API is generated based on the specifications of the [Digipolis API System 7.0](https://antwerp-api.digipolis.be/).
+    This {{api.name}} API is generated based on the specifications of the [Digipolis API System 7.0](https://antwerp-api.digipolis.be/).
     
 
     **What's next:** 
 
-      - Check if all resources (like {{capitalize resources.0.name}}) require all operations that were generated, some parts of the API may be readOnly so remove the operations not needed
+      - Check if all resources (like {{capitalize api.resources.0.name}}) require all operations that were generated, some parts of the API may be readOnly so remove the operations not needed
       - The schema (or models) of all resources are examples here, be sure to adjust them to your case at hand
       - Have a look [here](https://antwerp-api.digipolis.be/#/content/common/swagger-docs) for tips on writing good documentation.        
+
+
+    *(Generated with [OpenAPI Generator](https://github.com/eriklenaerts/openapi-generator) v{{generator.version}} on {{generator.timestamp}})*
   contact:
     name: John Doe
     email: john.doe@gmail.com
@@ -37,19 +40,19 @@ servers:
         description: the catalog in which this API will be published  
       provider:
         default: digipolis
-        description: the name of the organisation that provides your {{name}} API
+        description: the name of the organisation that provides your {{api.name}} API
       service:
-        default: {{name}}
+        default: {{api.name}}
         description: the name of this Service 
       version:
-        default: '{{version}}'
+        default: '{{api.version}}'
         description: specify the major version of this api
-{{#if resources.length}}
+{{#if api.resources.length}}
 paths:
 {{else}}
 paths: {}    
 {{/if}}
-{{#each resources}}
+{{#each api.resources}}
   {{#if ops.hasCollectionOps~}}'{{~collectionPath~}}':{{~/if}}
     {{#if ops.hasList}}
     get:
@@ -362,7 +365,7 @@ paths: {}
         - {{capitalize tag}}  
     {{/if}}
 {{/each}}
-{{#if hasAsyncOps}}
+{{#if api.hasAsyncOps}}
   '/tasks/{id}':
     get:
       summary: Check the creation status of a resource created asynchronously.
@@ -371,7 +374,7 @@ paths: {}
       parameters:
         - $ref: '#/components/parameters/taskIdParam'
         - $ref: '#/components/parameters/correlationParam'
-        {{#ifNotEquals name 'tenant'}}- $ref: '#/components/parameters/dgptenantIdParam'{{/ifNotEquals}}
+        - $ref: '#/components/parameters/dgptenantIdParam'
       responses:
         '200':
           description: OK, though, still busy creating the resource.
@@ -406,7 +409,7 @@ paths: {}
       tags:
         - System
 {{/if}}
-{{#if resources.length}}
+{{#if api.resources.length}}
   '/status/health':
     $ref: 'https://raw.githubusercontent.com/digipolisantwerpdocumentation/api-system/master/components/monitoring.yaml#/paths/~1status~1health'      
   '/status/health/components':
@@ -443,7 +446,7 @@ components:
         minimum: 1
         type: string
         example: {{random 2000 10000}}  
-{{#each resources}}
+{{#each api.resources}}
     {{idParameter.name}}:
       name: {{idParameter.key}}
       in: path
@@ -469,7 +472,7 @@ components:
             schema:
                 $ref: '#/components/schemas/problem'
             example:
-              type: 'https://api-gw-a.antwerpen.be/antwerpen/digipolis/{{name}}/{{version}}/errors/SVC0034'
+              type: 'https://api-gw-a.antwerpen.be/antwerpen/digipolis/{{api.name}}/{{api.version}}/errors/SVC0034'
               title: 'The request is malformed, please check the URL in the queryparameters and header values.'
               status: 400
               identifier: 'DDD68BE6-B522-3E35-08BF-9563D1D11991'
@@ -481,7 +484,7 @@ components:
             schema:
                 $ref: '#/components/schemas/problem'
             example:
-              type: 'https://api-gw-a.antwerpen.be/antwerpen/digipolis/{{name}}/{{version}}/errors/SVC0032'
+              type: 'https://api-gw-a.antwerpen.be/antwerpen/digipolis/{{api.name}}/{{api.version}}/errors/SVC0032'
               title: 'There seems to be an issue with the server at the moment. Please try again later.'
               status: 500
               identifier: 'C5C68BE6-B5FF-11E5-B08F-D1D119563991'
@@ -493,13 +496,13 @@ components:
             schema:
                 $ref: '#/components/schemas/problem'
             example:
-              type: 'https://api-gw-a.antwerpen.be/antwerpen/digipolis/{{name}}/{{version}}/errors/SVC0011'
+              type: 'https://api-gw-a.antwerpen.be/antwerpen/digipolis/{{api.name}}/{{api.version}}/errors/SVC0011'
               title: 'Requested resource not found.'
               status: 404
               identifier: 'B5FF68BBB-DE23-89AB-CCC2-7891D1D11956'
               code: 'SVC0011'
   schemas:
-{{#each resources}}
+{{#each api.resources}}
   {{#if ops.hasCollectionOps}}
     {{collection}}:
       type: object
@@ -562,7 +565,7 @@ components:
           description: 'The logo for this `{{name}}`'
           example: 'https://s3.amazon.com/klj{{random 1000 10000}}/logo.xyz.png'
 {{/each}}
-  {{#if hasAsyncOps}}
+  {{#if api.hasAsyncOps}}
     task:
       type: object
       properties:
@@ -597,7 +600,7 @@ components:
 security:
   - ApiKeyAuth: []
 tags:
-{{#each tags}}
+{{#each api.tags}}
   - name: {{capitalize name}}
     {{#ifGT usedInCollection.length 1}} 
     description: Operations related to {{#each usedInCollection}}{{capitalize .}}, {{/each}}... 
