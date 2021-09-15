@@ -82,6 +82,13 @@ export default class api {
 
         });
 
+        // re-sort tags
+        taglist.sort((a, b) => {
+            if (a.name.toLowerCase() < b.name.toLowerCase()) return -1;
+            if (a.name.toLowerCase() > b.name.toLowerCase()) return 1;
+            return 0;
+        });
+
         consola.trace(`- Found ${taglist.length} unique ${pluralize('tag', taglist.length)} ${chalk.cyan(taglist.join(', '))}`);
 
         return taglist;

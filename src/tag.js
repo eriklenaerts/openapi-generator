@@ -1,5 +1,3 @@
-import pluralize from "pluralize";
-
 export default class tag {
     name;
     usedInCollection;
