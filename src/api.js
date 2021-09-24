@@ -21,7 +21,7 @@ export default class api {
             if (!match)
                 throw new Error(`The name (${options.name}) is invalid, please use small or big letters, numbers or hyphens (-) only.`);
         }
-        this.name = options.name.toLowerCase();
+        this.name = options.name.replace(/\b\sapi$/ig, "");
         this.version = options.apiVersion;
         this.urlFriendlyName = options.name.replace(/[^a-z0-9_]+/gi, '-').replace(/^-|-$/g, '').toLowerCase();
         this.resources = this.parseResources(options.resources);
