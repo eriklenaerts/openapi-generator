@@ -51,10 +51,14 @@ export default class api {
         let missingParents = [];
         resources.forEach(res => {
             if (res.parent) {
+                // Check if parent was explicitly defined
                 if (!resources.find(parentResource => parentResource.name === res.parent.name)) {
-                    // the parent is added under the same tag as the orphan and with only the two GET ops
-                    missingParents.push(new resource(res.parent.name + '[9]::' + res.tag));
+                    // chec if the missing parent wasn't already discoverd
                     consola.trace(`-- Discovered missing parent ${chalk.cyan(res.parent.name)} for ${chalk.cyan(res.name)}`);
+                    if (!missingParents.find(mp => mp.name === res.parent.name)) {
+                        // the parent is added under the same tag as the orphan and with only the two GET ops
+                        missingParents.push(new resource(res.parent.name + '[9]::' + res.tag));
+                    }
                 }
             }
         })
