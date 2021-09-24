@@ -437,6 +437,7 @@ components:
         type: string
         format: byte
       example: 'eyAiaWQiOiAiYjg2MjVjIiwgInNvdXJjZSI6ICJhcHBOYW1lIiwgInVzZXJJZCI6ICJ1c2VyaWQiLCAiaXBBZGRyZXNzIjogIjE5NC4yNS43Ni4xMjIiIH0='
+{{#if api.hasAsyncOps}}
     taskIdParam:
       name: id
       description: The unique `id` of this specific task in our system. 
@@ -446,6 +447,7 @@ components:
         minimum: 1
         type: string
         example: {{random 2000 10000}}  
+{{/if}}
 {{#each api.resources}}
     {{idParameter.name}}:
       name: {{idParameter.key}}
