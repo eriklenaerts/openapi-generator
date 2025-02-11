@@ -1,7 +1,7 @@
 {{!-- {{
-  This template is specifically designed for Digipolis Antwerp. It produces an OAS 3 document. 
+  This template is specifically designed for Digipolis Antwerp. It produces a swagger 2 document. 
 }} --}}
-openapi: 3.0.3
+swagger: 2.0 
 info:
   version: '{{api.version}}'
   title: {{capitalize api.name}} API
@@ -24,6 +24,22 @@ info:
   license:
     name: MIT license
     url: https://opensource.org/licenses/MIT
+host: api-gw-p.antwerpen.be
+basePath: /acpaas/wcm-content/v4
+securityDefinitions:
+  apikey:
+    type: apiKey
+    description: >-
+      Acquire a valid API key by registering a contract via the [API
+      store](https://api-store.antwerpen.be)
+    name: apikey
+    in: header
+schemes:
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
 servers:
   - url: 'https://{environment}.antwerpen.be/{catalog}/{provider}/{service}/{version}'
     description: OTAP servers
@@ -474,7 +490,7 @@ components:
             schema:
                 $ref: '#/components/schemas/problem'
             example:
-              type: 'https://api-gw-a.antwerpen.be/antwerpen/digipolis/{{api.urlFriendlyName}}/{{api.version}}/errors/SVC0034'
+              type: 'https://api-gw-a.antwerpen.be/antwerpen/digipolis/{{api.name}}/{{api.version}}/errors/SVC0034'
               title: 'The request is malformed, please check the URL in the queryparameters and header values.'
               status: 400
               identifier: 'DDD68BE6-B522-3E35-08BF-9563D1D11991'
@@ -486,7 +502,7 @@ components:
             schema:
                 $ref: '#/components/schemas/problem'
             example:
-              type: 'https://api-gw-a.antwerpen.be/antwerpen/digipolis/{{api.urlFriendlyName}}/{{api.version}}/errors/SVC0032'
+              type: 'https://api-gw-a.antwerpen.be/antwerpen/digipolis/{{api.name}}/{{api.version}}/errors/SVC0032'
               title: 'There seems to be an issue with the server at the moment. Please try again later.'
               status: 500
               identifier: 'C5C68BE6-B5FF-11E5-B08F-D1D119563991'
@@ -498,7 +514,7 @@ components:
             schema:
                 $ref: '#/components/schemas/problem'
             example:
-              type: 'https://api-gw-a.antwerpen.be/antwerpen/digipolis/{{api.urlFriendlyName}}/{{api.version}}/errors/SVC0011'
+              type: 'https://api-gw-a.antwerpen.be/antwerpen/digipolis/{{api.name}}/{{api.version}}/errors/SVC0011'
               title: 'Requested resource not found.'
               status: 404
               identifier: 'B5FF68BBB-DE23-89AB-CCC2-7891D1D11956'
