@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import handlebars from 'handlebars';
 import handlebarsHelpers from 'handlebars-helpers';
-import shortid from 'shortid'
+import { nanoid } from 'nanoid'
 import api from './api.js';
 import consola from './consola.js';
 import template from './template.js';
@@ -85,7 +85,7 @@ async function determineOutputPath(options) {
 
     consola.trace('- output folder: ' + chalk.reset.blueBright.underline(outputLocation) + ' looks good.');
 
-    let uniqueFileNamePostfix = options.uniqueOutputFileName ? '_' + shortid.generate() : '';
+    let uniqueFileNamePostfix = options.uniqueOutputFileName ? '_' + nanoid.generate() : '';
     if (options.uniqueOutputFileName) 
         consola.trace('- generating a unique output postfix ' + chalk.cyan(uniqueFileNamePostfix));
 

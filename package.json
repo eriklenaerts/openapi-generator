@@ -4,6 +4,9 @@
   "description": "Generate an Open API document to kick start your REST API design or development.",
   "main": "src/index.js",
   "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "bin": {
     "@eriklenaerts/openapi-docgen": "./bin/generator",
     "openapi-docgen": "./bin/generator",
@@ -21,9 +24,9 @@
     "handlebars-helpers": "^0.10.0",
     "highlight.js": ">=10.4.1",
     "inquirer": "^8.1.2",
+    "nanoid": "^5.1.6",
     "pluralize": "^8.0.0",
-    "set-value": ">=4.0.1",
-    "shortid": "^2.2.16"
+    "set-value": ">=4.0.1"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
