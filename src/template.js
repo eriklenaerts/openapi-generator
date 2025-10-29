@@ -1,8 +1,8 @@
 import path from 'path';
 import chalk from 'chalk';
 import fs from 'fs';
-import consola from './consola';
-import { templateProvider, templateBaseLocation } from './config'
+import consola from './consola.js';
+import { templateProvider, templateBaseLocation } from './config.js'
 import axios from 'axios';
 
 const providers = {

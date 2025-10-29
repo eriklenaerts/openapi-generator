@@ -1,8 +1,8 @@
 import chalk from 'chalk';
 import pluralize from 'pluralize';
-import resource from './resource';
-import tag from './tag';
-import consola from './consola';
+import resource from './resource.js';
+import tag from './tag.js';
+import consola from './consola.js';
 
 export default class api {
     name;

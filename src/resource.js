@@ -1,9 +1,7 @@
 import pluralize from "pluralize";
-import chalk from 'chalk';
-import consola from './consola';
-import operations from "./operations";
-import parameter from "./parameter";
-import { defaultOpsModifier } from './config'
+import operations from "./operations.js";
+import parameter from "./parameter.js";
+import { defaultOpsModifier } from './config.js'
 
 export default class resource {
     parent;

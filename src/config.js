@@ -1,4 +1,3 @@
-import { ok } from 'node:assert';
 import chalk from 'chalk';
 import dotenv from 'dotenv';
 import consola from './consola.js';

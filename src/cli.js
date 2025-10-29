@@ -3,7 +3,7 @@ import chalk from 'chalk';
 import inquirer from 'inquirer';
 import consola from './consola.js';
 import { generate } from './main.js';
-import config from './config'
+import config from './config.js'
 import pjson from '../package.json' assert { type: 'json' };
 
 function parseArgumentsIntoOptions(rawArgs) {
@@ -99,7 +99,7 @@ async function promptForMissingOptions(options) {
         outputLocation: options.outputLocation || process.cwd(),
         apiVersion: options.apiVersion || 'v1',
         verbose: options.verbose || false,
-        generatorVersion: require('../package.json').version,
+        generatorVersion: pjson.version,
         generationTimestamp: new Date(Date.now()).toUTCString()
     }
 
