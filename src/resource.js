@@ -1,7 +1,7 @@
 import pluralize from "pluralize";
 import operations from "./operations.js";
 import parameter from "./parameter.js";
-import { defaultOpsModifier } from './config.js'
+import config from './config.js'
 
 export default class resource {
     parent;
@@ -30,7 +30,7 @@ export default class resource {
             this.parent = match.groups.parent ? new resource(match.groups.parent) : null;
             this.tag = this.determineTag(match.groups.tag, this.name, this.parent)
             this.idParameter = new parameter(pluralize.singular(match.groups.resource), (this.parent != null));
-            this.ops = new operations(match.groups.ops || defaultOpsModifier);
+            this.ops = new operations(match.groups.ops || config.defaultOpsModifier);
             this.collectionPath = this.ops.hasCollectionOps ? this.determinePath(this.parent, this.collection) : null;
             this.resourcePath = this.ops.hasResourceOps ? this.determinePath(this.parent, this.collection, this.idParameter) : null;
 

@@ -4,7 +4,7 @@ import inquirer from 'inquirer';
 import consola from './consola.js';
 import { generate } from './main.js';
 import config from './config.js'
-import pjson from '../package.json' assert { type: 'json' };
+const pjson = await import('../package.json', { assert: { type: 'json' } });
 
 function parseArgumentsIntoOptions(rawArgs) {
     const args = arg(

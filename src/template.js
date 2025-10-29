@@ -2,7 +2,7 @@ import path from 'path';
 import chalk from 'chalk';
 import fs from 'fs';
 import consola from './consola.js';
-import { templateProvider, templateBaseLocation } from './config.js'
+import config from './config.js'
 import axios from 'axios';
 
 const providers = {
@@ -16,7 +16,7 @@ export default class template {
 
     constructor(name) {
         this.name = name
-        this.provider = templateProvider;
+        this.provider = config.templateProvider;
     }
 
     async getTemplateFromOnline(templateLocation) {
@@ -61,7 +61,7 @@ export default class template {
         try {
             const templateFolder = path.join(
                 __dirname,
-                templateBaseLocation.trim()
+                config.templateBaseLocation.trim()
             );
 
             fs.statSync(templateFolder);
@@ -76,7 +76,7 @@ export default class template {
 
     async getTemplateLocationForOnline(templateName) {
         try {
-            const location = new URL(templateName, templateBaseLocation.trim());
+            const location = new URL(templateName, config.templateBaseLocation.trim());
             return location.toString();
         } catch (error) {
             throw new Error(error.message + '\n\tValidate your configuration in your \'env\' file.');
