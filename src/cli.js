@@ -4,6 +4,7 @@ import inquirer from 'inquirer';
 import consola from './consola.js';
 import { generate } from './main.js';
 import config from './config'
+import pjson from '../package.json' assert { type: 'json' };
 
 function parseArgumentsIntoOptions(rawArgs) {
     const args = arg(
@@ -44,7 +45,6 @@ function parseArgumentsIntoOptions(rawArgs) {
 }
 
 function showHeader() {
-    const pjson = require('../package.json');
     consola.newline().title(`Open API document generator (v${pjson.version})`);
     consola.log('Use this commandline to generate an Open API document (aka a \'swagger\' file) to get you kick started for design and development of a REST API.');
     consola.sub('Developed by Erik Lenaerts, 2021. Contact me at erik.lenaerts@line20.be');
@@ -176,14 +176,14 @@ async function promptForMissingOptions(options) {
                 name: resource + 'Ops',
                 message: 'Select the operations for ' + chalk.reset.cyan(resource) + ':',
                 choices: [
-                    { name: '[GET] \tList all resources', short: 'List', value: 1, checked: (config.defaultOpsModifier & 1) == 1 },
-                    { name: '[POST] \tCreate a resource', short: 'Create', value: 2, checked: (config.defaultOpsModifier & 2) == 2 },
+                    { name: '[GET] \tList all resources', short: 'List', value: 1, checked: (config.defaultOpsModifier & 1) === 1 },
+                    { name: '[POST] \tCreate a resource', short: 'Create', value: 2, checked: (config.defaultOpsModifier & 2) === 2 },
                     // { name: '[POST] \tCreate a resource (async)', short: 'Create (async)', value: 4, checked: (config.defaultOpsModifier & 4) == 4 }, //we don't provide this option anymore, instead we ask an additional question for a synchronous or asynchronous version.
-                    { name: '[GET] \tRead one resource', short: 'Read', value: 8, checked: (config.defaultOpsModifier & 8) == 8 },
-                    { name: '[HEAD] \tCheck if a resource exist', short: 'Check', value: 16, checked: (config.defaultOpsModifier & 16) == 16 },
-                    { name: '[PUT] \tReplace a resource', short: 'Replace', value: 32, checked: (config.defaultOpsModifier & 32) == 32 },
-                    { name: '[PATCH] \tUpdate a resource', short: 'Update', value: 64, checked: (config.defaultOpsModifier & 64) == 64 },
-                    { name: "[DELETE] \tRemove a resource.", short: 'Delete', value: 128, checked: (config.defaultOpsModifier & 64) == 64 }]
+                    { name: '[GET] \tRead one resource', short: 'Read', value: 8, checked: (config.defaultOpsModifier & 8) === 8 },
+                    { name: '[HEAD] \tCheck if a resource exist', short: 'Check', value: 16, checked: (config.defaultOpsModifier & 16) === 16 },
+                    { name: '[PUT] \tReplace a resource', short: 'Replace', value: 32, checked: (config.defaultOpsModifier & 32) === 32 },
+                    { name: '[PATCH] \tUpdate a resource', short: 'Update', value: 64, checked: (config.defaultOpsModifier & 64) === 64 },
+                    { name: "[DELETE] \tRemove a resource.", short: 'Delete', value: 128, checked: (config.defaultOpsModifier & 64) === 64 }]
             });
             questions.push({
                 type: 'confirm',

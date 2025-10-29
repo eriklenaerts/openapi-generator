@@ -4,10 +4,12 @@ import path from 'path';
 import handlebars from 'handlebars';
 import handlebarsHelpers from 'handlebars-helpers';
 import shortid from 'shortid'
-import api from './api';
-import consola from './consola';
-import template from './template';
-import config from './config'
+import api from './api.js';
+import consola from './consola.js';
+import template from './template.js';
+import config from './config.js'
+import os from 'os';
+
 
 async function compileTemplate(template, templateData, outputPath) {
     // load handlebar helper functions that extend the capabilities
@@ -27,7 +29,7 @@ async function compileTemplate(template, templateData, outputPath) {
     });
 
     const hbTemplate = handlebars.compile(template);
-    consola.trace('- Template succesfully compiled');
+    consola.trace('- Template successfully compiled');
 
     let resultData = hbTemplate(templateData);
     consola.trace('- Cooking the OpenAPI document by merging the Parsed API info with the template');
@@ -58,7 +60,7 @@ async function getTemplateData(options) {
 
 async function determineOutputPath(options) {
     // convert a ~ path to an absolute path if needed.
-    let outputLocation = options.outputLocation.replace(/^~($|\/|\\)/,`${require('os').homedir()}$1`);
+    let outputLocation = options.outputLocation.replace(/^~($|\/|\\)/, `${os.homedir()}$1`);
 
     consola.trace('Checking output location');
 

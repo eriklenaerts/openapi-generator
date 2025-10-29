@@ -3,6 +3,7 @@
   "version": "0.4.200",
   "description": "Generate an Open API document to kick start your REST API design or development.",
   "main": "src/index.js",
+  "type": "module",
   "bin": {
     "@eriklenaerts/openapi-docgen": "./bin/generator",
     "openapi-docgen": "./bin/generator",
@@ -12,18 +13,17 @@
     "access": "public"
   },
   "dependencies": {
-    "esm": "^3.2.25",
     "arg": "^5.0.0",
     "axios": ">=0.21.2",
     "chalk": "^4.1.1",
     "dotenv": "^10.0.0",
     "handlebars": "^4.7.7",
     "handlebars-helpers": "^0.10.0",
+    "highlight.js": ">=10.4.1",
     "inquirer": "^8.1.2",
     "pluralize": "^8.0.0",
-    "shortid": "^2.2.16",
-    "highlight.js": ">=10.4.1",
-    "set-value": ">=4.0.1"
+    "set-value": ">=4.0.1",
+    "shortid": "^2.2.16"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

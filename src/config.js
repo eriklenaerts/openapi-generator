@@ -1,32 +1,34 @@
-const { ok } = require('assert');
-const chalk = require('chalk');
-const env = require('dotenv');
-const { default: consola } = require('./consola');
-env.config();
+import { ok } from 'node:assert';
+import chalk from 'chalk';
+import dotenv from 'dotenv';
+import consola from './consola.js';
+import axios from 'axios';
+import fs from 'node:fs';
+import path from 'node:path';
 
-module.exports = {
+dotenv.config();
+
+export default {
     templateProvider: process.env.TEMPLATE_PROVIDER || 'FileSystem',
     templateBaseLocation: process.env.TEMPLATES_BASE_LOCATION || '../templates',
     defaultTemplate: process.env.DEFAULT_TEMPLATE || 'basic.hbs',
     defaultOutputLocation: process.env.DEFAULT_OUTPUT_LOCATION || process.cwd(),
-    uniqueOutputFileName: process.env.UNIQUE_OUTPUT_FILENAME ? (process.env.UNIQUE_OUTPUT_FILENAME.trim() == 'true') : false,
+    uniqueOutputFileName: process.env.UNIQUE_OUTPUT_FILENAME ? (process.env.UNIQUE_OUTPUT_FILENAME.trim() === 'true') : false,
     defaultOpsModifier: isNaN(process.env.DEFAULT_OPS_MODIFIER) ? 235 : parseInt(process.env.DEFAULT_OPS_MODIFIER),
-    noSetupFound: !(process.env.TEMPLATE_PROVIDER | process.env.TEMPLATES_BASE_LOCATION | process.env.DEFAULT_TEMPLATE | process.env.DEFAULT_OUTPUT_LOCATION | process.env.UNIQUE_OUTPUT_FILENAME | process.env.DEFAULT_OPS_MODIFIER),
+    noSetupFound: !(process.env.TEMPLATE_PROVIDER || process.env.TEMPLATES_BASE_LOCATION || process.env.DEFAULT_TEMPLATE || process.env.DEFAULT_OUTPUT_LOCATION || process.env.UNIQUE_OUTPUT_FILENAME || process.env.DEFAULT_OPS_MODIFIER),
     setup,
 };
 
 async function setup() {
     consola.trace(`Retrieving sample config file.`);
     let configContent = await downloadConfig('https://raw.githubusercontent.com/eriklenaerts/openapi-generator/master/.env.example');
-    let configFileLocation = await saveConfig(configContent)
+    let configFileLocation = await saveConfig(configContent);
     consola.done(`Prepared a configuration file for you here ${chalk.blueBright.underline(configFileLocation)}`);
-    consola.tab().log('Feel free to have a peek or change some settings')
+    consola.tab().log('Feel free to have a peek or change some settings');
 }
 
 async function downloadConfig(fileLocation) {
-    const axios = require("axios");
     consola.trace(`- Downloading config from ${chalk.blueBright.underline(fileLocation)}`);
-
     try {
         let response = await axios({
             url: fileLocation,
@@ -34,31 +36,24 @@ async function downloadConfig(fileLocation) {
             headers: {
                 'Content-Type': 'text',
             }
-        })
-        if (response.status == 200) {
+        });
+        if (response.status === 200) {
             consola.trace(`- Finished download, retrieved ${response.data.length} bytes.`);
         }
-
         return response.data;
-
     } catch (error) {
-        throw new Error(`downloading config from ${fileLocation}\n\t${error}`);
+        throw new Error(`Error downloading config from ${fileLocation}\n\t${error}`);
     }
 }
 
 async function saveConfig(content) {
-    const fs = require('fs')
-    const path = require('path');
-
     let outputPath = path.join(process.cwd(), '.env');
     consola.trace(`- Config file will be saved here ${chalk.blueBright.underline(outputPath)}`);
-
     try {
-        const data = fs.writeFileSync(outputPath, content)
+        fs.writeFileSync(outputPath, content);
         consola.trace(`- Saved config file`);
         return outputPath;
     } catch (err) {
         throw err;
     }
-
 }

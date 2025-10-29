@@ -3,6 +3,7 @@ import chalk from 'chalk';
 import fs from 'fs';
 import consola from './consola';
 import { templateProvider, templateBaseLocation } from './config'
+import axios from 'axios';
 
 const providers = {
     FileSystem: 'FileSystem',
@@ -19,7 +20,6 @@ export default class template {
     }
 
     async getTemplateFromOnline(templateLocation) {
-        const axios = require("axios");
         consola.trace(`- Downloading template from ${chalk.blueBright.underline(templateLocation)}`);
 
         try {
@@ -30,7 +30,7 @@ export default class template {
                     'Content-Type': 'text/yaml',
                 }
             })
-            if (response.status == 200) {
+            if (response.status === 200) {
                 consola.trace(`- Finished download, retrieved ${response.data.length} bytes.`);
             }
 
@@ -92,12 +92,12 @@ export default class template {
         consola.trace(`- template ${chalk.cyan(this.name)}`);
         consola.trace(`- template provider ${chalk.cyan(this.provider)}`);
 
-        if (this.provider == providers.FileSystem) {
+        if (this.provider === providers.FileSystem) {
             templateLocation = await this.getTemplateLocationForFS(this.name);
             content = await this.getTemplateFromFS(templateLocation);
         }
 
-        if (this.provider == providers.Online) {
+        if (this.provider === providers.Online) {
             templateLocation = await this.getTemplateLocationForOnline(this.name);
             content = await this.getTemplateFromOnline(templateLocation);
         }
